@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - main
-      - "????????_communal_the_test"
+      - "*_communal_the_test"
     paths-ignore:
       - "aws_output_*.txt"
   pull_request:
