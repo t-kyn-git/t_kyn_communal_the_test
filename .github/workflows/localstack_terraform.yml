@@ -254,4 +254,7 @@ jobs:
         git add .
         git commit -m "Add AWS CLI output ($OUTFILE) [skip ci]" || echo "No changes to commit"
 
-        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:main
+        echo "current branches:"
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${BRANCH_NAME}
