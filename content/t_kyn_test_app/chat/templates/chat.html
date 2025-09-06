@@ -47,6 +47,7 @@
     </script>
     <a href="/">Home</a>
 </body>
+<button type="button" onclick="history.back()">戻る</button>
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit">ログアウト</button>
