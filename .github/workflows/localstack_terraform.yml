@@ -280,7 +280,7 @@ jobs:
           echo "  </div>"
           echo "</body>"
           echo "</html>"
-        } > $HTML_OUTFILE
+        } > $OUTHTMLFILE
 
     - name: Commit & Push AWS CLI output
       env:
