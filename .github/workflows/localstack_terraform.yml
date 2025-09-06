@@ -220,7 +220,7 @@ jobs:
         OUTFILE="$OUTDIR/aws_output_${TIMESTAMP}.txt"
         DOCS_DIR="docs/subdir/terraform_aws_outputs"
         mkdir -p $DOCS_DIR
-        OUTHTMLFILE="$DOCS_DIR/aws_output_${TIMESTAMP}.html"
+        OUTHTMLFILE="$DOCS_DIR/aws_output.html"
 
         {
           echo "===== VPC一覧 ====="
