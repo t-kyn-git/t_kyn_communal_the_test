@@ -218,6 +218,9 @@ jobs:
         OUTDIR="output_terraform_resourceslogs"
         mkdir -p $OUTDIR
         OUTFILE="$OUTDIR/aws_output_${TIMESTAMP}.txt"
+        DOCS_DIR="docs/subdir/terraform_aws_outputs"
+        mkdir -p $DOCS_DIR
+        OUTHTMLFILE="$DOCS_DIR/aws_output.html"
 
         {
           echo "===== VPC一覧 ====="
@@ -244,15 +247,50 @@ jobs:
 
         echo "Output saved to $OUTFILE"
 
+        # 2. 新しくHTMLファイルへの出力
+        {
+          echo "<!DOCTYPE html>"
+          echo "<html lang='ja'>"
+          echo "<head>"
+          echo "  <meta charset='UTF-8'>"
+          echo "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+          echo "  <title>AWSリソース一覧 (${TIMESTAMP})</title>"
+          echo "  <style>"
+          echo "    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }"
+          echo "    .container { max-width: 980px; margin: 20px auto; padding: 20px; }"
+          echo "    h1, h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }"
+          echo "    pre { background-color: #f6f8fa; border-radius: 3px; padding: 16px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }"
+          echo "  </style>"
+          echo "</head>"
+          echo "<body>"
+          echo "  <div class='container'>"
+          echo "    <h1>AWSリソース一覧 (${TIMESTAMP})</h1>"
+
+          echo "    <h2>VPC一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-vpcs --output text)</pre>"
+          echo "    <h2>サブネット一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-subnets --output text)</pre>"
+          echo "    <h2>セキュリティグループ一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-security-groups --output text)</pre>"
+          echo "    <h2>ルートテーブル一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-route-tables --output text)</pre>"
+          echo "    <h2>EC2インスタンス一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-instances --output text)</pre>"
+          echo "    <h2>キーペア一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-key-pairs --output text)</pre>"
+          echo "    <h2>S3バケット一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT s3api list-buckets --output text)</pre>"
+          echo "    <h2>Lambda関数一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT lambda list-functions --output text)</pre>"
+          echo "    <h2>API Gateway一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT apigateway get-rest-apis --output text)</pre>"
+          echo "    <h2>Route53ホストゾーン一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT route53 list-hosted-zones --output text)</pre>"
+
+          echo "  </div>"
+          echo "</body>"
+          echo "</html>"
+        } > $OUTHTMLFILE
+
     - name: Commit & Push AWS CLI output
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        ls -l $OUTFILE
+        ls -l $OUTFILE $OUTHTMLFILE
         git add .
-        git commit -m "Add AWS CLI output ($OUTFILE) [skip ci]" || echo "No changes to commit"
+        git commit -m "Add AWS CLI output ($OUTFILE AND $OUTHTMLFILE) [skip ci]" || echo "No changes to commit"
 
         echo "current branches:"
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
