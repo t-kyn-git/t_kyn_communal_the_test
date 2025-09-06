@@ -1,3 +1,5 @@
+
+```mermaid
 graph TD
     %% --- スタイル定義 ---
     classDef vpc fill:#f9f9f9,stroke:#333,stroke-width:2px;
@@ -69,3 +71,4 @@ graph TD
     class ec2_public,ec2_private ec2;
     class ec2_master_db,ec2_slave_db rds;
     class sub1,sub2,sub3,sub4 subnet;
+```
