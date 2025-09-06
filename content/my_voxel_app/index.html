@@ -16,6 +16,8 @@
             color: white;
         }
         #gui > * { display: block; margin-bottom: 10px; }
+        /* ★追加 */
+        #file-importer { display: none; }
         .block-preview {
             width: 20px; height: 20px;
             border: 1px solid #fff;
@@ -32,6 +34,8 @@
             <h3>ブロック選択</h3>
             <div id="block-selector"></div>
         </div>
+        <button id="import-btn">インポート</button>
+        <input type="file" id="file-importer" accept=".json">
         <button id="export-btn">エクスポート</button>
         <button id="save-btn">サーバーに保存</button>
         <div>

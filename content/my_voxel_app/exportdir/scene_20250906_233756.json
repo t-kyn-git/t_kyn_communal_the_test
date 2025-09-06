@@ -1,0 +1,180 @@
+{
+  "blocks": [
+    {
+      "type": "dirt",
+      "position": {
+        "x": -1,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "dirt",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "dirt",
+      "position": {
+        "x": 1,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": -2,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": -3,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": -3,
+        "y": 1,
+        "z": 0
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 1,
+        "y": 0,
+        "z": 2
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 2,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 2,
+        "y": 1,
+        "z": 2
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 3,
+        "y": 1,
+        "z": 2
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 3,
+        "y": 1,
+        "z": -1
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 5,
+        "y": 0,
+        "z": 1
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 5,
+        "y": 0,
+        "z": 2
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 5,
+        "y": 1,
+        "z": 0
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 6,
+        "y": 1,
+        "z": 0
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 5,
+        "y": 0,
+        "z": 4
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 6,
+        "y": 1,
+        "z": -3
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 8,
+        "y": 1,
+        "z": -5
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 9,
+        "y": 1,
+        "z": -5
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 9,
+        "y": 1,
+        "z": -4
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 8,
+        "y": 1,
+        "z": -3
+      }
+    },
+    {
+      "type": "grass",
+      "position": {
+        "x": 7,
+        "y": 1,
+        "z": -2
+      }
+    }
+  ]
+}

@@ -10,6 +10,7 @@ const rollOverMesh = createRollOverMesh();
 const plane = createPlane();
 const textureLoader = new THREE.TextureLoader();
 const textureCache = {};
+let lastPlacedPos = null;
 
 async function init() {
     await fetchBlockTypes();
@@ -18,9 +19,14 @@ async function init() {
     createBlockSelector();
     document.addEventListener('pointermove', onPointerMove);
     document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('pointerup', onPointerUp);
     window.addEventListener('resize', onWindowResize);
     document.getElementById('export-btn').addEventListener('click', exportScene);
     document.getElementById('save-btn').addEventListener('click', saveSceneToServer);
+    const importBtn = document.getElementById('import-btn');
+    const fileImporter = document.getElementById('file-importer');
+    importBtn.addEventListener('click', () => fileImporter.click());
+    fileImporter.addEventListener('change', importScene);
     animate();
 }
 
@@ -56,26 +62,40 @@ function onPointerMove(event) {
     if (intersects.length > 0) {
         const intersect = intersects[0];
         const newPos = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
-        rollOverMesh.position.set(Math.floor(newPos.x) + 0.5, Math.floor(newPos.y) + 0.5, Math.floor(newPos.z) + 0.5);
+        const voxelPos = new THREE.Vector3(Math.floor(newPos.x), Math.floor(newPos.y), Math.floor(newPos.z));
+        rollOverMesh.position.copy(voxelPos).addScalar(0.5);
         rollOverMesh.visible = true;
+        if (event.buttons === 1) { // 左ボタンドラッグ中
+            if (!lastPlacedPos || !lastPlacedPos.equals(voxelPos)) {
+                addBlock(voxelPos, currentBlockType);
+                lastPlacedPos = voxelPos.clone();
+            }
+        }
     } else {
         rollOverMesh.visible = false;
     }
 }
 
 function onPointerDown(event) {
-    pointer.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObjects(objects, false);
-    if (intersects.length > 0) {
-        const intersect = intersects[0];
-        if (event.button === 0) {
-            const newPos = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
-            addBlock({ x: Math.floor(newPos.x), y: Math.floor(newPos.y), z: Math.floor(newPos.z) }, currentBlockType);
-        } else if (event.button === 2 && intersect.object !== plane) {
+    if (intersects.length === 0) return;
+    const intersect = intersects[0];
+
+    if (event.button === 0) { // 左クリック
+        const newPos = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
+        const voxelPos = new THREE.Vector3(Math.floor(newPos.x), Math.floor(newPos.y), Math.floor(newPos.z));
+        addBlock(voxelPos, currentBlockType);
+        lastPlacedPos = voxelPos.clone();
+    } else if (event.button === 2) { // 右クリック
+        if (intersect.object !== plane) {
             removeBlock(intersect.object);
         }
     }
+}
+
+function onPointerUp() {
+    lastPlacedPos = null;
 }
 
 function onWindowResize() {
@@ -90,7 +110,7 @@ function addBlock(position, type) {
     const material = new THREE.MeshLambertMaterial({ map: textureCache[type] });
     const cube = new THREE.Mesh(geometry, material);
     cube.position.set(position.x + 0.5, position.y + 0.5, position.z + 0.5);
-    cube.userData = { type, position };
+    cube.userData = { type, position: { x: position.x, y: position.y, z: position.z } };
     scene.add(cube);
     objects.push(cube);
 }
@@ -117,6 +137,30 @@ function preloadTextures() {
         const texture = textureLoader.load(blockTypes[type].texture);
         texture.magFilter = THREE.NearestFilter;
         textureCache[type] = texture;
+    }
+}
+
+function importScene(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const sceneData = JSON.parse(e.target.result);
+            if (!sceneData.blocks || !Array.isArray(sceneData.blocks)) throw new Error('無効なファイル形式');
+            clearScene();
+            sceneData.blocks.forEach(block => addBlock(new THREE.Vector3(block.position.x, block.position.y, block.position.z), block.type));
+            updateStatus(`${file.name} をインポートしました。`, 'green');
+        } catch (error) {
+            updateStatus(`インポートエラー: ${error.message}`, 'red');
+        } finally { event.target.value = ''; }
+    };
+    reader.readAsText(file);
+}
+
+function clearScene() {
+    for (let i = objects.length - 1; i >= 0; i--) {
+        if (objects[i] !== plane) removeBlock(objects[i]);
     }
 }
 

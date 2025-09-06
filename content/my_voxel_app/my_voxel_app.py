@@ -1,8 +1,11 @@
 import json
 import datetime
 from flask import Flask, render_template, request, jsonify, send_from_directory
+import os
 
 app = Flask(__name__, static_folder='static', template_folder='.')
+
+EXPORT_DIR = 'exportdir'
 
 # ブロック定義 (共通のテクスチャパスを参照)
 BLOCK_TYPES = {
@@ -27,7 +30,14 @@ def index():
 def get_block_types():
     return jsonify(BLOCK_TYPES)
 
-# シーンデータをサーバーに保存するAPI
+# # シーンデータをサーバーに保存するAPI
+# @app.route('/api/save_scene', methods=['POST'])
+# def save_scene():
+#     scene_data = request.get_json()
+#     if not scene_data or 'blocks' not in scene_data:
+#         return jsonify({"status": "error", "message": "Invalid data"}), 400
+
+# ★変更点: シーン保存のロジックを更新
 @app.route('/api/save_scene', methods=['POST'])
 def save_scene():
     scene_data = request.get_json()
@@ -35,13 +45,19 @@ def save_scene():
         return jsonify({"status": "error", "message": "Invalid data"}), 400
 
     try:
+        # exportdirが存在しない場合は作成する
+        os.makedirs(EXPORT_DIR, exist_ok=True)
+
         now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"scene_{now}.json"
+        
+        # 安全なファイルパスを生成
+        filepath = os.path.join(EXPORT_DIR, filename)
 
-        with open(filename, "w") as f:
+        with open(filepath, "w") as f:
             json.dump(scene_data, f, indent=2)
 
-        print(f"シーンが {filename} として保存されました。")
+        print(f"シーンが {filepath} として保存されました。")
         return jsonify({"status": "success", "filename": filename})
     except Exception as e:
         print(f"保存エラー: {e}")
