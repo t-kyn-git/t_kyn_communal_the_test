@@ -247,7 +247,17 @@ jobs:
 
         echo "Output saved to $OUTFILE"
 
-        # 2. 新しくHTMLファイルへの出力
+    # ステップ2: mainブランチへのpush時のみ、HTMLファイルを出力する
+    - name: Generate HTML output for main branch
+      if: github.event_name == 'push' && github.ref_name == 'main'
+      run: |
+        ENDPOINT="http://localhost:4566"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        DOCS_DIR="docs/subdir/terraform_aws_outputs"
+        mkdir -p $DOCS_DIR
+        OUTHTMLFILE="$DOCS_DIR/aws_output.html"
+
+        echo "Running on main branch push. Generating HTML file..."
         {
           echo "<!DOCTYPE html>"
           echo "<html lang='ja'>"
@@ -281,6 +291,7 @@ jobs:
           echo "</body>"
           echo "</html>"
         } > $OUTHTMLFILE
+        echo "HTML output saved to $OUTHTMLFILE"
 
     - name: Commit & Push AWS CLI output
       env:
