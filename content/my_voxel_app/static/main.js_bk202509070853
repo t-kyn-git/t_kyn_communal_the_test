@@ -1,0 +1,176 @@
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+let scene, camera, renderer, controls;
+let raycaster, pointer;
+const objects = [];
+let blockTypes = {};
+let currentBlockType = '';
+const rollOverMesh = createRollOverMesh();
+const plane = createPlane();
+const textureLoader = new THREE.TextureLoader();
+const textureCache = {};
+
+// ★追加: ドラッグ操作で同じ場所に連続配置しないように、最後に置いた場所を記録
+let lastPlacedPos = new THREE.Vector3();
+
+async function init() {
+    await fetchBlockTypes();
+    preloadTextures();
+    setupScene();
+    createBlockSelector();
+
+    // ★変更点: イベントリスナーを更新
+    document.addEventListener('pointermove', onPointerMove);
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('pointerup', onPointerUp); // マウスボタンを離した時のイベントを追加
+    window.addEventListener('resize', onWindowResize);
+    document.getElementById('export-btn').addEventListener('click', exportScene);
+    document.getElementById('save-btn').addEventListener('click', saveSceneToServer);
+
+    // ★追加: インポート機能のイベントリスナー
+    const importBtn = document.getElementById('import-btn');
+    const fileImporter = document.getElementById('file-importer');
+    importBtn.addEventListener('click', () => fileImporter.click());
+    fileImporter.addEventListener('change', importScene);
+
+    animate();
+}
+
+function setupScene() {
+    // ... (この関数の中身は変更ありません)
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(2, 5, 10);
+    camera.lookAt(0, 0, 0);
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+    const ambientLight = new THREE.AmbientLight(0x606060);
+    scene.add(ambientLight);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    directionalLight.position.set(1, 0.75, 0.5).normalize();
+    scene.add(directionalLight);
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    raycaster = new THREE.Raycaster();
+    pointer = new THREE.Vector2();
+    scene.add(rollOverMesh);
+    scene.add(plane);
+    objects.push(plane);
+    const gridHelper = new THREE.GridHelper(50, 50);
+    scene.add(gridHelper);
+}
+
+// ★変更点: ドラッグ操作のロジックを追加
+function onPointerMove(event) {
+    pointer.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(objects, false);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
+        const newPos = new THREE.Vector3().copy(intersect.point).add(intersect.face.normal);
+        const voxelPos = new THREE.Vector3(Math.floor(newPos.x), Math.floor(newPos.y), Math.floor(newPos.z));
+        
+        rollOverMesh.position.copy(voxelPos).addScalar(0.5);
+        rollOverMesh.visible = true;
+
+        // event.buttons === 1 は左ボタンが押されている状態を示す
+        if (event.buttons === 1 && !lastPlacedPos.equals(voxelPos)) {
+            addBlock(voxelPos, currentBlockType);
+            lastPlacedPos.copy(voxelPos);
+        }
+    } else {
+        rollOverMesh.visible = false;
+    }
+}
+
+function onPointerDown(event) {
+    // onPointerMoveで処理されるので、pointerdownでは最初の一個を置くだけ
+    onPointerMove(event);
+}
+
+// ★追加: マウスボタンを離したら、最後の位置記録をリセット
+function onPointerUp(event) {
+    lastPlacedPos = null;
+}
+
+
+function onWindowResize() { /* ...変更なし... */ }
+
+function addBlock(position, type) {
+    if (!blockTypes[type] || !textureCache[type]) return;
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshLambertMaterial({ map: textureCache[type] });
+    const cube = new THREE.Mesh(geometry, material);
+    cube.position.set(position.x + 0.5, position.y + 0.5, position.z + 0.5);
+    cube.userData = { type, position: {x: position.x, y: position.y, z: position.z} }; //
+    scene.add(cube);
+    objects.push(cube);
+}
+
+function removeBlock(object) {
+    // 右クリックでブロックを消す機能 (onPointerDownの外で処理する)
+    pointer.set((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObjects(objects, false);
+
+    if (intersects.length > 0) {
+        const intersect = intersects[0];
+        if (event.button === 2 && intersect.object !== plane) {
+             scene.remove(intersect.object);
+             objects.splice(objects.indexOf(intersect.object), 1);
+             intersect.object.geometry.dispose();
+             intersect.object.material.dispose();
+        }
+    }
+}
+
+
+async function fetchBlockTypes() { /* ...変更なし... */ }
+function preloadTextures() { /* ...変更なし... */ }
+function exportScene() { /* ...変更なし... */ }
+async function saveSceneToServer() { /* ...変更なし... */ }
+
+// ★追加: インポート関連の関数
+function importScene(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const sceneData = JSON.parse(e.target.result);
+            if (!sceneData.blocks || !Array.isArray(sceneData.blocks)) throw new Error('無効なファイル形式');
+            clearScene();
+            sceneData.blocks.forEach(block => addBlock(block.position, block.type));
+            updateStatus(`${file.name} をインポートしました。`, 'green');
+        } catch (error) {
+            updateStatus(`インポートエラー: ${error.message}`, 'red');
+        } finally {
+            event.target.value = '';
+        }
+    };
+    reader.readAsText(file);
+}
+
+function clearScene() {
+    for (let i = objects.length - 1; i >= 0; i--) {
+        if (objects[i] !== plane) {
+            const obj = objects[i];
+            scene.remove(obj);
+            objects.splice(i, 1);
+            obj.geometry.dispose();
+            obj.material.dispose();
+        }
+    }
+}
+
+function createRollOverMesh() { /* ...変更なし... */ }
+function createPlane() { /* ...変更なし... */ }
+function createBlockSelector() { /* ...変更なし... */ }
+function updateStatus(message, color) { /* ...変更なし... */ }
+function animate() { /* ...変更なし... */ }
+
+init();

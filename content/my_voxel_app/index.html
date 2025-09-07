@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>3D Voxel Builder</title>
+    <style>
+        body { margin: 0; font-family: sans-serif; }
+        canvas { display: block; }
+        #gui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+        }
+        #gui > * { display: block; margin-bottom: 10px; }
+        /* ★追加 */
+        #file-importer { display: none; }
+        .block-preview {
+            width: 20px; height: 20px;
+            border: 1px solid #fff;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div id="gui">
+        <div>
+            <h3>ブロック選択</h3>
+            <div id="block-selector"></div>
+        </div>
+        <button id="import-btn">インポート</button>
+        <input type="file" id="file-importer" accept=".json">
+        <button id="export-btn">エクスポート</button>
+        <button id="save-btn">サーバーに保存</button>
+        <div>
+            <p>左クリック(Eキー): ブロックを置く</p>
+            <p>右クリック(Qキー): ブロックを消す</p>
+        </div>
+        <div id="status-message" style="font-weight: bold;"></div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="/static/main.js"></script>
+</body>
+</html>
