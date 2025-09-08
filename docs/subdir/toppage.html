@@ -25,17 +25,32 @@
     </style>
 </head>
 <body>
-    <div id="jp" class="text-container"></div>
+    <h1>Knowledge Portal</h1>
     <div id="en" class="text-container"></div>
-    <div id="zh" class="text-container"></div>
-    <div id="kr" class="text-container"></div>
+    <h2><b><u>The all content of share is below</b></u></h2>
+    <table border="1" style="width: 80%; margin: 20px auto; border-collapse: collapse;">
+        <tr>
+            <th>Content Type</th>
+            <th>LinkPage</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>Baby</td>
+            <td><a href="share/donoteat_pregnant.html">Do not eat pregnant</a></td>
+            <td>Do not eat during pregnancy</td>
+        </tr>
+        <tr>
+            <td>Development</td>
+            <td><a href="development/k3d_self_arch.html">k3d_self_arch.html</a></td>
+            <td>Self-architecture of k3d</td>
+        </tr>
 
     <script>
         const texts = {
-            jp: "10年前から始まったサーバ構築。サーバ構築取り組みは、単なる製造だけではなく、サーバを通して何をするかを考えるようになった。そして現在、AI・クラウド・ビッグデータ分野が急成長している時代。データの利活用から社会問題を解決することが求められる。UNKO Unknown Numeric Knowledgement Owner 未知の無限な知識をどん欲に取得する。そして、そのナリッジを世界へ！",
-            en: "The server construction that started 10 years ago. The approach to server construction has shifted from mere manufacturing to considering what can be achieved through the server. Today, we are in an era where AI, Cloud, and Big Data fields are growing rapidly. It is essential to solve social issues through the utilization of data. UNKO - Unknown Numeric Knowledge Owner - seeks to acquire infinite unknown knowledge and share it with the world!",
-            zh: "10年前开始的服务器构建。服务器构建的努力不仅仅是制造，还开始考虑通过服务器可以实现什么。而现在，AI、云计算、大数据领域正在迅速发展。需要通过数据的利用来解决社会问题。UNKO 未知数值知识拥有者，贪婪地获取无限的未知知识，并将这些知识传播到世界各地！",
-            kr: "10년 전부터 시작된 서버 구축. 서버 구축 노력은 단순한 제조에서 벗어나 서버를 통해 무엇을 할 수 있을지를 고민하게 되었다. 그리고 현재, AI, 클라우드, 빅데이터 분야가 급성장하는 시대. 데이터 활용을 통해 사회 문제를 해결하는 것이 요구되고 있다. UNKO - 알 수 없는 무한한 지식을 탐욕스럽게 습득하고, 그 지식을 세계로 확산시키자!"
+            en: "The server construction that started 10 years ago. \
+            The approach to server construction has shifted from mere manufacturing to considering what can be achieved through the server. \
+            Today, we are in an era where AI, Cloud, and Big Data fields are growing rapidly. \
+            It is essential to solve social issues through the utilization of data. UNKO - Unknown Numeric Knowledge Owner - seeks to acquire infinite unknown knowledge and share it with the world!",
         };
 
         // 各言語に対して1文字ずつフェードインさせる関数
@@ -53,12 +68,7 @@
                 }, index * delay);
             });
         }
-
-        // 日本語、英語、中国語、韓国語の順に0.1秒ずつフェードイン
-        fadeInText(texts.jp, "jp", 100);
-        fadeInText(texts.en, "en", 100);
-        fadeInText(texts.zh, "zh", 100);
-        fadeInText(texts.kr, "kr", 100);
+        fadeInText(texts.en, "en", 10);
     </script>
 </body>
 </html>

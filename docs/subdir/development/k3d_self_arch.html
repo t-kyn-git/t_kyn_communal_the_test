@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>k3d アーキテクチャ図</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        h1, h2 {
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        pre {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .mermaid {
+            text-align: center;
+        }
+        .plantuml-img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>k3d アーキテクチャ図</h1>
+        <p>提供されたREADME.mdに基づき、t_kynシステムのk3dアーキテクチャを視覚化したものです。</p>
+
+        <h2>1. Mermaid図</h2>
+        <p>システム全体のコンポーネントとデータの流れを示します。</p>
+        <div class="mermaid">
+graph TD
+    subgraph "User Environment"
+        Client[Client/Browser]
+    end
+
+    subgraph "GitHub Codespaces (Host Environment)"
+        LB[k3d Load Balancer]
+        PV[Host Path Persistent Volume]
+
+        subgraph "k3d Cluster"
+            direction LR
+            subgraph "Control Plane (Master Node)"
+                APIServer[API Server]
+                DNS[CoreDNS]
+                MetricsServer[Metrics Server]
+            end
+
+            subgraph "Worker Nodes"
+                direction TB
+                
+                subgraph "Application Pods"
+                    NginxSvc[Service: nginx-svc]
+                    PythonSvc[Service: python-svc]
+                    MySQLWriteSvc[Service: mysql-write-svc]
+                    MySQLReadSvc[Service: mysql-read-svc]
+
+                    NginxPod1[Pod: Nginx] --- NginxSvc
+                    NginxPod2[Pod: Nginx] --- NginxSvc
+                    NginxPod3[Pod: Nginx] --- NginxSvc
+
+                    PythonPod1[Pod: Python/FastAPI] --- PythonSvc
+                    PythonPod2[Pod: Python/FastAPI] --- PythonSvc
+                    PythonPod3[Pod: Python/FastAPI] --- PythonSvc
+                    
+                    MySQLPod1[Pod: MySQL Master] --- MySQLWriteSvc & MySQLReadSvc
+                    MySQLPod2[Pod: MySQL Slave] --- MySQLReadSvc
+                    MySQLPod3[Pod: MySQL Slave] --- MySQLReadSvc
+                end
+
+                subgraph "Monitoring & Logging Pods"
+                    Prometheus[Pod: Prometheus]
+                    Grafana[Pod: Grafana]
+                    FluentdServer[Pod: Fluentd Server]
+                    NodeExporter[DaemonSet: Node Exporter]
+                    cAdvisor[DaemonSet: cAdvisor]
+                end
+
+                subgraph "Persistent Storage"
+                    MySQLPVC1[PVC: mysql-pvc1] --> PV
+                    MySQLPVC2[PVC: mysql-pvc2] --> PV
+                    MySQLPVC3[PVC: mysql-pvc3] --> PV
+                end
+            end
+        end
+    end
+
+    %% --- Connections ---
+    Client -- "HTTPS Request" --> LB
+    LB -- "Forwarding" --> NginxSvc
+    NginxSvc -- "Load Balancing" --> NginxPod1 & NginxPod2 & NginxPod3
+    NginxPod1 & NginxPod2 & NginxPod3 -- "HTTP Request" --> PythonSvc
+    PythonSvc -- "Load Balancing" --> PythonPod1 & PythonPod2 & PythonPod3
+    PythonPod1 -- "Write (TCP)" --> MySQLWriteSvc
+    PythonPod1 & PythonPod2 & PythonPod3 -- "Read (TCP)" --> MySQLReadSvc
+    MySQLWriteSvc --> MySQLPod1
+    MySQLReadSvc --> MySQLPod1 & MySQLPod2 & MySQLPod3
+    MySQLPod1 --> MySQLPVC1
+    MySQLPod2 --> MySQLPVC2
+    MySQLPod3 --> MySQLPVC3
+
+    %% --- Monitoring Connections ---
+    Prometheus -- "Scrapes Metrics" --> NginxPod1 & PythonPod1 & MySQLPod1 & NodeExporter & cAdvisor
+    Grafana -- "Queries Data" --> Prometheus
+    Client -- "Views Dashboard" --> Grafana
+    FluentdServer -- "Aggregates Logs" --> NginxPod1 & PythonPod1 & MySQLPod1
+        </div>
+
+        <h2>2. PlantUML図</h2>
+        <p>同じアーキテクチャをコンポーネント図のスタイルで表現したものです。</p>
+        <img class="plantuml-img" src="https://www.plantuml.com/plantuml/svg/VP1BRT8n48Rl-HH5sMvL59R4-Jm720LKbYc0f_uF34Hl8D1Q166g082_y-Xq65V9j1uMTAI60p4s9u82t6-u5v8jQ2M42l6M20p0tE7Qk_23Rj4pE7iBv8r-s4E9Hl8-yqI-Xq7P5Q1wR4K-n64mKac55bYvL9R9A0u009pX9m3-8D00nL-9l-9hXQh7p4-m607fW4U6c4O9X-E6vYm8e8m_4g6b-d3nLd5f4iC3F-T3c5mK20t4l5l6j5D0b0u6Ym62n5C3H1i2t5G2n0O-T3b4X-E6Yl4i-XnB-G6Yg4e-Wp2b-Wp2b-g3mHnBd5j4hC3F-n3i5g20X-f60vB-g1_5g2_25H3E2X-E6vYg8f8g_4h6b-W_3v9j4iC3F-n4d2n4O-HnCd_2n4O8X-f40nB-Z3c5mK20v4j6f4h_2m_m1c5mK20d0f4d3c5f4n4f2p_sA6YvL5R8-WqI-XnB-G6vYl5f8l_4h6b-d3nLf4t_g-Z24b5l6j5D0b0p7Ym62p5C3X-g_m5C1H2n4t_oO-Lnb_W35l6j5D1c6t5C3nC9_4t5C3X_oO-T24H-g_m0" alt="PlantUML Architecture Diagram">
+
+        <h2>参考：HTMLに埋め込んだコード</h2>
+
+        <h3>Mermaid Code</h3>
+        <pre><code>
+graph TD
+    subgraph "User Environment"
+        Client[Client/Browser]
+    end
+
+    subgraph "GitHub Codespaces (Host Environment)"
+        LB[k3d Load Balancer]
+        PV[Host Path Persistent Volume]
+
+        subgraph "k3d Cluster"
+            direction LR
+            subgraph "Control Plane (Master Node)"
+                APIServer[API Server]
+                DNS[CoreDNS]
+                MetricsServer[Metrics Server]
+            end
+
+            subgraph "Worker Nodes"
+                direction TB
+                
+                subgraph "Application Pods"
+                    NginxSvc[Service: nginx-svc]
+                    PythonSvc[Service: python-svc]
+                    MySQLWriteSvc[Service: mysql-write-svc]
+                    MySQLReadSvc[Service: mysql-read-svc]
+
+                    NginxPod1[Pod: Nginx] --- NginxSvc
+                    NginxPod2[Pod: Nginx] --- NginxSvc
+                    NginxPod3[Pod: Nginx] --- NginxSvc
+
+                    PythonPod1[Pod: Python/FastAPI] --- PythonSvc
+                    PythonPod2[Pod: Python/FastAPI] --- PythonSvc
+                    PythonPod3[Pod: Python/FastAPI] --- PythonSvc
+                    
+                    MySQLPod1[Pod: MySQL Master] --- MySQLWriteSvc & MySQLReadSvc
+                    MySQLPod2[Pod: MySQL Slave] --- MySQLReadSvc
+                    MySQLPod3[Pod: MySQL Slave] --- MySQLReadSvc
+                end
+
+                subgraph "Monitoring & Logging Pods"
+                    Prometheus[Pod: Prometheus]
+                    Grafana[Pod: Grafana]
+                    FluentdServer[Pod: Fluentd Server]
+                    NodeExporter[DaemonSet: Node Exporter]
+                    cAdvisor[DaemonSet: cAdvisor]
+                end
+
+                subgraph "Persistent Storage"
+                    MySQLPVC1[PVC: mysql-pvc1] --> PV
+                    MySQLPVC2[PVC: mysql-pvc2] --> PV
+                    MySQLPVC3[PVC: mysql-pvc3] --> PV
+                end
+            end
+        end
+    end
+
+    %% --- Connections ---
+    Client -- "HTTPS Request" --> LB
+    LB -- "Forwarding" --> NginxSvc
+    NginxSvc -- "Load Balancing" --> NginxPod1 & NginxPod2 & NginxPod3
+    NginxPod1 & NginxPod2 & NginxPod3 -- "HTTP Request" --> PythonSvc
+    PythonSvc -- "Load Balancing" --> PythonPod1 & PythonPod2 & PythonPod3
+    PythonPod1 -- "Write (TCP)" --> MySQLWriteSvc
+    PythonPod1 & PythonPod2 & PythonPod3 -- "Read (TCP)" --> MySQLReadSvc
+    MySQLWriteSvc --> MySQLPod1
+    MySQLReadSvc --> MySQLPod1 & MySQLPod2 & MySQLPod3
+    MySQLPod1 --> MySQLPVC1
+    MySQLPod2 --> MySQLPVC2
+    MySQLPod3 --> MySQLPVC3
+
+    %% --- Monitoring Connections ---
+    Prometheus -- "Scrapes Metrics" --> NginxPod1 & PythonPod1 & MySQLPod1 & NodeExporter & cAdvisor
+    Grafana -- "Queries Data" --> Prometheus
+    Client -- "Views Dashboard" --> Grafana
+    FluentdServer -- "Aggregates Logs" --> NginxPod1 & PythonPod1 & MySQLPod1
+        </code></pre>
+
+        <h3>PlantUML Code</h3>
+        <pre><code>
+@startuml
+!theme cerulean-outline
+
+actor Client
+
+cloud "GitHub Codespaces" {
+    folder "Host Path Volume" as HostVolume
+    
+    package "k3d Cluster" {
+        node "Load Balancer" as LB
+
+        package "Worker Nodes" {
+            rectangle "Nginx Pods" as Nginx {
+                component [nginx-1]
+                component [nginx-2]
+                component [nginx-3]
+            }
+            rectangle "Python Pods (FastAPI)" as Python {
+                component [python-1]
+                component [python-2]
+                component [python-3]
+            }
+            database "MySQL Pods" as MySQL {
+                database "mysql-master" as Master
+                database "mysql-slave-1" as Slave1
+                database "mysql-slave-2" as Slave2
+            }
+            
+            package "Monitoring & Logging" {
+                component [Prometheus]
+                component [Grafana]
+                component [Fluentd]
+            }
+        }
+
+        package "Kubernetes Services" {
+            hexagon "nginx-svc" as NginxSvc
+            hexagon "python-svc" as PythonSvc
+            hexagon "mysql-write-svc" as MySQLWriteSvc
+            hexagon "mysql-read-svc" as MySQLReadSvc
+        }
+
+        package "Storage" {
+            storage "PVCs" as PVC
+        }
+    }
+}
+
+' --- Connections ---
+Client -down-> LB : HTTPS
+LB -down-> NginxSvc
+
+NginxSvc -right-> Nginx
+Nginx -down-> PythonSvc
+PythonSvc -right-> Python
+
+Python -down-> MySQLWriteSvc : Write
+Python -down-> MySQLReadSvc : Read
+
+MySQLWriteSvc -right-> Master
+MySQLReadSvc -right-> Master
+MySQLReadSvc -right-> Slave1
+MySQLReadSvc -right-> Slave2
+
+MySQL -down-> PVC
+PVC -down- HostVolume : Binds
+
+' --- Monitoring ---
+Prometheus .up.> Nginx : Scrapes
+Prometheus .up.> Python : Scrapes
+Prometheus .up.> MySQL : Scrapes
+Grafana .left.> Prometheus : Queries
+Client -right-> Grafana : Views Dashboard
+
+@enduml
+        </code></pre>
+
+    </div>
+
+    <!-- Mermaid.jsのスクリプトを読み込み -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+</html>
