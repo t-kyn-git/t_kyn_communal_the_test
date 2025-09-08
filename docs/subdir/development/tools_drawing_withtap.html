@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>HTMLお絵かきツール</title>
+    <style>
+        /* ここからCSS（見た目の設定） */
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            touch-action: none; /* スマホでの画面スクロールを無効化 */
+        }
+        h1 {
+            color: #333;
+        }
+        #canvas-container {
+            border: 2px solid #333;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+        canvas {
+            display: block; /* キャンバス下の余白を消す */
+        }
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap; /* スマホ表示で折り返す */
+            gap: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            align-items: center;
+            justify-content: center;
+        }
+        .tool-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        label {
+            font-size: 0.8em;
+            margin-bottom: 2px;
+            color: #555;
+        }
+        input[type="color"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 50px;
+            height: 30px;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            padding: 0;
+            background-color: transparent;
+        }
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+        input[type="color"]::-moz-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background-color: #e9e9e9;
+        }
+        button.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>HTMLお絵かきツール</h1>
+
+    <!-- 描画エリア -->
+    <div id="canvas-container">
+        <canvas id="draw-canvas" width="400" height="400"></canvas>
+    </div>
+
+    <!-- 操作パネル -->
+    <div class="toolbar">
+        <div class="tool-item">
+            <label for="color-picker">色</label>
+            <input type="color" id="color-picker" value="#000000">
+        </div>
+        <div class="tool-item">
+            <label for="pen-width">太さ: <span id="pen-width-value">5</span></label>
+            <input type="range" id="pen-width" min="1" max="50" value="5">
+        </div>
+        <button id="pen-button" class="active">ペン</button>
+        <button id="eraser-button">消しゴム</button>
+        <button id="clear-button">全消し</button>
+    </div>
+
+    <script>
+    // ここからJavaScript（お絵かき機能のロジック）
+
+    // ページの読み込みが終わったら処理を開始
+    window.addEventListener('load', () => {
+        const canvas = document.getElementById('draw-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // キャンバスのサイズを画面に合わせて調整
+        // PCでは固定、スマホでは画面幅に合わせる
+        const canvasContainer = document.getElementById('canvas-container');
+        if (window.innerWidth < 450) {
+            const size = window.innerWidth - 40; // 左右の余白を考慮
+            canvas.width = size;
+            canvas.height = size;
+        }
+        
+        // 初期設定
+        let isDrawing = false; // 描画中かどうかのフラグ
+        ctx.lineCap = 'round'; // 線の端を丸くする
+        ctx.lineJoin = 'round'; // 線の角を丸くする
+
+        // ツール要素を取得
+        const colorPicker = document.getElementById('color-picker');
+        const penWidthSlider = document.getElementById('pen-width');
+        const penWidthValue = document.getElementById('pen-width-value');
+        const penButton = document.getElementById('pen-button');
+        const eraserButton = document.getElementById('eraser-button');
+        const clearButton = document.getElementById('clear-button');
+
+        // 現在のペンの色を保存しておく変数
+        let currentColor = colorPicker.value;
+
+        // ペンの設定を更新する関数
+        function updatePen() {
+            ctx.strokeStyle = colorPicker.value;
+            ctx.lineWidth = penWidthSlider.value;
+            penWidthValue.textContent = penWidthSlider.value;
+        }
+
+        // 最初のペンの設定
+        updatePen();
+
+
+        // --- イベント処理 ---
+
+        // 描き始め (PCのマウス・スマホのタッチ)
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e); // クリックしただけでも点を描画するため
+        }
+
+        // 描き終わり (PCのマウス・スマホのタッチ)
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath(); // パスをリセット
+        }
+
+        // 描画中 (PCのマウス・スマホのタッチ)
+        function draw(e) {
+            if (!isDrawing) return;
+
+            // イベントの位置を取得
+            const pos = getMousePos(canvas, e);
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+        
+        // マウス/タッチ座標をキャンバスの座標に変換する関数
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            // タッチイベントの場合
+            if (evt.touches) {
+                return {
+                    x: evt.touches[0].clientX - rect.left,
+                    y: evt.touches[0].clientY - rect.top
+                };
+            }
+            // マウスイベントの場合
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+
+        // --- 各パーツの動作設定 ---
+
+        // PCマウス用イベント
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseout', stopDrawing); // キャンバスから外れたら描画終了
+
+        // スマホタッチ用イベント
+        canvas.addEventListener('touchstart', startDrawing);
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('touchmove', draw);
+
+        // 色が変更されたとき
+        colorPicker.addEventListener('change', (e) => {
+            currentColor = e.target.value;
+            // 消しゴムモードでなければ色を適用
+            if (ctx.globalCompositeOperation !== 'destination-out') {
+                 ctx.strokeStyle = currentColor;
+            }
+        });
+        
+        // 太さが変更されたとき
+        penWidthSlider.addEventListener('input', () => {
+            ctx.lineWidth = penWidthSlider.value;
+            penWidthValue.textContent = penWidthSlider.value;
+        });
+
+        // 全消しボタンが押されたとき
+        clearButton.addEventListener('click', () => {
+            if(confirm('本当にすべて消しますか？')){
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        // ペンボタンが押されたとき
+        penButton.addEventListener('click', () => {
+            ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
+            ctx.strokeStyle = currentColor; // 保存しておいた色に戻す
+            penButton.classList.add('active');
+            eraserButton.classList.remove('active');
+        });
+
+        // 消しゴムボタンが押されたとき
+        eraserButton.addEventListener('click', () => {
+            ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+            penButton.classList.remove('active');
+            eraserButton.classList.add('active');
+        });
+
+    });
+    </script>
+
+</body>
+</html>
