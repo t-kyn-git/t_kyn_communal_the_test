@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Web Drawing Tool</title>
+    <style>
+        body { font-family: sans-serif; }
+        #controls { margin-bottom: 10px; }
+        #controls > * { margin-right: 15px; vertical-align: middle; }
+        canvas { border: 1px solid black; cursor: crosshair; }
+        #status-message { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Webお絵かきツール</h1>
+
+    <div id="controls">
+        <label for="color-picker">色:</label>
+        <input type="color" id="color-picker" value="#000000">
+
+        <label for="line-width">太さ:</label>
+        <input type="range" id="line-width" min="1" max="50" value="2">
+
+        <button id="eraser-btn">消しゴム</button>
+        <button id="clear-btn">全部消す</button>
+
+        <!-- ★追加★ サーバーに保存するためのボタン -->
+        <button id="save-btn">サーバーに保存</button>
+    </div>
+
+    <canvas id="draw-canvas" width="600" height="400"></canvas>
+
+    <!-- ★追加★ 保存結果を表示するエリア -->
+    <div id="status-message"></div>
+
+    <script>
+        // --- 基本的な描画設定（変更なし） ---
+        const canvas = document.getElementById('draw-canvas');
+        const context = canvas.getContext('2d');
+        const colorPicker = document.getElementById('color-picker');
+        const lineWidthSlider = document.getElementById('line-width');
+        const eraserBtn = document.getElementById('eraser-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        function draw(e) {
+            if (!isDrawing) return;
+            context.strokeStyle = colorPicker.value;
+            context.lineWidth = lineWidthSlider.value;
+            context.lineCap = 'round';
+            context.beginPath();
+            context.moveTo(lastX, lastY);
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+            [lastX, lastY] = [e.offsetX, e.offsetY];
+        }
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; [lastX, lastY] = [e.offsetX, e.offsetY]; });
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', () => isDrawing = false);
+        canvas.addEventListener('mouseout', () => isDrawing = false);
+        eraserBtn.addEventListener('click', () => { colorPicker.value = '#FFFFFF'; });
+        clearBtn.addEventListener('click', () => { context.clearRect(0, 0, canvas.width, canvas.height); });
+        // --- ここまで変更なし ---
+
+        // ★★★ここからが追加部分★★★
+
+        // 保存ボタンとステータスメッセージの要素を取得
+        const saveBtn = document.getElementById('save-btn');
+        const statusMessage = document.getElementById('status-message');
+
+        // 保存ボタンがクリックされたときの処理
+        saveBtn.addEventListener('click', async () => {
+            // キャンバスの内容をPNG形式のBase64データURLとして取得
+            const imageData = canvas.toDataURL('image/png');
+
+            statusMessage.textContent = '保存中...';
+            statusMessage.style.color = 'blue';
+
+            try {
+                // fetch APIを使ってサーバーの'/save'エンドポイントにデータを送信
+                const response = await fetch('/save', {
+                    method: 'POST', // POSTメソッドで送信
+                    headers: {
+                        'Content-Type': 'application/json', // データ形式はJSON
+                    },
+                    // 送信するデータ本体。JSON形式の文字列に変換する
+                    body: JSON.stringify({ image_data: imageData })
+                });
+
+                // サーバーからの応答をJSONとして解析
+                const result = await response.json();
+
+                if (response.ok) {
+                    // 成功した場合
+                    statusMessage.textContent = `成功: サーバーに ${result.filename} として保存されました。`;
+                    statusMessage.style.color = 'green';
+                } else {
+                    // サーバー側でエラーが発生した場合
+                    statusMessage.textContent = `失敗: ${result.message}`;
+                    statusMessage.style.color = 'red';
+                }
+            } catch (error) {
+                // 通信エラーなどが発生した場合
+                console.error('保存エラー:', error);
+                statusMessage.textContent = 'エラー: サーバーとの通信に失敗しました。';
+                statusMessage.style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
