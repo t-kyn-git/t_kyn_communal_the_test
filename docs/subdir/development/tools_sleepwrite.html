@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>睡眠記録アプリ（インポート/エクスポート機能付き）</title>
+    <style>
+        /* ここからCSS（デザイン）です */
+        body {
+            font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        header h1 {
+            color: #2c3e50;
+            margin: 0;
+        }
+        section {
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            border-left: 5px solid #3498db;
+            padding-left: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .quality-options {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 15px;
+        }
+        .quality-options label {
+            cursor: pointer;
+        }
+        button, .button-like {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+        }
+        button:hover, .button-like:hover {
+            background-color: #2980b9;
+        }
+        button.secondary {
+            background-color: #2ecc71;
+        }
+        button.secondary:hover {
+            background-color: #27ae60;
+        }
+        button.tertiary {
+            background-color: #e74c3c;
+        }
+        button.tertiary:hover {
+            background-color: #c0392b;
+        }
+        #log-list {
+            list-style: none;
+            padding: 0;
+        }
+        #log-list li {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 5px solid #bdc3c7;
+        }
+        #log-list li .date {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
+        #log-list li .memo {
+            margin-top: 5px;
+            white-space: pre-wrap; /* 改行を反映 */
+        }
+        .data-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>睡眠記録アプリ</h1>
+            <p>睡眠データを記録し、JSONファイルで入出力できます。</p>
+        </header>
+
+        <main>
+            <!-- 睡眠記録フォーム -->
+            <section id="sleep-log">
+                <h2>今日の睡眠を記録する</h2>
+                <form id="log-form">
+                    <label for="date">日付:</label>
+                    <input type="date" id="date" required>
+
+                    <label for="sleep-time">就寝時刻:</label>
+                    <input type="time" id="sleep-time" required>
+
+                    <label for="wake-time">起床時刻:</label>
+                    <input type="time" id="wake-time" required>
+
+                    <label>睡眠の質:</label>
+                    <div class="quality-options">
+                        <label><input type="radio" name="quality" value="😊 良かった" checked> 😊 良かった</label>
+                        <label><input type="radio" name="quality" value="😐 普通"> 😐 普通</label>
+                        <label><input type="radio" name="quality" value="😴 悪かった"> 😴 悪かった</label>
+                    </div>
+
+                    <label for="memo">メモ:</label>
+                    <textarea id="memo" rows="4" placeholder="夢の内容や、途中で目が覚めた回数などを記録しましょう。"></textarea>
+
+                    <button type="submit">記録する</button>
+                </form>
+            </section>
+            
+            <!-- データ管理（インポート/エクスポート） -->
+            <section>
+                <h2>データ管理</h2>
+                <div class="data-buttons">
+                    <button type="button" id="export-btn" class="secondary">エクスポート (JSON)</button>
+                    <label for="import-file" class="button-like secondary">インポート (JSON)</label>
+                    <input type="file" id="import-file" accept=".json">
+                </div>
+                 <button type="button" id="clear-all-btn" class="tertiary">全データ削除</button>
+            </section>
+
+            <!-- 記録表示エリア -->
+            <section>
+                <h2>記録一覧</h2>
+                <ul id="log-list">
+                    <!-- ここに記録が動的に追加されます -->
+                </ul>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2025 HTML Sleep App with JS</p>
+        </footer>
+    </div>
+
+    <script>
+        // ここからJavaScriptです
+        document.addEventListener('DOMContentLoaded', () => {
+            const logForm = document.getElementById('log-form');
+            const logList = document.getElementById('log-list');
+            const exportBtn = document.getElementById('export-btn');
+            const importFile = document.getElementById('import-file');
+            const clearAllBtn = document.getElementById('clear-all-btn');
+
+            // アプリケーションのデータを保持する配列
+            let sleepData = [];
+
+            // 1. データの読み込み (localStorageから)
+            const loadData = () => {
+                const storedData = localStorage.getItem('sleepData');
+                if (storedData) {
+                    sleepData = JSON.parse(storedData);
+                }
+                renderLogs();
+            };
+
+            // 2. データの保存 (localStorageへ)
+            const saveData = () => {
+                localStorage.setItem('sleepData', JSON.stringify(sleepData));
+            };
+
+            // 3. 記録を画面に表示する
+            const renderLogs = () => {
+                logList.innerHTML = ''; // 一旦リストを空にする
+                // 日付が新しい順にソートして表示
+                const sortedData = [...sleepData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                if (sortedData.length === 0) {
+                    logList.innerHTML = '<li>まだ記録がありません。</li>';
+                    return;
+                }
+
+                sortedData.forEach(log => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <div class="date">${log.date}</div>
+                        <div>
+                            <span>就寝: ${log.sleepTime}</span> | 
+                            <span>起床: ${log.wakeTime}</span> | 
+                            <span>睡眠の質: ${log.quality}</span>
+                        </div>
+                        ${log.memo ? `<div class="memo">${escapeHTML(log.memo)}</div>` : ''}
+                    `;
+                    logList.appendChild(li);
+                });
+            };
+
+            // 4. フォーム送信時の処理 (記録追加)
+            logForm.addEventListener('submit', (e) => {
+                e.preventDefault(); // フォームのデフォルトの送信動作をキャンセル
+
+                const newLog = {
+                    date: document.getElementById('date').value,
+                    sleepTime: document.getElementById('sleep-time').value,
+                    wakeTime: document.getElementById('wake-time').value,
+                    quality: document.querySelector('input[name="quality"]:checked').value,
+                    memo: document.getElementById('memo').value,
+                };
+                
+                // 同じ日付のデータがあれば上書き、なければ追加
+                const existingIndex = sleepData.findIndex(d => d.date === newLog.date);
+                if (existingIndex > -1) {
+                    sleepData[existingIndex] = newLog;
+                } else {
+                    sleepData.push(newLog);
+                }
+
+                saveData();
+                renderLogs();
+                logForm.reset(); // フォームをリセット
+            });
+
+            // 5. エクスポート処理
+            exportBtn.addEventListener('click', () => {
+                if (sleepData.length === 0) {
+                    alert('エクスポートするデータがありません。');
+                    return;
+                }
+                const jsonString = JSON.stringify(sleepData, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sleep_log_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+
+            // 6. インポート処理
+            importFile.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        if (Array.isArray(importedData)) {
+                             if (confirm('現在の記録をインポートしたデータで上書きしますか？（現在の記録は失われます）')) {
+                                sleepData = importedData;
+                                saveData();
+                                renderLogs();
+                                alert('データのインポートが完了しました。');
+                             }
+                        } else {
+                            throw new Error('無効なファイル形式です。');
+                        }
+                    } catch (error) {
+                        alert('ファイルの読み込みに失敗しました。有効なJSONファイルを選択してください。');
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = ''; // 同じファイルを再度選択できるように値をリセット
+            });
+
+            // 7. 全データ削除処理
+            clearAllBtn.addEventListener('click', () => {
+                if (sleepData.length > 0 && confirm('本当にすべてのデータを削除しますか？この操作は元に戻せません。')) {
+                    sleepData = [];
+                    saveData();
+                    renderLogs();
+                    alert('すべてのデータを削除しました。');
+                } else if (sleepData.length === 0) {
+                    alert('削除するデータがありません。');
+                }
+            });
+            
+            // XSS対策のためのHTMLエスケープ関数
+            const escapeHTML = (str) => {
+                return str.replace(/[&<>"']/g, function(match) {
+                    return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                    }[match];
+                });
+            };
+
+            // 初期化
+            loadData();
+        });
+    </script>
+</body>
+</html>
