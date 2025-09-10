@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>👶 育児ログアプリ (オフライン版)</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  button { margin: 5px; padding: 10px; }
+  table { border-collapse: collapse; margin-top: 15px; width: 100%; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+</style>
+</head>
+<body>
+<h2>👶 育児ログアプリ (オフライン版)</h2>
+
+<p>
+  <button onclick="addLog('授乳')">授乳</button>
+  <button onclick="addLog('おむつ交換')">おむつ交換</button>
+  <button onclick="addLog('睡眠')">睡眠</button>
+</p>
+
+<p>
+  <button onclick="exportData()">📤 エクスポート</button>
+  <input type="file" id="fileInput" onchange="importData(event)">
+</p>
+
+<table>
+  <thead>
+    <tr><th>イベント</th><th>日時</th></tr>
+  </thead>
+  <tbody id="logTable"></tbody>
+</table>
+
+<script>
+  const STORAGE_KEY = "baby_logs";
+
+  function getLogs() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  }
+
+  function saveLogs(logs) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+  }
+
+  function addLog(event) {
+    const logs = getLogs();
+    logs.unshift({ event, time: new Date().toLocaleString() });
+    saveLogs(logs);
+    renderLogs();
+  }
+
+  function renderLogs() {
+    const logs = getLogs();
+    const table = document.getElementById("logTable");
+    table.innerHTML = "";
+    logs.forEach(log => {
+      const row = `<tr><td>${log.event}</td><td>${log.time}</td></tr>`;
+      table.innerHTML += row;
+    });
+  }
+
+  function exportData() {
+    const logs = getLogs();
+    const blob = new Blob([JSON.stringify(logs, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "baby_logs.json";
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function importData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const logs = JSON.parse(e.target.result);
+        saveLogs(logs);
+        renderLogs();
+      } catch (err) {
+        alert("JSONファイルが不正です");
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // 初期表示
+  renderLogs();
+</script>
+</body>
+</html>
