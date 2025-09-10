@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🛒 買い物リスト & 在庫管理</title>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  h2 { margin-top: 30px; }
+  input, button { margin: 5px; padding: 5px; }
+  ul { list-style: none; padding: 0; }
+  li { margin: 5px 0; }
+  .done { text-decoration: line-through; color: gray; }
+</style>
+</head>
+<body>
+<h1>🛒 買い物リスト & 在庫管理</h1>
+
+<!-- 買い物リスト -->
+<h2>買い物リスト</h2>
+<input id="itemInput" placeholder="商品名">
+<button onclick="addShopping()">追加</button>
+<ul id="shoppingList"></ul>
+
+<!-- 在庫管理 -->
+<h2>在庫管理</h2>
+<input id="stockItem" placeholder="商品名">
+<input id="stockDate" type="date">
+<button onclick="addStock()">追加</button>
+<ul id="stockList"></ul>
+
+<!-- データ管理 -->
+<h2>データ管理</h2>
+<button onclick="exportData()">📤 エクスポート</button>
+<input type="file" id="fileInput" onchange="importData(event)">
+
+<script>
+const STORAGE_KEY = "shopping_stock_data";
+
+function getData() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"shopping":[],"stock":[]}');
+}
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  render();
+}
+
+// --- 買い物リスト ---
+function addShopping() {
+  const item = document.getElementById("itemInput").value.trim();
+  if (!item) return;
+  const data = getData();
+  data.shopping.push({ name: item, done: false });
+  saveData(data);
+  document.getElementById("itemInput").value = "";
+}
+
+function toggleShopping(index) {
+  const data = getData();
+  data.shopping[index].done = !data.shopping[index].done;
+  saveData(data);
+}
+
+function deleteShopping(index) {
+  const data = getData();
+  data.shopping.splice(index, 1);
+  saveData(data);
+}
+
+// --- 在庫管理 ---
+function addStock() {
+  const name = document.getElementById("stockItem").value.trim();
+  const date = document.getElementById("stockDate").value;
+  if (!name) return;
+  const data = getData();
+  data.stock.push({ name, expiry: date });
+  saveData(data);
+  document.getElementById("stockItem").value = "";
+  document.getElementById("stockDate").value = "";
+}
+
+function deleteStock(index) {
+  const data = getData();
+  data.stock.splice(index, 1);
+  saveData(data);
+}
+
+// --- レンダリング ---
+function render() {
+  const data = getData();
+
+  // 買い物リスト
+  const shoppingList = document.getElementById("shoppingList");
+  shoppingList.innerHTML = "";
+  data.shopping.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="${item.done ? "done" : ""}" onclick="toggleShopping(${i})">${item.name}</span>
+                    <button onclick="deleteShopping(${i})">❌</button>`;
+    shoppingList.appendChild(li);
+  });
+
+  // 在庫リスト
+  const stockList = document.getElementById("stockList");
+  stockList.innerHTML = "";
+  data.stock.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${item.name} (期限: ${item.expiry || "未設定"}) 
+                    <button onclick="deleteStock(${i})">❌</button>`;
+    stockList.appendChild(li);
+  });
+}
+
+// --- データ入出力 ---
+function exportData() {
+  const data = getData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "shopping_stock.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      saveData(data);
+    } catch {
+      alert("JSONファイルが不正です");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// 初期表示
+render();
+</script>
+</body>
+</html>
