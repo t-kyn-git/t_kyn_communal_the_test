@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>t_kyn_grafana_system Dashboard</title>
+    <style>
+        /* --- 全体の設定 --- */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            background-color: #1a1a1a; /* 背景アニメーションが見えない場合の予備色 */
+            overflow: hidden; /* スクロールバーを隠す */
+        }
+
+        /* --- 動く背景 --- */
+        #animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* コンテンツの背面に配置 */
+        }
+
+        /* 背景パターン1: 斜めのグラデーションが動く */
+        .bg-pattern-1 {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient-move 15s ease infinite;
+        }
+
+        /* 背景パターン2: ゆっくりと色が変化する */
+        .bg-pattern-2 {
+            background: linear-gradient(120deg, #1e3c72, #2a5298, #1d2b53);
+            background-size: 200% 200%;
+            animation: gradient-move 20s ease infinite;
+        }
+        
+        /* 背景パターン3: 放射状のグラデーションが広がる */
+        .bg-pattern-3 {
+            background: radial-gradient(circle, #4a00e0, #8e2de2, #240b36);
+            background-size: 200% 200%;
+            animation: gradient-zoom 18s ease infinite;
+        }
+
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes gradient-zoom {
+            0% { background-position: center; }
+            50% { background-position: top left; }
+            100% { background-position: center; }
+        }
+
+        /* --- ヘッダー --- */
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 15px 30px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8em;
+            letter-spacing: 2px;
+        }
+
+        /* --- サイドバー --- */
+        .sidebar {
+            width: 240px;
+            background-color: rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 70px; /* ヘッダーの高さ分下げる */
+            left: 0;
+            height: calc(100% - 70px);
+            padding-top: 20px;
+        }
+
+        .sidebar nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav li a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar nav li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- メインコンテンツ --- */
+        .main-content {
+            margin-left: 240px; /* サイドバーの幅を避ける */
+            padding: 90px 40px 40px 40px; /* 上はヘッダー分、左右下に余白 */
+        }
+
+        .main-content h2 {
+            border-bottom: 2px solid #fff;
+            padding-bottom: 10px;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        /* --- 戻るボタン --- */
+        #backButton {
+            background-color: #23a6d5;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        #backButton:hover {
+            background-color: #23d5ab;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 動く背景を描画する要素 -->
+    <div id="animated-bg"></div>
+
+    <!-- ヘッダー -->
+    <header>
+        <h1>t_kyn_grafana_system</h1>
+    </header>
+
+    <!-- サイドバー -->
+    <aside class="sidebar">
+        <nav>
+            <ul>
+                <li><a href="#">ダッシュボード</a></li>
+                <li><a href="#">アラート設定</a></li>
+                <li><a href="#">ユーザー管理</a></li>
+                <li><a href="#">レポート</a></li>
+                <li><a href="#">システム設定</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- メインコンテンツ -->
+    <main class="main-content">
+        <h2>システム概要</h2>
+        <div class="card">
+            <p>ここにシステムの主要な情報やグラフ、ステータスなどが表示されます。</p>
+            <p>このページは単一のHTMLファイルで構成されており、CSSによる動的な背景とレイアウト、JavaScriptによる背景の切り替えとボタン機能が実装されています。</p>
+        </div>
+        
+        <!-- 戻るボタン -->
+        <button id="backButton">前のページに戻る</button>
+    </main>
+
+    <script>
+        // --- JavaScriptによる機能実装 ---
+
+        // DOMが読み込まれたら実行
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // 1. 戻るボタンの機能
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function() {
+                    // ブラウザの履歴を一つ戻る
+                    history.back();
+                });
+            }
+
+            // 2. 背景を10秒ごとに切り替える機能
+            const bgElement = document.getElementById('animated-bg');
+            const bgPatterns = ['bg-pattern-1', 'bg-pattern-2', 'bg-pattern-3'];
+            let currentPatternIndex = 0;
+
+            // 最初に適用するクラスを設定
+            bgElement.className = bgPatterns[currentPatternIndex];
+
+            // 10秒ごと（10000ミリ秒）に背景を切り替え
+            setInterval(function() {
+                // 次のパターンのインデックスを計算
+                currentPatternIndex = (currentPatternIndex + 1) % bgPatterns.length;
+                
+                // 現在のクラスを削除し、新しいクラスを追加
+                bgElement.className = '';
+                // 少し遅延させてクラスを追加することで、ブラウザが再描画するのを助ける
+                setTimeout(() => {
+                    bgElement.className = bgPatterns[currentPatternIndex];
+                }, 10);
+
+            }, 10000); 
+
+        });
+    </script>
+
+</body>
+</html>
