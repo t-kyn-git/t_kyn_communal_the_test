@@ -5,19 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Test Documentation</title>
     <style>
+        /* --- ここから修正後の背景アニメーション用CSS --- */
+        #background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* コンテンツの背面に配置 */
+        }
+
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0; /* 初期状態は透明 */
+            /* 共通のアニメーション設定 */
+            animation-name: crossfade;
+            animation-duration: 20s; /* 4画像 x 5秒 = 20秒 */
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        /* 4つの画像にそれぞれ異なる開始タイミングを設定 */
+        .bg-slide:nth-child(1) {
+            /* 雷: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/1118869/pexels-photo-1118869.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: 0s;
+        }
+        .bg-slide:nth-child(2) {
+            /* 炎: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/266665/pexels-photo-266665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -15s; /* 20秒サイクルの5秒地点から開始 */
+        }
+        .bg-slide:nth-child(3) {
+            /* 水: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/932401/pexels-photo-932401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -10s; /* 20秒サイクルの10秒地点から開始 */
+        }
+        .bg-slide:nth-child(4) {
+            /* 草: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/158316/sky-grass-meadow-nature-158316.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -5s;  /* 20秒サイクルの15秒地点から開始 */
+        }
+
+        /*
+         * クロスフェードアニメーションの定義
+         * 1つの画像が表示される期間（5秒間）をアニメーションの25%として定義
+         * フェードイン(1秒) -> 表示(3秒) -> フェードアウト(1秒)
+        */
+        @keyframes crossfade {
+            0%   { opacity: 0; }
+            5%   { opacity: 1; } /* 1秒かけてフェードイン */
+            20%  { opacity: 1; } /* 3秒間表示を維持 */
+            25%  { opacity: 0; } /* 1秒かけてフェードアウト */
+            100% { opacity: 0; }
+        }
+        /* --- ここまで背景アニメーション用CSS --- */
+
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.8;
             margin: 0;
             padding: 0;
-            background: #f0f0f0 url('https://www.transparenttextures.com/patterns/polkadots.png');
-            background-size: 50px 50px;
         }
         .container {
+            position: relative; /* 背景の上にコンテンツが乗るように */
+            z-index: 1;
             max-width: 900px;
             margin: 20px auto;
             padding: 20px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.9); /* 背景が透けて見えるように少し透明に */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -26,22 +90,22 @@
             margin-top: 0;
         }
         h1 {
-            font-size: 1.8em; /* 変更前: 2.0em */
+            font-size: 1.8em;
             border-bottom: 2px solid #007bff;
             padding-bottom: 10px;
         }
         h2 {
-            font-size: 1.4em; /* 変更前: 1.6em */
+            font-size: 1.4em;
             border-bottom: 1px solid #ddd;
             padding-bottom: 5px;
             margin-top: 20px;
         }
         h3 {
-            font-size: 1.1em; /* 変更前: 1.2em */
+            font-size: 1.1em;
             margin-top: 20px;
         }
         h4 {
-            font-size: 0.9em; /* 変更前: 1.0em */
+            font-size: 0.9em;
             margin-top: 15px;
         }
         ul {
@@ -54,14 +118,14 @@
             background: #f4f4f4;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 0.75em; /* 変更前: 0.8em */
+            font-size: 0.75em;
         }
         pre {
             background: #f4f4f4;
             padding: 10px;
             border-radius: 4px;
             overflow-x: auto;
-            font-size: 0.75em; /* 変更前: 0.8em */
+            font-size: 0.75em;
         }
         a {
             color: #007bff;
@@ -76,7 +140,7 @@
             border-collapse: collapse;
             margin: 20px 0;
             table-layout: fixed;
-            font-size: 0.9em; /* 変更前: 0.95em */
+            font-size: 0.9em;
         }
         th, td {
             border: 1px solid #ddd;
@@ -95,7 +159,7 @@
             padding-top: 10px;
             border-top: 1px solid #ddd;
             text-align: center;
-            font-size: 0.85em; /* 変更前: 0.9em */
+            font-size: 0.85em;
             color: #666;
         }
 
@@ -104,42 +168,37 @@
             opacity: 0;
             transition: opacity 1s ease-in;
         }
-
         .fade-in.visible {
             opacity: 1;
         }
-
         /* Group fade-in container */
         .fade-in-group {
             opacity: 0;
             transition: opacity 1.5s ease-in;
         }
-
         .fade-in-group.visible {
             opacity: 1;
         }
 
         /* Mobile Styles */
         @media (max-width: 600px) {
-            h1 {
-                font-size: 1.3em; /* 変更前: 1.5em */
-            }
-            h2 {
-                font-size: 1.1em; /* 変更前: 1.3em */
-            }
-            h3 {
-                font-size: 0.9em; /* 変更前: 1.0em */
-            }
-            table {
-                font-size: 0.75em; /* 変更前: 0.8em */
-            }
-            th, td {
-                padding: 8px;
-            }
+            h1 { font-size: 1.3em; }
+            h2 { font-size: 1.1em; }
+            h3 { font-size: 0.9em; }
+            table { font-size: 0.75em; }
+            th, td { padding: 8px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- 背景アニメーション用のコンテナ（HTML構造は変更） -->
+    <div id="background-container">
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+    </div>
 
     <div class="container">
         <h1 id="dynamic-text"></h1>
