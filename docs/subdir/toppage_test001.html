@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNKO - Knowledge for the World</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            /* 背景に青から白への美しいグラデーションを追加 */
+            background: linear-gradient(to bottom, #e6f7ff, #ffffff);
+            color: #333;
+            margin: 0;
+            padding: 2% 5%;
+        }
+        h1 {
+            font-size: 2.5em;
+            color: #0056b3;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        h2 {
+            border-bottom: 2px solid #0056b3;
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-top: 40px;
+        }
+        h6 {
+            color: #666;
+            font-weight: normal;
+        }
+
+        .text-container {
+            font-size: 1.2em; /* 少しサイズを調整 */
+            color: #444;
+            margin: 30px auto;
+            max-width: 800px;
+            line-height: 1.6;
+        }
+        .fade-in {
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        .visible {
+            opacity: 1;
+        }
+
+        /* --- テーブルをカード型グリッドレイアウトに変更 --- */
+        .content-grid {
+            display: grid;
+            /* 画面幅に応じてカードの列数を自動調整 */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px; /* カード間の余白 */
+            width: 90%;
+            margin: 40px auto;
+            text-align: left;
+        }
+        .content-card {
+            background-color: white;
+            border-radius: 10px; /* 角を丸くする */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 影をつけて立体感を出す */
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* アニメーション効果 */
+            display: flex;
+            flex-direction: column; /* 内容を縦に並べる */
+            justify-content: space-between;
+        }
+        /* マウスを乗せると少し浮き上がるエフェクト */
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .card-category {
+            font-weight: bold;
+            color: #0056b3;
+            background-color: #e6f7ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .card-link {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .card-link a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+        .card-link a:hover {
+            color: #0056b3;
+        }
+        .card-description {
+            color: #555;
+            flex-grow: 1; /* 説明文がカードの高さを埋めるように */
+            margin-bottom: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Knowledge Portal</h1>
+    <div id="en" class="text-container"></div>
+    <h2><b><u>The all content of share is below</u></b></h2>
+    <h6>Click the LinkPage to see the contents<br>
+    These contents are made from AI tools.</h6>
+
+    <!-- テーブルをDivベースのグリッドレイアウトに変更 -->
+    <div class="content-grid">
+        <!-- 各行をカードとして表現 -->
+        <div class="content-card">
+            <div>
+                <div class="card-category">Terraform</div>
+                <div class="card-link"><a href="terraform_aws_outputs/aws_output.html">terraform awsoutput</a></div>
+                <div class="card-description">terraform awsoutput</div>
+            </div>
+        </div>
+        <div class="content-card">
+            <div>
+                <div class="card-category">Baby</div>
+                <div class="card-link"><a href="share/donoteat_pregnant.html">Do not eat pregnant</a></div>
+                <div class="card-description">Do not eat during pregnancy</div>
+            </div>
+        </div>
+        <div class="content-card">
+            <div>
+                <div class="card-category">Development Blogs</div>
+                <div class="card-link"><a href="development/k3d_self_arch.html">k3d_self_arch</a></div>
+                <div class="card-description">Self-architecture of k3d</div>
+            </div>
+        </div>
+        <div class="content-card">
+            <div>
+                <div class="card-category">Games</div>
+                <div class="card-link"><a href="development/games_tetris.html">games_tetris</a></div>
+                <div class="card-description">Games tetris</div>
+            </div>
+        </div>
+        <div class="content-card">
+            <div>
+                <div class="card-category">Games</div>
+                <div class="card-link"><a href="development/games_minecraf.html">games_minecraf</a></div>
+                <div class="card-description">Games minecraf</div>
+            </div>
+        </div>
+        <div class="content-card">
+            <div>
+                <div class="card-category">Tools</div>
+                <div class="card-link"><a href="development/tools_drawing.html">drawing PC</a></div>
+                <div class="card-description">Drawing Free with PC site (No Need Paint!)</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">Tools</div>
+                <div class="card-link"><a href="development/tools_drawing_withtap.html">drawing smartphone</a></div>
+                <div class="card-description">Drawing Free with smartphone site (No Need Paint!)</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">Tools</div>
+                <div class="card-link"><a href="development/tools_drawing3d_withtap.html">drawing 3d smartphone</a></div>
+                <div class="card-description">Drawing 3d Free with smartphone site (No Need Paint!)</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">Tools</div>
+                <div class="card-link"><a href="development/tools_stocks.html">confirm stocks</a></div>
+                <div class="card-description">Stocks site</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">tools</div>
+                <div class="card-link"><a href="development/tools_sleepwrite.html">sleepwrite</a></div>
+                <div class="card-description">Sleepwrite</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">tools</div>
+                <div class="card-link"><a href="development/tools_babytest001.html">badyRecord</a></div>
+                <div class="card-description">bady the record</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">tools</div>
+                <div class="card-link"><a href="development/tools_cooking.html">CookingGrow</a></div>
+                <div class="card-description">Cooking of the recipes</div>
+            </div>
+        </div>
+        <div class="content-card">
+             <div>
+                <div class="card-category">test</div>
+                <div class="card-link"><a href="test/testhtml001.html">test</a></div>
+                <div class="card-description">test</div>
+            </div>
+        </div>
+        <!-- 他のコンテンツも同様にカードとして追加 -->
+    </div>
+
+    <script>
+        const texts = {
+            en: "The server construction that started 10 years ago. \
+            The approach to server construction has shifted from mere manufacturing to considering what can be achieved through the server. \
+            Today, we are in an era where AI, Cloud, and Big Data fields are growing rapidly. \
+            It is essential to solve social issues through the utilization of data. UNKO - Unknown Numeric Knowledge Owner - seeks to acquire infinite unknown knowledge and share it with the world!",
+        };
+
+        // 各言語に対して1文字ずつフェードインさせる関数
+        function fadeInText(text, containerId, delay) {
+            const container = document.getElementById(containerId);
+            text.split("").forEach((char, index) => {
+                const span = document.createElement("span");
+                span.textContent = char;
+                span.classList.add("fade-in");
+                container.appendChild(span);
+
+                // 0.1秒ごとにフェードイン
+                setTimeout(() => {
+                    span.classList.add("visible");
+                }, index * delay);
+            });
+        }
+        fadeInText(texts.en, "en", 10);
+    </script>
+</body>
+</html>
