@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本の天気予報 (APIキー不要版)</title>
+    <style>
+        /* 全体のスタイル */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Noto Sans CJK JP', sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #2a3f54;
+            margin-bottom: 30px;
+        }
+
+        /* 天気カードのコンテナ */
+        #weather-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* 天気カードのデザイン */
+        .weather-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            width: 230px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .city-name {
+            font-size: 1.6em;
+            font-weight: 600;
+            margin: 0 0 15px 0;
+            color: #333;
+        }
+
+        .weather-icon {
+            font-size: 4.5em; /* 絵文字のサイズ */
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .temperature {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin: 5px 0;
+            color: #1e88e5;
+        }
+        
+        .weather-description {
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            color: #555;
+            height: 2.2em; /* 2行分の高さを確保 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .details {
+            font-size: 0.95em;
+            color: #888;
+        }
+        
+        .loading, .error {
+            font-size: 1.2em;
+            color: #777;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>日本の天気予報</h1>
+    <div id="weather-container">
+        <!-- 天気情報はJavaScriptによってここに挿入されます -->
+    </div>
+
+    <script>
+        // ページが読み込まれたら実行
+        window.onload = function() {
+            // 天気を表示したい日本の都市リスト（自由に追加・変更してください）
+            // 都市名は英語（ローマ字）で指定してください
+            const cities = [
+                'Sapporo',      // 札幌
+                'Sendai',       // 仙台
+                'Tokyo',        // 東京
+                'Yokohama',     // 横浜
+                'Nagoya',       // 名古屋
+                'Kyoto',        // 京都
+                'Osaka',        // 大阪
+                'Kobe',         // 神戸
+                'Hiroshima',    // 広島
+                'Fukuoka',      // 福岡
+                'Naha'          // 那覇
+            ];
+
+            const container = document.getElementById('weather-container');
+
+            // 各都市の天気情報を取得して表示
+            cities.forEach(city => {
+                fetchWeatherData(city);
+            });
+
+            // 天気情報をAPIから取得する関数
+            async function fetchWeatherData(city) {
+                // ローディング表示用のカードを作成
+                const placeholder = document.createElement('div');
+                placeholder.className = 'weather-card';
+                placeholder.innerHTML = `<div class="loading">「${city}」を読み込み中...</div>`;
+                container.appendChild(placeholder);
+
+                // wttr.in のJSONフォーマットを指定するURL
+                const apiUrl = `https://wttr.in/${city}?format=j1`;
+
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`データ取得に失敗`);
+                    }
+                    const data = await response.json();
+                    
+                    // ローディング表示を実際の天気情報カードに置き換え
+                    displayWeather(data, placeholder, city);
+
+                } catch (error) {
+                    console.error('Error fetching weather data for ' + city + ':', error);
+                    placeholder.innerHTML = `<div class="error">「${city}」<br>情報の取得に失敗しました。</div>`;
+                }
+            }
+
+            // 取得した天気情報をHTMLに表示する関数
+            function displayWeather(data, element, originalCityName) {
+                // wttr.inは最も近い観測点を返すため、指定した都市名と表示名が若干異なる場合があります
+                const cityName = data.nearest_area[0].areaName[0].value;
+                const weatherInfo = data.current_condition[0];
+                
+                const temperature = weatherInfo.temp_C;
+                const weatherDescription = weatherInfo.lang_ja[0].value; // 日本語の天気情報
+                const humidity = weatherInfo.humidity;
+                const weatherCode = weatherInfo.weatherCode; // 天気コード
+
+                const weatherIcon = getWeatherIcon(weatherCode);
+
+                const cardHTML = `
+                    <div class="city-name">${cityName}</div>
+                    <div class="weather-icon">${weatherIcon}</div>
+                    <div class="temperature">${temperature}°C</div>
+                    <div class="weather-description">${weatherDescription}</div>
+                    <div class="details">湿度: ${humidity}%</div>
+                `;
+                
+                element.innerHTML = cardHTML;
+            }
+
+            // 天気コードに対応する絵文字を返す関数
+            function getWeatherIcon(code) {
+                const weatherCodes = {
+                    '113': '☀️', '116': '🌤️', '119': '☁️', '122': '☁️', '143': '🌫️',
+                    '176': '🌦️', '179': '🌨️', '182': '🌨️', '185': '🌨️', '200': '⛈️',
+                    '227': '🌨️', '230': '🌨️', '248': '🌫️', '260': '🌫️', '263': '🌦️',
+                    '266': '🌦️', '281': '🌨️', '284': '🌨️', '293': '🌦️', '296': '🌦️',
+                    '299': '🌧️', '302': '🌧️', '305': '🌧️', '308': '🌧️', '311': '🌨️',
+                    '314': '🌨️', '317': '🌨️', '320': '🌨️', '323': '🌨️', '326': '🌨️',
+                    '329': '❄️', '332': '❄️', '335': '❄️', '338': '❄️', '350': '🌨️',
+                    '353': '🌦️', '356': '🌧️', '359': '🌧️', '362': '🌨️', '365': '🌨️',
+                    '368': '🌨️', '371': '❄️', '374': '🌨️', '377': '🌨️', '386': '⛈️',
+                    '389': '⛈️', '392': '⛈️', '395': '❄️'
+                };
+                return weatherCodes[code] || '🌍'; // 不明な場合は地球の絵文字
+            }
+        };
+    </script>
+</body>
+</html>
