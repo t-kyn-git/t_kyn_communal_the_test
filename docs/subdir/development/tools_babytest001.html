@@ -8,6 +8,7 @@
   button { margin: 5px; padding: 10px; }
   table { border-collapse: collapse; margin-top: 15px; width: 100%; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  .delete-btn { color: white; background: red; border: none; padding: 5px 10px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -17,6 +18,9 @@
   <button onclick="addLog('授乳')">授乳</button>
   <button onclick="addLog('おむつ交換')">おむつ交換</button>
   <button onclick="addLog('睡眠')">睡眠</button>
+  <button onclick="addLog('沐浴')">沐浴</button>
+  <button onclick="addLog('ミルク')">ミルク</button>
+  <button onclick="addLog('その他')">その他</button>
 </p>
 
 <p>
@@ -26,7 +30,7 @@
 
 <table>
   <thead>
-    <tr><th>イベント</th><th>日時</th></tr>
+    <tr><th>イベント</th><th>日時</th><th>削除</th></tr>
   </thead>
   <tbody id="logTable"></tbody>
 </table>
@@ -53,10 +57,91 @@
     const logs = getLogs();
     const table = document.getElementById("logTable");
     table.innerHTML = "";
-    logs.forEach(log => {
-      const row = `<tr><td>${log.event}</td><td>${log.time}</td></tr>`;
-      table.innerHTML += row;
+    logs.forEach((log, index) => {
+      const row = document.createElement("tr");
+
+      // イベント名セル（クリックで編集可能）
+      const eventCell = document.createElement("td");
+      eventCell.textContent = log.event;
+      eventCell.style.cursor = "pointer";
+      eventCell.onclick = () => editEvent(index, eventCell);
+      row.appendChild(eventCell);
+
+      // 日時セル（クリックで編集可能）
+      const timeCell = document.createElement("td");
+      timeCell.textContent = log.time;
+      timeCell.style.cursor = "pointer";
+      timeCell.onclick = () => editTime(index, timeCell);
+      row.appendChild(timeCell);
+
+      // 削除ボタンセル
+      const deleteCell = document.createElement("td");
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => deleteLog(index);
+      deleteCell.appendChild(delBtn);
+      row.appendChild(deleteCell);
+
+      table.appendChild(row);
     });
+  }
+
+  function editEvent(index, cell) {
+    const logs = getLogs();
+    const oldEvent = logs[index].event;
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = oldEvent;
+    input.style.width = "100px";
+
+    cell.innerHTML = "";
+    cell.appendChild(input);
+    input.focus();
+
+    input.onblur = () => {
+      logs[index].event = input.value || oldEvent;
+      saveLogs(logs);
+      renderLogs();
+    };
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") input.blur();
+    };
+  }
+
+  function editTime(index, cell) {
+    const logs = getLogs();
+    const oldTime = logs[index].time;
+
+    const input = document.createElement("input");
+    input.type = "datetime-local";
+    const dt = new Date(oldTime);
+    input.value = dt.toISOString().slice(0,16);
+    input.style.width = "150px";
+
+    cell.innerHTML = "";
+    cell.appendChild(input);
+    input.focus();
+
+    input.onblur = () => {
+      const newTime = new Date(input.value);
+      logs[index].time = newTime.toLocaleString();
+      saveLogs(logs);
+      renderLogs();
+    };
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") input.blur();
+    };
+  }
+
+  function deleteLog(index) {
+    const logs = getLogs();
+    if (confirm("この行を削除しますか？")) {
+      logs.splice(index, 1);
+      saveLogs(logs);
+      renderLogs();
+    }
   }
 
   function exportData() {
