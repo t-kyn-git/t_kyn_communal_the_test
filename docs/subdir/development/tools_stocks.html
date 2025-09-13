@@ -14,6 +14,43 @@
             margin-top: 20px;
             margin-bottom: 20px;
         }
+
+        /* =================================================== */
+        /* ===== チャートコンテナのスタイル（ここからが重要） ===== */
+        /* =================================================== */
+
+        /* PCなど通常の画面サイズでは高さを600pxに固定 */
+        #tradingview_chart {
+            height: 600px;
+        }
+
+        /* ===== スマートフォン表示向けのスタイル（画面幅が768px以下の場合に適用） ===== */
+        @media screen and (max-width: 768px) {
+            body {
+                /* 上下の余白は少し残し、左右の余白は小さくする */
+                padding: 1rem 0.5rem;
+            }
+
+            main.container {
+                /* コンテナの左右の余白もなくす */
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            h1 {
+                font-size: 1.5rem; /* 見出しを少し小さくする */
+            }
+
+            header > p {
+                font-size: 0.9rem; /* 説明文を少し小さくする */
+                padding: 0 1rem;
+            }
+
+            /* 【最重要】スマホではチャートの高さを画面の高さの80%にする */
+            #tradingview_chart {
+                height: 80vh;
+            }
+        }
     </style>
 </head>
 <body>
@@ -27,7 +64,7 @@
         </header>
 
         <!-- =================================================================================== -->
-        <!-- 1. シンボル情報ウィジェット：現在の株価などをコンパクトに表示 -->
+        <!-- 1. シンボル情報ウィジェット -->
         <!-- =================================================================================== -->
         <article>
             <header><strong>現在の株価情報</strong></header>
@@ -35,7 +72,7 @@
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-info.js" async>
                 {
-                  "symbol": "NASDAQ:AAPL", // ← 表示したい銘柄をここで変更 (例: "TSE:7203" トヨタ自動車)
+                  "symbol": "NASDAQ:AAPL",
                   "width": "100%",
                   "locale": "ja",
                   "colorTheme": "light",
@@ -46,34 +83,34 @@
         </article>
 
         <!-- =================================================================================== -->
-        <!-- 2. 高機能チャートウィジェット：詳細なテクニカル分析が可能 -->
+        <!-- 2. 高機能チャートウィジェット（HTML構造をシンプルに変更） -->
         <!-- =================================================================================== -->
         <article>
              <header><strong>テクニカル分析チャート</strong></header>
-            <div class="tradingview-widget-container" style="height: 600px;">
-                <div id="tradingview_chart"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                <script type="text/javascript">
-                new TradingView.widget(
-                {
-                  "autosize": true,
-                  "symbol": "NASDAQ:AAPL", // ← 表示したい銘柄をここで変更 (例: "TSE:9984" ソフトバンクグループ)
-                  "interval": "D", // D=日足, W=週足, M=月足
-                  "timezone": "Asia/Tokyo",
-                  "theme": "light",
-                  "style": "1", // 1=バー, 2=ローソク, 3=ライン
-                  "locale": "ja",
-                  "toolbar_bg": "#f1f3f6",
-                  "enable_publishing": false,
-                  "allow_symbol_change": true, // チャート上で銘柄検索を許可するか
-                  "studies": [
-                    "MASimple@tv-basicstudies" // 単純移動平均線 (SMA) をデフォルトで表示
-                  ],
-                  "container_id": "tradingview_chart"
-                }
-                );
-                </script>
-            </div>
+             <!-- ↓↓↓ 変更点：divを一つにまとめ、この要素に直接id="tradingview_chart"を設定 ↓↓↓ -->
+            <div id="tradingview_chart" class="tradingview-widget-container"></div>
+            <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+            <script type="text/javascript">
+            new TradingView.widget(
+            {
+              "autosize": true,
+              "symbol": "NASDAQ:AAPL",
+              "interval": "D",
+              "timezone": "Asia/Tokyo",
+              "theme": "light",
+              "style": "1",
+              "locale": "ja",
+              "toolbar_bg": "#f1f3f6",
+              "enable_publishing": false,
+              "allow_symbol_change": true,
+              "studies": [
+                "MASimple@tv-basicstudies"
+              ],
+              // ↓↓↓ 変更点：このIDを持つ要素にチャートが描画される
+              "container_id": "tradingview_chart"
+            }
+            );
+            </script>
         </article>
 
     </main>
