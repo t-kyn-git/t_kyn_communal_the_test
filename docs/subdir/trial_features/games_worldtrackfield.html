@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8人同時短距離100m決勝</title>
+<style>
+  body { font-family: sans-serif; text-align: center; margin: 20px; }
+  #track { width: 90%; height: 50px; margin: 10px auto; background: lightgray; position: relative; border-radius: 25px; }
+  .runner { width: 50px; height: 50px; position: absolute; top: 0; border-radius: 50%; transition: left 0.1s linear; }
+  #finish { position: absolute; right: 0; top: 0; width: 10px; height: 100%; background: gold; border-radius: 5px; }
+  #startBtn { padding: 15px 30px; font-size: 20px; margin-top: 10px; border-radius: 10px; }
+  #score { font-size: 20px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<h1>8人同時短距離レース</h1>
+
+<div id="raceContainer"></div>
+
+<button id="startBtn">スタート</button>
+<div id="score">タップして走ろう！</div>
+
+<script>
+const NUM_PLAYERS = 8;
+const colors = ['red','blue','green','orange','purple','pink','brown','cyan'];
+let runners = [];
+let clicks = 0;
+let running = false;
+let trackWidth;
+
+// ランナーを生成
+function createRunners() {
+  const container = document.getElementById('raceContainer');
+  container.innerHTML = '';
+  runners = [];
+  for (let i=0; i<NUM_PLAYERS; i++) {
+    let track = document.createElement('div');
+    track.id = 'track'+i;
+    track.className = 'track';
+    track.style.height = '50px';
+    track.style.margin = '5px auto';
+    track.style.background = 'lightgray';
+    track.style.position = 'relative';
+    track.style.borderRadius = '25px';
+
+    let finish = document.createElement('div');
+    finish.className = 'finish';
+    finish.style.position = 'absolute';
+    finish.style.right = '0';
+    finish.style.top = '0';
+    finish.style.width = '10px';
+    finish.style.height = '100%';
+    finish.style.background = 'gold';
+    finish.style.borderRadius = '5px';
+    track.appendChild(finish);
+
+    let runner = document.createElement('div');
+    runner.className = 'runner';
+    runner.style.background = colors[i];
+    runner.style.left = '0px';
+    runner.style.top = '0px';
+    track.appendChild(runner);
+
+    container.appendChild(track);
+    runners.push({el: runner, finished: false, rank: 0});
+  }
+}
+
+// スタートボタン
+document.getElementById('startBtn').onclick = () => {
+  clicks = 0;
+  running = true;
+  createRunners();
+  trackWidth = document.querySelector('#raceContainer div').offsetWidth - 50;
+  document.getElementById('score').textContent = '0回タップ';
+  // AIランナーを自動で動かす
+  aiMove();
+};
+
+// タップで自分（赤）のランナーだけ進む
+document.body.ontouchstart = () => {
+  if (!running) return;
+  clicks++;
+  moveRunner(runners[0], 10); // 赤ランナーはタップで10px進む
+  document.getElementById('score').textContent = clicks + '回タップ';
+};
+
+// ランナーを移動
+function moveRunner(runnerObj, distance) {
+  if (runnerObj.finished) return;
+  let currentLeft = parseInt(runnerObj.el.style.left);
+  let newLeft = Math.min(trackWidth, currentLeft + distance);
+  runnerObj.el.style.left = newLeft + 'px';
+  if (newLeft >= trackWidth) finishRunner(runnerObj);
+}
+
+// ゴール処理
+let currentRank = 1;
+function finishRunner(runnerObj) {
+  runnerObj.finished = true;
+  runnerObj.rank = currentRank++;
+  if (currentRank > NUM_PLAYERS) running = false;
+  if (!running) showResults();
+}
+
+// AIランナー動作
+function aiMove() {
+  if (!running) return;
+  for (let i=1; i<NUM_PLAYERS; i++) {
+    let randStep = Math.floor(Math.random() * 5); // 0〜4pxランダム前進
+    moveRunner(runners[i], randStep);
+  }
+  requestAnimationFrame(aiMove);
+}
+
+// 結果表示
+function showResults() {
+  let results = '順位:\n';
+  runners.sort((a,b) => a.rank - b.rank);
+  runners.forEach((r,i) => {
+    results += (i+1) + ': ' + r.el.style.background + '\n';
+  });
+  alert(results);
+}
+
+</script>
+</body>
+</html>

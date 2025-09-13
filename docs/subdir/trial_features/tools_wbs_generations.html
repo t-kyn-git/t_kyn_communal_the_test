@@ -1,0 +1,136 @@
+▪️▪️▪️
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>システム構築WBS 作成ツール（拡張版）</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; background: #f4f4f9; }
+  h1 { text-align: center; }
+  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+  th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+  th { background-color: #eee; }
+  input, button, select { padding: 5px; margin: 2px; }
+  .completed { text-decoration: line-through; color: gray; }
+  .progress-bar { width: 100%; background-color: #ddd; border-radius: 3px; overflow: hidden; height: 15px; }
+  .progress { height: 100%; background-color: #4caf50; text-align: center; color: white; font-size: 10px; line-height: 15px; }
+</style>
+</head>
+<body>
+<h1>システム構築 WBS（拡張版）</h1>
+
+<div>
+  <input type="text" id="taskName" placeholder="タスク名">
+  <input type="text" id="taskOwner" placeholder="担当者">
+  <select id="taskPriority">
+    <option value="高">高</option>
+    <option value="中" selected>中</option>
+    <option value="低">低</option>
+  </select>
+  <input type="date" id="taskStart">
+  <input type="date" id="taskEnd">
+  <input type="number" id="taskProgress" placeholder="進捗 %" min="0" max="100">
+  <button onclick="addTask()">追加</button>
+  <button onclick="downloadJSON()">JSONで保存</button>
+</div>
+
+<table id="wbsTable">
+  <thead>
+    <tr>
+      <th>完了</th>
+      <th>タスク名</th>
+      <th>担当者</th>
+      <th>優先度</th>
+      <th>開始日</th>
+      <th>終了日</th>
+      <th>進捗</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<script>
+let tasks = [];
+
+function renderTable() {
+    const tbody = document.querySelector('#wbsTable tbody');
+    tbody.innerHTML = '';
+    tasks.forEach((task, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleComplete(${index})"></td>
+            <td contenteditable="true" oninput="updateTaskName(${index}, this.innerText)" class="${task.completed ? 'completed' : ''}">${task.name}</td>
+            <td contenteditable="true" oninput="updateTaskOwner(${index}, this.innerText)">${task.owner}</td>
+            <td>
+              <select onchange="updateTaskPriority(${index}, this.value)">
+                <option value="高" ${task.priority==='高'?'selected':''}>高</option>
+                <option value="中" ${task.priority==='中'?'selected':''}>中</option>
+                <option value="低" ${task.priority==='低'?'selected':''}>低</option>
+              </select>
+            </td>
+            <td><input type="date" value="${task.start}" onchange="updateTaskStart(${index}, this.value)"></td>
+            <td><input type="date" value="${task.end}" onchange="updateTaskEnd(${index}, this.value)"></td>
+            <td>
+              <div class="progress-bar">
+                <div class="progress" style="width:${task.progress}%;"></div>
+              </div>
+              <input type="number" value="${task.progress}" min="0" max="100" onchange="updateTaskProgress(${index}, this.value)">
+            </td>
+            <td><button onclick="deleteTask(${index})">削除</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+function addTask() {
+    const name = document.getElementById('taskName').value.trim();
+    const owner = document.getElementById('taskOwner').value.trim();
+    const priority = document.getElementById('taskPriority').value;
+    const start = document.getElementById('taskStart').value;
+    const end = document.getElementById('taskEnd').value;
+    const progress = parseInt(document.getElementById('taskProgress').value) || 0;
+
+    if(name === '') { alert('タスク名を入力してください'); return; }
+
+    tasks.push({ name, owner, priority, start, end, progress, completed: false });
+
+    document.getElementById('taskName').value = '';
+    document.getElementById('taskOwner').value = '';
+    document.getElementById('taskStart').value = '';
+    document.getElementById('taskEnd').value = '';
+    document.getElementById('taskProgress').value = '';
+    renderTable();
+}
+
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    renderTable();
+}
+
+function toggleComplete(index) {
+    tasks[index].completed = !tasks[index].completed;
+    renderTable();
+}
+
+function updateTaskName(index, value) { tasks[index].name = value; }
+function updateTaskOwner(index, value) { tasks[index].owner = value; }
+function updateTaskPriority(index, value) { tasks[index].priority = value; }
+function updateTaskStart(index, value) { tasks[index].start = value; }
+function updateTaskEnd(index, value) { tasks[index].end = value; }
+function updateTaskProgress(index, value) { tasks[index].progress = parseInt(value) || 0; renderTable(); }
+
+function downloadJSON() {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tasks, null, 2));
+    const dlAnchor = document.createElement('a');
+    dlAnchor.setAttribute("href", dataStr);
+    dlAnchor.setAttribute("download", "wbs.json");
+    dlAnchor.click();
+}
+
+renderTable();
+</script>
+</body>
+</html>
+▪️▪️▪️
