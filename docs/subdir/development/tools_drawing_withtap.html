@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>HTMLお絵かきツール</title>
+    <title>HTMLお絵かきツール（インポート/エクスポート機能付き）(version 2)</title>
     <style>
         /* ここからCSS（見た目の設定） */
         body {
@@ -108,6 +108,9 @@
         <button id="pen-button" class="active">ペン</button>
         <button id="eraser-button">消しゴム</button>
         <button id="clear-button">全消し</button>
+        <button id="export-button">保存</button>
+        <button id="import-button">読込</button>
+        <input type="file" id="import-file" accept="image/*" style="display: none;">
     </div>
 
     <script>
@@ -119,18 +122,17 @@
         const ctx = canvas.getContext('2d');
 
         // キャンバスのサイズを画面に合わせて調整
-        // PCでは固定、スマホでは画面幅に合わせる
         const canvasContainer = document.getElementById('canvas-container');
         if (window.innerWidth < 450) {
-            const size = window.innerWidth - 40; // 左右の余白を考慮
+            const size = window.innerWidth - 40;
             canvas.width = size;
             canvas.height = size;
         }
         
         // 初期設定
-        let isDrawing = false; // 描画中かどうかのフラグ
-        ctx.lineCap = 'round'; // 線の端を丸くする
-        ctx.lineJoin = 'round'; // 線の角を丸くする
+        let isDrawing = false;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
         // ツール要素を取得
         const colorPicker = document.getElementById('color-picker');
@@ -139,116 +141,160 @@
         const penButton = document.getElementById('pen-button');
         const eraserButton = document.getElementById('eraser-button');
         const clearButton = document.getElementById('clear-button');
+        const exportButton = document.getElementById('export-button');
+        const importButton = document.getElementById('import-button');
+        const importFile = document.getElementById('import-file');
 
-        // 現在のペンの色を保存しておく変数
         let currentColor = colorPicker.value;
 
-        // ペンの設定を更新する関数
         function updatePen() {
             ctx.strokeStyle = colorPicker.value;
             ctx.lineWidth = penWidthSlider.value;
             penWidthValue.textContent = penWidthSlider.value;
         }
 
-        // 最初のペンの設定
         updatePen();
 
-
-        // --- イベント処理 ---
-
-        // 描き始め (PCのマウス・スマホのタッチ)
         function startDrawing(e) {
             isDrawing = true;
-            draw(e); // クリックしただけでも点を描画するため
+            draw(e);
         }
 
-        // 描き終わり (PCのマウス・スマホのタッチ)
         function stopDrawing() {
             isDrawing = false;
-            ctx.beginPath(); // パスをリセット
+            ctx.beginPath();
         }
 
-        // 描画中 (PCのマウス・スマホのタッチ)
         function draw(e) {
             if (!isDrawing) return;
-
-            // イベントの位置を取得
             const pos = getMousePos(canvas, e);
-
             ctx.lineTo(pos.x, pos.y);
             ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(pos.x, pos.y);
         }
         
-        // マウス/タッチ座標をキャンバスの座標に変換する関数
         function getMousePos(canvas, evt) {
             const rect = canvas.getBoundingClientRect();
-            // タッチイベントの場合
             if (evt.touches) {
                 return {
                     x: evt.touches[0].clientX - rect.left,
                     y: evt.touches[0].clientY - rect.top
                 };
             }
-            // マウスイベントの場合
             return {
                 x: evt.clientX - rect.left,
                 y: evt.clientY - rect.top
             };
         }
 
-
-        // --- 各パーツの動作設定 ---
-
-        // PCマウス用イベント
         canvas.addEventListener('mousedown', startDrawing);
         canvas.addEventListener('mouseup', stopDrawing);
         canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseout', stopDrawing); // キャンバスから外れたら描画終了
+        canvas.addEventListener('mouseout', stopDrawing);
 
-        // スマホタッチ用イベント
         canvas.addEventListener('touchstart', startDrawing);
         canvas.addEventListener('touchend', stopDrawing);
         canvas.addEventListener('touchmove', draw);
 
-        // 色が変更されたとき
         colorPicker.addEventListener('change', (e) => {
             currentColor = e.target.value;
-            // 消しゴムモードでなければ色を適用
             if (ctx.globalCompositeOperation !== 'destination-out') {
                  ctx.strokeStyle = currentColor;
             }
         });
         
-        // 太さが変更されたとき
         penWidthSlider.addEventListener('input', () => {
             ctx.lineWidth = penWidthSlider.value;
             penWidthValue.textContent = penWidthSlider.value;
         });
 
-        // 全消しボタンが押されたとき
         clearButton.addEventListener('click', () => {
             if(confirm('本当にすべて消しますか？')){
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
         });
-
-        // ペンボタンが押されたとき
-        penButton.addEventListener('click', () => {
-            ctx.globalCompositeOperation = 'source-over'; // 通常の描画モード
-            ctx.strokeStyle = currentColor; // 保存しておいた色に戻す
+        
+        // ▼▼▼ ペンと消しゴムの切り替えを関数化 ▼▼▼
+        function activatePen() {
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.strokeStyle = currentColor;
             penButton.classList.add('active');
             eraserButton.classList.remove('active');
-        });
+        }
 
-        // 消しゴムボタンが押されたとき
-        eraserButton.addEventListener('click', () => {
-            ctx.globalCompositeOperation = 'destination-out'; // 消しゴムモード
+        function activateEraser() {
+            ctx.globalCompositeOperation = 'destination-out';
             penButton.classList.remove('active');
             eraserButton.classList.add('active');
+        }
+
+        penButton.addEventListener('click', activatePen);
+        eraserButton.addEventListener('click', activateEraser);
+        // ▲▲▲ ここまで ▲▲▲
+
+        exportButton.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = 'drawing.png';
+            link.click();
         });
 
+        importButton.addEventListener('click', () => {
+            importFile.click();
+        });
+
+        // ▼▼▼ ファイル読み込み処理を修正・改善 ▼▼▼
+        importFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            // ファイルが画像形式かチェック
+            if (!file.type.startsWith('image/')) {
+                alert('画像ファイルを選択してください。');
+                importFile.value = '';
+                return;
+            }
+
+            if(!confirm('現在の絵は消えますが、画像を読み込みますか？')){
+                importFile.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+
+            // ファイル読み込み成功時の処理
+            reader.onload = (event) => {
+                const img = new Image();
+                
+                // 画像データ読み込み成功時の処理
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    // 読み込み後はペンモードに戻す
+                    activatePen(); 
+                };
+                
+                // 画像データ読み込み失敗時の処理
+                img.onerror = () => {
+                    alert('画像の読み込みに失敗しました。ファイルが破損している可能性があります。');
+                };
+                
+                img.src = event.target.result;
+            };
+
+            // ファイル読み込み失敗時の処理
+            reader.onerror = () => {
+                alert('ファイルの読み込みに失敗しました。');
+            };
+            
+            reader.readAsDataURL(file);
+
+            importFile.value = '';
+        });
+        // ▲▲▲ ここまで修正 ▲▲▲
     });
     </script>
 
