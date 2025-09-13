@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HTML 完結 スプレッドシート（Excel インポート/エクスポート）</title>
+<style>
+  :root{
+    --header-height:48px;
+    --cell-width:100px;
+    --cell-height:28px;
+    --font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  body{font-family:var(--font-family);margin:0;background:#f6f7f9;color:#111}
+  .toolbar{
+    height:var(--header-height);
+    display:flex;align-items:center;gap:8px;padding:6px 10px;
+    background:#ffffff;border-bottom:1px solid #ddd;box-sizing:border-box;
+  }
+  .toolbar button, .toolbar input[type=file], .toolbar select{
+    height:34px;padding:6px 10px;border-radius:6px;border:1px solid #ccc;background:#fff;
+    cursor:pointer;font-size:13px;
+  }
+  .container{display:flex;height:calc(100vh - var(--header-height));overflow:auto}
+  .sheet{
+    margin:12px;background:#fff;border:1px solid #ddd;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+    overflow:auto;
+  }
+  table{border-collapse:collapse;min-width:600px;}
+  th, td{
+    border:1px solid #e1e4e8;padding:0;margin:0;
+    width:var(--cell-width);height:var(--cell-height);
+    box-sizing:border-box;vertical-align:middle;
+  }
+  th{
+    background:#f3f6f9;color:#333;font-weight:600;text-align:center;font-size:12px;
+  }
+  td{
+    position:relative;padding:0;
+  }
+  .cell{
+    width:100%;height:100%;display:block;padding:4px;font-size:13px;overflow:hidden;
+    outline:none;box-sizing:border-box;cursor:text;
+  }
+  .cell[contenteditable="true"]:focus{box-shadow:inset 0 0 0 2px rgba(0,120,215,0.15)}
+  .selected{background:rgba(0,120,215,0.07)}
+  .controls{display:flex;gap:6px;margin-left:auto;align-items:center}
+  .small{font-size:12px;padding:4px 8px;height:30px}
+  .footer-note{padding:8px 12px;font-size:12px;color:#666}
+  /* responsive */
+  @media (max-width:640px){
+    :root{--cell-width:88px}
+    .toolbar{flex-wrap:wrap}
+  }
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <strong>HTML Spreadsheet</strong>
+    <div style="width:1px;height:28px;background:#eee;margin-left:8px;margin-right:8px"></div>
+
+    <label style="display:inline-flex;align-items:center;gap:6px">
+      <input id="fileOpen" type="file" accept=".xlsx,.xls" style="display:none">
+      <button id="btnOpen">Open (.xlsx)</button>
+    </label>
+
+    <button id="btnNew">New</button>
+    <button id="btnSaveXlsx">Save .xlsx</button>
+    <button id="btnSaveCsv">Save .csv</button>
+
+    <div class="controls">
+      <button id="addRow" class="small">行追加</button>
+      <button id="delRow" class="small">行削除</button>
+      <button id="addCol" class="small">列追加</button>
+      <button id="delCol" class="small">列削除</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="sheet" id="sheetWrap" style="flex:1; min-width:300px; padding:12px;">
+      <table id="grid" tabindex="0" aria-label="Spreadsheet"></table>
+      <div class="footer-note">セルをクリックして編集。Enterで確定。矢印キーで移動。読み込みは1シート目を表示します。</div>
+    </div>
+  </div>
+
+  <!-- SheetJS (xlsx) CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <script>
+  // --- 設定 ---
+  const DEFAULT_ROWS = 30;
+  const DEFAULT_COLS = 12; // A..L
+
+  // --- ヘルパー ---
+  function colLabel(n){
+    let label = '';
+    while(n>=0){
+      label = String.fromCharCode(65 + (n % 26)) + label;
+      n = Math.floor(n/26) - 1;
+    }
+    return label;
+  }
+
+  // --- データモデル（シンプル） ---
+  let rows = DEFAULT_ROWS;
+  let cols = DEFAULT_COLS;
+  // 2D 配列データ（文字列）
+  let data = Array.from({length:rows}, ()=>Array.from({length:cols}, ()=>''));
+
+  // --- DOM ---
+  const grid = document.getElementById('grid');
+  const fileOpen = document.getElementById('fileOpen');
+  const btnOpen = document.getElementById('btnOpen');
+  const btnNew = document.getElementById('btnNew');
+  const btnSaveXlsx = document.getElementById('btnSaveXlsx');
+  const btnSaveCsv = document.getElementById('btnSaveCsv');
+  const addRowBtn = document.getElementById('addRow');
+  const delRowBtn = document.getElementById('delRow');
+  const addColBtn = document.getElementById('addCol');
+  const delColBtn = document.getElementById('delCol');
+
+  let selected = {r:0,c:0};
+
+  // --- 表示更新 ---
+  function render(){
+    grid.innerHTML = '';
+    const thead = document.createElement('thead');
+    const headRow = document.createElement('tr');
+    const corner = document.createElement('th'); corner.textContent = ''; headRow.appendChild(corner);
+    for(let c=0;c<cols;c++){
+      const th = document.createElement('th'); th.textContent = colLabel(c); headRow.appendChild(th);
+    }
+    thead.appendChild(headRow); grid.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    for(let r=0;r<rows;r++){
+      const tr = document.createElement('tr');
+      const th = document.createElement('th'); th.textContent = (r+1); tr.appendChild(th);
+      for(let c=0;c<cols;c++){
+        const td = document.createElement('td');
+        const div = document.createElement('div');
+        div.className = 'cell';
+        div.contentEditable = true;
+        div.dataset.r = r; div.dataset.c = c;
+        div.innerText = data[r] && data[r][c] !== undefined ? data[r][c] : '';
+        // events
+        div.addEventListener('focus', (e)=> {
+          const rr = Number(div.dataset.r); const cc = Number(div.dataset.c);
+          setSelected(rr,cc);
+        });
+        div.addEventListener('keydown', cellKeydown);
+        div.addEventListener('input', (e)=>{
+          const rr = Number(div.dataset.r); const cc = Number(div.dataset.c);
+          data[rr][cc] = div.innerText;
+        });
+        td.appendChild(div);
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+    grid.appendChild(tbody);
+    updateSelectionHighlight();
+  }
+
+  function setSelected(r,c){
+    selected.r = r; selected.c = c;
+    updateSelectionHighlight();
+  }
+
+  function updateSelectionHighlight(){
+    // remove previous
+    document.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'));
+    // highlight selected cell's td
+    const cell = grid.querySelector(`div.cell[data-r="${selected.r}"][data-c="${selected.c}"]`);
+    if(cell) {
+      cell.classList.add('selected');
+      // ensure visible
+      cell.scrollIntoView({block:'nearest', inline:'nearest'});
+      // focus if not focused
+      // do NOT forcibly focus to avoid losing edit context
+    }
+  }
+
+  // --- キーボード操作 ---
+  function cellKeydown(e){
+    const div = e.currentTarget;
+    const r = Number(div.dataset.r); const c = Number(div.dataset.c);
+
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      // move down one cell and focus
+      const nr = Math.min(rows-1, r+1);
+      setTimeout(()=> focusCell(nr,c), 0);
+    } else if(e.key === 'Tab'){
+      e.preventDefault();
+      const nc = (e.shiftKey) ? Math.max(0,c-1) : Math.min(cols-1,c+1);
+      focusCell(r,nc);
+    } else if(e.key === 'ArrowDown'){
+      e.preventDefault(); focusCell(Math.min(rows-1,r+1), c);
+    } else if(e.key === 'ArrowUp'){
+      e.preventDefault(); focusCell(Math.max(0,r-1), c);
+    } else if(e.key === 'ArrowLeft'){
+      // if caret at start, move
+      const sel = window.getSelection();
+      if(sel && sel.anchorOffset === 0 && sel.focusOffset === 0){
+        e.preventDefault(); focusCell(r, Math.max(0,c-1));
+      }
+    } else if(e.key === 'ArrowRight'){
+      // if caret at end, move
+      // rough heuristic: if selection length equals text length
+      const sel = window.getSelection();
+      if(sel){
+        const text = div.innerText || '';
+        if(sel.anchorOffset === text.length && sel.focusOffset === text.length){
+          e.preventDefault(); focusCell(r, Math.min(cols-1,c+1));
+        }
+      }
+    }
+  }
+
+  function focusCell(r,c){
+    const cell = grid.querySelector(`div.cell[data-r="${r}"][data-c="${c}"]`);
+    if(cell){
+      cell.focus();
+      placeCaretAtEnd(cell);
+      setSelected(r,c);
+    }
+  }
+  function placeCaretAtEnd(el){
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  // --- 行/列操作 ---
+  function addRow(){
+    data.push(Array.from({length:cols}, ()=>''));
+    rows++;
+    render();
+  }
+  function delRow(){
+    if(rows<=1) return;
+    data.pop();
+    rows--;
+    render();
+  }
+  function addCol(){
+    for(let r=0;r<rows;r++) data[r].push('');
+    cols++;
+    render();
+  }
+  function delCol(){
+    if(cols<=1) return;
+    for(let r=0;r<rows;r++) data[r].pop();
+    cols--;
+    render();
+  }
+
+  // --- New / Clear ---
+  function newSheet(){
+    rows = DEFAULT_ROWS; cols = DEFAULT_COLS;
+    data = Array.from({length:rows}, ()=>Array.from({length:cols}, ()=>''));
+    render();
+    focusCell(0,0);
+  }
+
+  // --- Save XLSX ---
+  function exportXLSX(){
+    // build worksheet
+    const ws_data = [];
+    for(let r=0;r<rows;r++){
+      const row = [];
+      for(let c=0;c<cols;c++){
+        row.push(data[r][c] === undefined ? '' : data[r][c]);
+      }
+      ws_data.push(row);
+    }
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    const wbout = XLSX.write(wb, {bookType:'xlsx', type:'array'});
+    downloadBlob(new Blob([wbout],{type:"application/octet-stream"}), "sheet.xlsx");
+  }
+
+  function exportCSV(){
+    const lines = [];
+    for(let r=0;r<rows;r++){
+      const row = data[r].map(cell => {
+        if(cell === null || cell === undefined) return '';
+        const s = String(cell);
+        // escape quotes
+        if(s.includes(',') || s.includes('"') || s.includes('\n')){
+          return '"' + s.replace(/"/g,'""') + '"';
+        }
+        return s;
+      }).join(',');
+      lines.push(row);
+    }
+    const csv = lines.join('\r\n');
+    downloadBlob(new Blob([csv],{type:"text/csv;charset=utf-8;"}), "sheet.csv");
+  }
+
+  function downloadBlob(blob, filename){
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  // --- Open (read xlsx) ---
+  function handleFile(e){
+    const f = e.target.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = function(evt){
+      const dataBuf = evt.target.result;
+      const wb = XLSX.read(dataBuf, {type:'array'});
+      const firstSheetName = wb.SheetNames[0];
+      const ws = wb.Sheets[firstSheetName];
+      const aoa = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, defval:''});
+      // replace data
+      rows = Math.max(aoa.length, 1);
+      cols = Math.max(aoa.reduce((m,row)=>Math.max(m,row.length||0),0),1);
+      data = Array.from({length:rows}, (_,r)=> {
+        const row = aoa[r] || [];
+        return Array.from({length:cols}, (_,c)=> row[c] === undefined ? '' : String(row[c]));
+      });
+      render();
+      focusCell(0,0);
+    };
+    reader.readAsArrayBuffer(f);
+    // reset input
+    e.target.value = '';
+  }
+
+  // --- イベント ---
+  btnOpen.addEventListener('click', ()=> fileOpen.click());
+  fileOpen.addEventListener('change', handleFile);
+  btnNew.addEventListener('click', newSheet);
+  btnSaveXlsx.addEventListener('click', exportXLSX);
+  btnSaveCsv.addEventListener('click', exportCSV);
+  addRowBtn.addEventListener('click', addRow);
+  delRowBtn.addEventListener('click', delRow);
+  addColBtn.addEventListener('click', addCol);
+  delColBtn.addEventListener('click', delCol);
+
+  // keyboard nav on table container
+  grid.addEventListener('keydown', function(e){
+    // forward to focused cell handled already
+  });
+
+  // initial render
+  render();
+  focusCell(0,0);
+
+  // expose some funcs for console tinkering
+  window.__sheet = {data, render, exportXLSX, exportCSV, newSheet};
+  </script>
+</body>
+</html>
