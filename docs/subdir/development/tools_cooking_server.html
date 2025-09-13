@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シングルファイル料理レシピ管理</title>
+    <style>
+        /* CSSは変更なし */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }
+        h1, h2 { border-bottom: 2px solid #4CAF50; padding-bottom: 10px; }
+        h3, h4 { margin-top: 1em; margin-bottom: 0.5em; }
+        h4 { border-left: 4px solid #4CAF50; padding-left: 8px; font-size: 1.1em; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        textarea { height: 120px; resize: vertical; }
+        button, label.button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-right: 5px; display: inline-block; text-align: center; }
+        button:hover, label.button:hover { background-color: #45a049; }
+        .button-group { margin-bottom: 20px; border-top: 1px solid #eee; padding-top: 20px; margin-top: 20px; }
+        #recipe-list { list-style-type: none; padding: 0; }
+        .recipe-item { background-color: #fdfdfd; border: 1px solid #eee; border-radius: 5px; padding: 15px; margin-bottom: 10px; }
+        .recipe-item h3 { margin-top: 0; color: #2E7D32; }
+        .recipe-item ul, .recipe-item ol { padding-left: 20px; }
+        #import-file { display: none; }
+    </style>
+</head>
+<body>
+    <!-- HTMLのボディ部分は変更なし -->
+    <h1>料理レシピ管理</h1>
+    <div class="container">
+        <h2>レシピの新規登録・編集</h2>
+        <form id="recipe-form">
+            <input type="hidden" id="recipe-id">
+            <label for="recipe-name">料理名:</label>
+            <input type="text" id="recipe-name" placeholder="例: 豚の生姜焼き" required>
+            <label for="recipe-ingredients">材料と分量 (1行に1つずつ):</label>
+            <textarea id="recipe-ingredients" placeholder="例:&#10;豚ロース肉 200g&#10;玉ねぎ 1/2個&#10;生姜 1かけ" required></textarea>
+            <label for="recipe-instructions">作り方・手順 (1行に1ステップずつ):</label>
+            <textarea id="recipe-instructions" placeholder="例:&#10;1. 玉ねぎは薄切り、生姜はすりおろす。&#10;2. フライパンに油を熱し、豚肉を炒める。&#10;3. 肉の色が変わったら玉ねぎを加えてさらに炒める。" required></textarea>
+            <button type="submit">レシピを登録・更新</button>
+            <button type="button" id="clear-form-btn">フォームをクリア</button>
+        </form>
+    </div>
+    <div class="container">
+        <h2>データ管理</h2>
+         <div class="button-group">
+            <button id="export-btn">JSONでエクスポート</button>
+            <label for="import-file" class="button">JSONをインポート</label>
+            <input type="file" id="import-file" accept=".json">
+            <button id="load-default-btn">デフォルトデータを読み込む</button>
+        </div>
+    </div>
+    <div class="container">
+        <h2>レシピ検索</h2>
+        <input type="text" id="search-box" placeholder="材料名で検索 (例: 豚肉)">
+    </div>
+    <div class="container">
+        <h2>登録済みレシピ一覧</h2>
+        <div id="recipe-list">
+            <p>登録済みのレシピはありません。</p>
+        </div>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // UI要素の取得
+    const recipeForm = document.getElementById('recipe-form');
+    // ... (他のUI要素の取得は変更なし)
+    const loadDefaultBtn = document.getElementById('load-default-btn');
+    const clearFormBtn = document.getElementById('clear-form-btn');
+
+    // ▼▼▼ ここにあった defaultRecipes の巨大な配列は削除する ▼▼▼
+
+    // ローカルストレージからレシピを読み込む
+    let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+
+    // renderRecipes, saveRecipes, clearForm などの関数は変更なし
+    const renderRecipes = (recipeData) => {
+        // ... (変更なし)
+    };
+    const saveRecipes = () => {
+        // ... (変更なし)
+    };
+    const clearForm = () => {
+        // ... (変更なし)
+    };
+
+    // レシピの登録・更新
+    recipeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = recipeIdInput.value;
+        const name = recipeNameInput.value.trim();
+        const ingredientsText = recipeIngredientsInput.value.trim();
+        const instructions = recipeInstructionsInput.value.trim(); // 手順を取得
+
+        if (!name || !ingredientsText || !instructions) { // 手順も必須入力に
+            alert('料理名、材料、作り方をすべて入力してください。');
+            return;
+        }
+        
+        // 材料のテキストをオブジェクトの配列に変換
+        const ingredients = ingredientsText.split('\n').map(line => {
+            const parts = line.trim().split(/\s+/);
+            const quantity = parts.pop() || '';
+            const name = parts.join(' ');
+            return { name, quantity };
+        }).filter(ing => ing.name);
+
+        if (id) { // 更新
+            const recipeIndex = recipes.findIndex(r => r.id == id);
+            if (recipeIndex > -1) {
+                recipes[recipeIndex] = { ...recipes[recipeIndex], name, ingredients, instructions };
+            }
+        } else { // 新規登録
+            const newRecipe = {
+                id: Date.now(), // ユニークなIDとしてタイムスタンプを使用
+                name,
+                ingredients,
+                instructions // 新規レシピに手順を追加
+            };
+            recipes.push(newRecipe);
+        }
+
+        saveRecipes();
+        renderRecipes(recipes);
+        clearForm();
+    });
+
+    // 検索機能 (変更なし)
+    searchBox.addEventListener('input', () => {
+        const searchTerm = searchBox.value.toLowerCase();
+        const filteredRecipes = recipes.filter(recipe => 
+            recipe.ingredients.some(ing => 
+                ing.name.toLowerCase().includes(searchTerm)
+            )
+        );
+        renderRecipes(filteredRecipes);
+    });
+
+    // エクスポート機能 (変更なし)
+    exportBtn.addEventListener('click', () => {
+        if (recipes.length === 0) {
+            alert('エクスポートするレシピがありません。');
+            return;
+        }
+        const dataStr = JSON.stringify(recipes, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'recipes.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    });
+
+    // インポート機能 (変更なし)
+    importFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const importedRecipes = JSON.parse(event.target.result);
+                if (Array.isArray(importedRecipes)) {
+                    if (confirm('現在のレシピを上書きしてインポートしますか？')) {
+                        recipes = importedRecipes;
+                        saveRecipes();
+                        renderRecipes(recipes);
+                        alert('レシピをインポートしました。');
+                    }
+                } else {
+                    alert('無効なファイル形式です。');
+                }
+            } catch (error) {
+                alert('ファイルの読み込みに失敗しました。');
+                console.error(error);
+            }
+        };
+        reader.readAsText(file);
+        // 同じファイルを再度選択できるように値をリセット
+        e.target.value = '';
+    });
+
+    // ▼▼▼ デフォルトデータ読み込み機能を書き換える ▼▼▼
+    loadDefaultBtn.addEventListener('click', async () => { // async を追加
+        if (confirm('現在のレシピを上書きしてデフォルトデータを読み込みますか？')) {
+            try {
+                // 'recipes.json'ファイルを読み込む
+                const response = await fetch('public_datas/recipes.json');
+                if (!response.ok) {
+                    throw new Error('ネットワークの応答が正しくありませんでした。');
+                }
+                const defaultRecipes = await response.json(); // JSONデータを解析
+
+                recipes = defaultRecipes; // 読み込んだデータをrecipesに代入
+                saveRecipes();
+                renderRecipes(recipes);
+                alert('デフォルトデータを読み込みました。');
+            } catch (error) {
+                console.error('デフォルトデータの読み込みに失敗しました:', error);
+                alert('デフォルトデータの読み込みに失敗しました。ファイルが正しく配置されているか確認してください。');
+            }
+        }
+    });
+
+    // フォームクリアボタン
+    clearFormBtn.addEventListener('click', clearForm);
+
+    // グローバルスコープに関数を公開
+    window.editRecipe = (id) => {
+        // ... (変更なし)
+    };
+    window.deleteRecipe = (id) => {
+        // ... (変更なし)
+    };
+    
+    // 初期描画
+    renderRecipes(recipes);
+});
+</script>
+
+</body>
+</html>
