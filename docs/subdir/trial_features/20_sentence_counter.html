@@ -1,0 +1,14 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Counter</title><body>
+<h1>文字数/単語カウンタ</h1>
+<h1>日本語にした場合、単語カウンタがおかしくないか？？？？？？</h1>
+<textarea id="t" style="width:100%;height:150px;"></textarea>
+<div>文字: <span id="c">0</span> 単語: <span id="w">0</span></div>
+<script>
+document.getElementById('t').oninput=()=>{
+  const s=document.getElementById('t').value;
+  document.getElementById('c').textContent=s.length;
+  document.getElementById('w').textContent=(s.trim()?s.trim().split(/\s+/).length:0);
+};
+</script>
+</body></html>

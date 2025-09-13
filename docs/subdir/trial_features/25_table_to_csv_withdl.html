@@ -1,0 +1,13 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Table to CSV</title><body>
+<h1>Table → CSV</h1>
+<h1>テーブル固定？？？可変にして自由に入力させてよ・・・・これじゃあただの読み取り式Excelじゃん・・・・</h1>
+<table id="t" border="1"><tr><th>名前</th><th>年齢</th></tr><tr><td>Alice</td><td>30</td></tr></table>
+<button id="dl">CSVダウンロード</button>
+<script>
+document.getElementById('dl').onclick=()=>{
+  const rows=[...document.querySelectorAll('#t tr')].map(tr=>[...tr.cells].map(td=>td.textContent).join(',')).join('\n');
+  const a=document.createElement('a'); a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(rows); a.download='table.csv'; a.click();
+};
+</script>
+</body></html>

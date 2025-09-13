@@ -1,0 +1,18 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>MiniChat</title><body>
+<h1>ミニチャット（ローカル）</h1>
+<h1>これじゃあただのひとりごとじゃん・・・・</h1>
+<input id="name" placeholder="名前"><input id="msg" placeholder="メッセージ"><button id="s">送信</button>
+<ul id="msgs"></ul>
+<script>
+const K='minichat';
+function get(){return JSON.parse(localStorage.getItem(K)||'[]');}
+function save(a){localStorage.setItem(K,JSON.stringify(a)); render();}
+function render(){ const ul=document.getElementById('msgs'); ul.innerHTML=''; get().forEach(m=>{ const li=document.createElement('li'); li.textContent=`[${m.t}] ${m.n}: ${m.m}`; ul.appendChild(li); }); }
+document.getElementById('s').onclick=()=>{
+  const n=document.getElementById('name').value||'匿名', m=document.getElementById('msg').value; if(!m) return;
+  const a=get(); a.push({n,m,t:new Date().toLocaleTimeString()}); save(a); document.getElementById('msg').value='';
+};
+render();
+</script>
+</body></html>

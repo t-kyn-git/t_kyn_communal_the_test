@@ -1,0 +1,17 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Clipboard history</title><body>
+<h1>クリップボード履歴（セッション）</h1>
+<h1>このhtmlはたんにクリップボードにこぴーされているものを張り付けるだけなので、意味ないですね・。・・・</h1>
+<button id="paste">貼り付け（許可が必要）</button>
+<ul id="hist"></ul>
+<script>
+const arr=[];
+document.getElementById('paste').onclick=async()=>{
+  try{
+    const t=await navigator.clipboard.readText();
+    arr.unshift(t); if(arr.length>20) arr.pop(); render();
+  }catch(e){ alert('クリップボードアクセス拒否'); }
+};
+function render(){ const ul=document.getElementById('hist'); ul.innerHTML=''; arr.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul.appendChild(li); }); }
+</script>
+</body></html>

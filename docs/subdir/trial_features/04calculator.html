@@ -1,0 +1,12 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Calculator</title></head><body>
+<h1>Calculator</h1>
+<input id="expr" style="width:60%"><button id="calc">=</button>
+<div id="res"></div>
+<script>
+document.getElementById('calc').onclick=()=>{
+  try{ const v=Function('"use strict";return ('+document.getElementById('expr').value+')')(); document.getElementById('res').textContent=v; }
+  catch(e){ document.getElementById('res').textContent='式が不正'; }
+};
+</script>
+</body></html>

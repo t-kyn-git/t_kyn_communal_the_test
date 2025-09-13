@@ -1,0 +1,23 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Budget</title></head><body>
+<h1>家計メモ</h1>
+<br>
+ラップタイムの記録として、jsonファイルのエクスポートとインポート機能つけたいなー
+<br>
+<input id="label" placeholder="項目"><input id="amt" type="number" placeholder="金額">
+<button id="add">追加</button><div>合計: <span id="sum">0</span> 円</div>
+<ul id="items"></ul>
+<script>
+const K='budget_items';
+const load=()=>JSON.parse(localStorage.getItem(K)||'[]');
+function save(a){ localStorage.setItem(K,JSON.stringify(a)); render(); }
+function render(){ const a=load(); document.getElementById('items').innerHTML=''; let s=0;
+a.forEach((it,i)=>{ s+=Number(it.amt); const li=document.createElement('li'); li.textContent=`${it.label}: ${it.amt}円`; const b=document.createElement('button'); b.textContent='削除'; b.onclick=()=>{ a.splice(i,1); save(a); }; li.appendChild(b); document.getElementById('items').appendChild(li); });
+document.getElementById('sum').textContent=s;
+}
+document.getElementById('add').onclick=()=>{
+  const label=document.getElementById('label').value, amt=document.getElementById('amt').value; if(!label||!amt) return;
+  const a=load(); a.push({label,amt:Number(amt)}); save(a); document.getElementById('label').value=''; document.getElementById('amt').value='';
+};
+render();
+</script></body></html>

@@ -1,0 +1,18 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Camera</title><body>
+<h1>カメラ撮影</h1>
+<h1>これ、パブリックにあっぷされるだけで意味ないじゃん・・・・</h1>
+<video id="v" autoplay playsinline width="320"></video><br>
+<button id="snap">撮影</button><a id="dl">ダウンロード</a><div id="shots"></div>
+<script>
+(async()=>{
+  const v=document.getElementById('v');
+  try{ v.srcObject = await navigator.mediaDevices.getUserMedia({video:true,audio:false}); }catch(e){ alert('カメラアクセス不可'); }
+})();
+document.getElementById('snap').onclick=()=>{
+  const v=document.getElementById('v'); const c=document.createElement('canvas'); c.width=v.videoWidth; c.height=v.videoHeight; c.getContext('2d').drawImage(v,0,0);
+  const url=c.toDataURL('image/png'); const img=document.createElement('img'); img.src=url; document.getElementById('shots').appendChild(img);
+  const a=document.getElementById('dl'); a.href=url; a.download='shot.png'; a.textContent='最後の画像をダウンロード';
+};
+</script>
+</body></html>

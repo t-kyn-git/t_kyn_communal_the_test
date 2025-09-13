@@ -1,0 +1,12 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Email Template</title><body>
+<h1>メールテンプレート</h1>
+<h1>署名の入力欄、1行だけ？センスないですね・・・</h1>
+<input id="to" placeholder="宛先"><input id="sub" placeholder="件名"><br>
+<textarea id="body" style="width:100%;height:120px;">こんにちは、</textarea><br>
+<input id="sig" placeholder="署名"><button id="gen">生成</button>
+<pre id="out"></pre>
+<script>
+document.getElementById('gen').onclick=()=>{ const out=`To: ${document.getElementById('to').value}\nSubject: ${document.getElementById('sub').value}\n\n${document.getElementById('body').value}\n\n${document.getElementById('sig').value}`; document.getElementById('out').textContent=out; };
+</script>
+</body></html>

@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Stopwatch</title></head><body>
+<h1>Stopwatch</h1>
+<br>
+ラップタイムの記録として、jsonファイルのエクスポートとインポート機能つけたいなー
+<br>
+<div id="time">00:00.0</div>
+<button id="start">開始</button><button id="lap">ラップ</button><button id="reset">リセット</button>
+<ul id="laps"></ul>
+<script>
+let start=0, elapsed=0, raf;
+function fmt(ms){ const s = Math.floor(ms/1000); const m = Math.floor(s/60); const sec = s%60; const dec = Math.floor((ms%1000)/100); return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}.${dec}`; }
+function tick(){ document.getElementById('time').textContent=fmt(Date.now()-start+elapsed); raf=requestAnimationFrame(tick); }
+document.getElementById('start').onclick=()=>{
+  if(raf){ cancelAnimationFrame(raf); raf=null; elapsed=Date.now()-start+elapsed; document.getElementById('start').textContent='開始'; }
+  else { start=Date.now(); tick(); document.getElementById('start').textContent='停止'; }
+};
+document.getElementById('lap').onclick=()=>{ const li=document.createElement('li'); li.textContent=document.getElementById('time').textContent; document.getElementById('laps').appendChild(li); };
+document.getElementById('reset').onclick=()=>{ cancelAnimationFrame(raf); raf=null; start=0; elapsed=0; document.getElementById('time').textContent='00:00.0'; document.getElementById('laps').innerHTML=''; document.getElementById('start').textContent='開始'; };
+</script></body></html>

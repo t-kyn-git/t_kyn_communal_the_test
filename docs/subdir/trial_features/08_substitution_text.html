@@ -1,0 +1,22 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Replace</title><body>
+<h1>置換ツール</h1>
+<h1>このhtmlは現在、検索機能はないですが、つけてもいいのでは？。</h1>
+<textarea id="src" style="width:48%;height:160px;"></textarea>
+<div>
+<input id="find" placeholder="検索(正規表現可)"><input id="rep" placeholder="置換">
+<button id="do">置換</button>
+</div>
+<div id="out" style="white-space:pre-wrap;border:1px solid #ccc;padding:8px;margin-top:8px;"></div>
+<script>
+document.getElementById('do').onclick=()=>{
+  try{
+    const f=document.getElementById('find').value;
+    const r=document.getElementById('rep').value;
+    const re=new RegExp(f,'g');
+    const s=document.getElementById('src').value;
+    document.getElementById('out').textContent=s.replace(re,r);
+  }catch(e){ document.getElementById('out').textContent='正規表現エラー'; }
+};
+</script>
+</body></html>

@@ -1,0 +1,19 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Unit Converter</title><body>
+<h1>単位変換</h1>
+<h1>もっとふやしたいですね・・・・・・・</h1>
+<input id="val" type="number" value="1"> <select id="type"><option value="m_to_cm">m→cm</option><option value="kg_to_g">kg→g</option><option value="c_to_f">℃→℉</option></select>
+<button id="go">変換</button>
+<div id="out"></div>
+<script>
+document.getElementById('go').onclick=()=>{
+  const v=Number(document.getElementById('val').value);
+  const t=document.getElementById('type').value;
+  let r='';
+  if(t==='m_to_cm') r=v*100+' cm';
+  if(t==='kg_to_g') r=v*1000+' g';
+  if(t==='c_to_f') r=(v*9/5+32).toFixed(2)+' ℉';
+  document.getElementById('out').textContent=r;
+};
+</script>
+</body></html>

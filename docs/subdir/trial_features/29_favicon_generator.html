@@ -1,0 +1,13 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Favicon</title><body>
+<h1>文字からFavicon生成</h1>
+<input id="txt" placeholder="1文字"><button id="g">生成</button><a id="dl"></a><canvas id="c" width="64" height="64" style="display:none"></canvas>
+<script>
+document.getElementById('g').onclick=()=>{
+  const t=document.getElementById('txt').value||'G', c=document.getElementById('c'), ctx=c.getContext('2d');
+  ctx.fillStyle='#'+Math.floor(Math.random()*16777215).toString(16); ctx.fillRect(0,0,64,64);
+  ctx.fillStyle='#fff'; ctx.font='40px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(t,32,34);
+  const url=c.toDataURL('image/png'); const a=document.getElementById('dl'); a.href=url; a.download='favicon.png'; a.textContent='ダウンロード';
+};
+</script>
+</body></html>

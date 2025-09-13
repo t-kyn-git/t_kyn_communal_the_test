@@ -1,0 +1,17 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Timeline</title><body>
+<h1>タイムライン</h1>
+<h1>これもインポートとエクスポート機能あるといいですね</h1>
+<textarea id="note" style="width:60%;height:80px;"></textarea><button id="add">追加</button>
+<ul id="list"></ul>
+<script>
+const K='timeline';
+function get(){return JSON.parse(localStorage.getItem(K)||'[]');}
+function save(a){localStorage.setItem(K,JSON.stringify(a)); render();}
+function render(){ const l=get(); const ul=document.getElementById('list'); ul.innerHTML=''; l.forEach(i=>{ const li=document.createElement('li'); li.textContent=`[${i.date}] ${i.text}`; ul.appendChild(li); }); }
+document.getElementById('add').onclick=()=>{
+  const t=document.getElementById('note').value.trim(); if(!t) return; const a=get(); a.unshift({date:new Date().toLocaleString(), text:t}); save(a); document.getElementById('note').value='';
+};
+render();
+</script>
+</body></html>
