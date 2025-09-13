@@ -1,20 +1,5 @@
-<!DOCTYPE html>
-<html lang='ja'>
-<head>
-  <meta charset='UTF-8'>
-  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-  <title>AWSリソース一覧 (20250913_131739)</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 980px; margin: 20px auto; padding: 20px; }
-    h1, h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }
-    pre { background-color: #f6f8fa; border-radius: 3px; padding: 16px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }
-  </style>
-</head>
-<body>
-  <div class='container'>
-    <h1>AWSリソース一覧 (20250913_131739)</h1>
-    <h2>VPC一覧</h2><pre>VPCS	172.31.0.0/16	default	default	True	000000000000	available	vpc-50e4d725ea33688f0
+===== VPC一覧 =====
+VPCS	172.31.0.0/16	default	default	True	000000000000	available	vpc-50e4d725ea33688f0
 CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-166f01d6c54c627ce	172.31.0.0/16
 CIDRBLOCKSTATE	associated
 VPCS	10.0.0.0/16	default	default	False	000000000000	available	vpc-d1fc8c119e47d50ec
@@ -22,8 +7,9 @@ CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-a7a10254557389b6c	10.0.0.0/16
 CIDRBLOCKSTATE	associated
 VPCS	10.0.0.0/16	default	default	False	000000000000	available	vpc-6795f3869b5620b82
 CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-641ab71b1a79af44b	10.0.0.0/16
-CIDRBLOCKSTATE	associated</pre>
-    <h2>サブネット一覧</h2><pre>SUBNETS	False	us-east-1a	use1-az6	4091	172.31.0.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-555ab742bd1cd6906	subnet-555ab742bd1cd6906	vpc-50e4d725ea33688f0
+CIDRBLOCKSTATE	associated
+===== サブネット一覧 =====
+SUBNETS	False	us-east-1a	use1-az6	4091	172.31.0.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-555ab742bd1cd6906	subnet-555ab742bd1cd6906	vpc-50e4d725ea33688f0
 SUBNETS	False	us-east-1a	use1-az6	250	10.0.1.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-4eb9148ae2bc775c0	subnet-4eb9148ae2bc775c0	vpc-d1fc8c119e47d50ec
 PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
 SUBNETS	False	us-east-1b	use1-az1	4091	172.31.16.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-0e7e2f9a4f8d44ae6	subnet-0e7e2f9a4f8d44ae6	vpc-50e4d725ea33688f0
@@ -36,8 +22,9 @@ SUBNETS	False	us-east-1d	use1-az4	4091	172.31.48.0/20	True	False	True	0000000000
 SUBNETS	False	us-east-1d	use1-az4	250	10.0.4.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-0bf0f075990ee6305	subnet-0bf0f075990ee6305	vpc-d1fc8c119e47d50ec
 PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
 SUBNETS	False	us-east-1e	use1-az3	4091	172.31.64.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-62b0b1ef81cd60831	subnet-62b0b1ef81cd60831	vpc-50e4d725ea33688f0
-SUBNETS	False	us-east-1f	use1-az5	4091	172.31.80.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-4622d0a91712db8be	subnet-4622d0a91712db8be	vpc-50e4d725ea33688f0</pre>
-    <h2>セキュリティグループ一覧</h2><pre>SECURITYGROUPS	default VPC security group	sg-7793d1eaee0fe838c	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-7793d1eaee0fe838c	vpc-50e4d725ea33688f0
+SUBNETS	False	us-east-1f	use1-az5	4091	172.31.80.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-4622d0a91712db8be	subnet-4622d0a91712db8be	vpc-50e4d725ea33688f0
+===== セキュリティグループ一覧 =====
+SECURITYGROUPS	default VPC security group	sg-7793d1eaee0fe838c	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-7793d1eaee0fe838c	vpc-50e4d725ea33688f0
 IPPERMISSIONSEGRESS	-1
 IPRANGES	0.0.0.0/0
 SECURITYGROUPS	default VPC security group	sg-ba887bec4d1375102	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-ba887bec4d1375102	vpc-d1fc8c119e47d50ec
@@ -58,8 +45,9 @@ IPPERMISSIONS	3307	tcp	3307
 IPRANGES	0.0.0.0/0
 SECURITYGROUPS	default VPC security group	sg-d03621863ccf6ed56	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-d03621863ccf6ed56	vpc-6795f3869b5620b82
 IPPERMISSIONSEGRESS	-1
-IPRANGES	0.0.0.0/0</pre>
-    <h2>ルートテーブル一覧</h2><pre>ROUTETABLES	000000000000	rtb-407e065e5d773f667	vpc-50e4d725ea33688f0
+IPRANGES	0.0.0.0/0
+===== ルートテーブル一覧 =====
+ROUTETABLES	000000000000	rtb-407e065e5d773f667	vpc-50e4d725ea33688f0
 ASSOCIATIONS	True	rtbassoc-04b129181fdc82715	rtb-407e065e5d773f667
 ASSOCIATIONSTATE	associated
 ROUTES	172.31.0.0/16	local	CreateRouteTable	active
@@ -70,8 +58,9 @@ ROUTES	10.0.0.0/16	local	CreateRouteTable	active
 ROUTETABLES	000000000000	rtb-0c9bf9fd67b286a12	vpc-6795f3869b5620b82
 ASSOCIATIONS	True	rtbassoc-3824fe99a703eb82d	rtb-0c9bf9fd67b286a12
 ASSOCIATIONSTATE	associated
-ROUTES	10.0.0.0/16	local	CreateRouteTable	active</pre>
-    <h2>EC2インスタンス一覧</h2><pre>RESERVATIONS	000000000000	r-2cee457e042e7d4ae
+ROUTES	10.0.0.0/16	local	CreateRouteTable	active
+===== EC2インスタンス一覧 =====
+RESERVATIONS	000000000000	r-2cee457e042e7d4ae
 INSTANCES	0	x86_64	ABCDE0000000000003	False	xen	ami-12345678	i-95bc7454071b23531	t2.micro	None	2025-09-13T13:16:59Z	ip-10-0-4-4.ec2.internal	10.0.4.4	None	/dev/sda1	ebs	True		subnet-0bf0f075990ee6305	paravirtual	vpc-d1fc8c119e47d50ec
 BLOCKDEVICEMAPPINGS	/dev/sda1
 EBS	2025-09-13T13:16:59Z	True	in-use	vol-4dc264fb0206e3d0c
@@ -136,22 +125,23 @@ SECURITYGROUPS	sg-c8d044899c5abe646	terraform-20250913131659344100000004
 SECURITYGROUPS	sg-4caac0f307cac46ed	terraform-20250913131659327500000003
 STATE	16	running
 STATEREASON		
-TAGS	Name	PrivateMysqlMasterInstance</pre>
-    <h2>キーペア一覧</h2><pre></pre>
-    <h2>S3バケット一覧</h2><pre>None
+TAGS	Name	PrivateMysqlMasterInstance
+===== キーペア一覧 =====
+===== S3バケット一覧 =====
+None
 BUCKETS	us-east-1	2025-09-13T13:16:57.000Z	my-test-bucket
-OWNER	webfile	75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a</pre>
-    <h2>Lambda関数一覧</h2><pre>FUNCTIONS	/H6bqnYROQ+uHmn8pr7Bd9PdRhEzUqkb2ir9ugu300c=	234		arn:aws:lambda:us-east-1:000000000000:function:lambda_function_payload	lambda_function_payload	index.handler	2025-09-13T13:16:58.177470+0000	128	Zip	02c457fd-572a-4963-b394-85d7265566ad	arn:aws:iam::000000000000:role/lambda_role	nodejs14.x	3	$LATEST
+OWNER	webfile	75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a
+===== Lambda関数一覧 =====
+FUNCTIONS	/H6bqnYROQ+uHmn8pr7Bd9PdRhEzUqkb2ir9ugu300c=	234		arn:aws:lambda:us-east-1:000000000000:function:lambda_function_payload	lambda_function_payload	index.handler	2025-09-13T13:16:58.177470+0000	128	Zip	02c457fd-572a-4963-b394-85d7265566ad	arn:aws:iam::000000000000:role/lambda_role	nodejs14.x	3	$LATEST
 ARCHITECTURES	x86_64
 EPHEMERALSTORAGE	512
 LOGGINGCONFIG	Text	/aws/lambda/lambda_function_payload
 SNAPSTART	None	Off
-TRACINGCONFIG	PassThrough</pre>
-    <h2>API Gateway一覧</h2><pre>ITEMS	HEADER	1757769418.0	False	c1psaoqo50	MyAPI	w9rtjxlwhd
+TRACINGCONFIG	PassThrough
+===== API Gateway一覧 =====
+ITEMS	HEADER	1757769418.0	False	c1psaoqo50	MyAPI	w9rtjxlwhd
 ENDPOINTCONFIGURATION	ipv4
-TYPES	EDGE</pre>
-    <h2>Route53ホストゾーン一覧</h2><pre>HOSTEDZONES	terraform-20250913131655915500000001	/hostedzone/0V952KYPW9MSEUJGM96SWR	t_kyn.testaws.product.com.	2
-CONFIG	Managed by Terraform	False</pre>
-  </div>
-</body>
-</html>
+TYPES	EDGE
+===== Route53ホストゾーン一覧 =====
+HOSTEDZONES	terraform-20250913131655915500000001	/hostedzone/0V952KYPW9MSEUJGM96SWR	t_kyn.testaws.product.com.	2
+CONFIG	Managed by Terraform	False
