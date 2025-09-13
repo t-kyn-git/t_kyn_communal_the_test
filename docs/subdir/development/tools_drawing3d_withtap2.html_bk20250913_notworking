@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"> <!-- ← 追加 -->
-<title>3D Drawing Tool with Three.js</title>
+<title>3D Drawing Tool with Three.js(改修後は削除します。)</title>
 <style>
   html, body {
     margin: 0;
