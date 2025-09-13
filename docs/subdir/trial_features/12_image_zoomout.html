@@ -1,0 +1,20 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>ImgResize</title><body>
+<h1>画像縮小</h1>
+<h1>このhtmlはpngの場合はjpgになって、むしろサイズでかくなりますね。バグですね。</h1>
+<input type="file" id="f"><input id="w" type="number" value="800">px
+<div id="out"></div>
+<script>
+document.getElementById('f').onchange=async(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const img=new Image(); img.src=URL.createObjectURL(file);
+  img.onload=()=>{
+    const w=Number(document.getElementById('w').value); const h=Math.round(img.height*(w/img.width));
+    const c=document.createElement('canvas'); c.width=w; c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    const a=document.createElement('a'); a.href=c.toDataURL('image/jpeg',0.8); a.download='resized.jpg'; a.textContent='縮小画像をダウンロード';
+    document.getElementById('out').innerHTML=''; document.getElementById('out').appendChild(a);
+  };
+};
+</script>
+</body></html>

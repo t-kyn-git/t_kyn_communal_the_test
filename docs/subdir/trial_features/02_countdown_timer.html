@@ -1,0 +1,19 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Countdown</title></head><body>
+<h1>Countdown</h1>
+<input id="mins" type="number" value="1" min="0">分
+<button id="start">開始</button><button id="stop">止める</button>
+<div id="time">00:00</div>
+<script>
+let t=null, remaining=0;
+function display(s){ const m=Math.floor(s/60), sec=s%60; document.getElementById('time').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;}
+document.getElementById('start').onclick=()=>{
+  remaining = Math.max(0, parseInt(document.getElementById('mins').value||0))*60;
+  if(remaining===0) return;
+  clearInterval(t); display(remaining);
+  t=setInterval(()=>{ remaining--; display(remaining); if(remaining<=0){ clearInterval(t); alert('終了'); } },1000);
+};
+document.getElementById('stop').onclick=()=>{ clearInterval(t); };
+display(0);
+</script>
+</body></html>

@@ -1,0 +1,14 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Habit</title><body>
+<h1>習慣トラッカー</h1>
+<input id="habit" placeholder="習慣名"><button id="add">追加</button>
+<h1>このhtmlは機能していません！！！！！！！！修正が必要ですう</h1>
+<ul id="list"></ul>
+<script>
+const K='habits';
+function get(){return JSON.parse(localStorage.getItem(K)||'[]');}
+function save(a){localStorage.setItem(K,JSON.stringify(a)); render();}
+function render(){ const ul=document.getElementById('list'); ul.innerHTML=''; get().forEach((h,i)=>{ const li=document.createElement('li'); li.innerHTML=`${h.name} - ${h.count||0}回 `; const b=document.createElement('button'); b.textContent='記録'; b.onclick=()=>{const a=get(); a[i].count=(a[i].count||0)+1; save(a);} li.appendChild(b); ul.appendChild(li); });}
+document.getElementById('add').onclick=()=>{ const n=document.getElementById('habit').value.trim(); if(!n) return; const a=get(); a.push({name:n,count:0}); save(a); document.getElementById('habit').value=''; };
+render();
+</script></body></html>

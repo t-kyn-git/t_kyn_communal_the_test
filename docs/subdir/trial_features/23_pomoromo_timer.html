@@ -1,0 +1,13 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Pomodoro</title><body>
+<h1>Pomodoro</h1>
+<h1>いみないのでは？</h1>
+<input id="min" type="number" value="25">分 <button id="start">開始</button><div id="t">00:00</div>
+<script>
+let s=null, rem=0;
+document.getElementById('start').onclick=()=>{
+  rem=Number(document.getElementById('min').value)*60;
+  clearInterval(s); s=setInterval(()=>{ rem--; const m=Math.floor(rem/60), sec=rem%60; document.getElementById('t').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; if(rem<=0){ clearInterval(s); alert('休憩'); } },1000);
+};
+</script>
+</body></html>

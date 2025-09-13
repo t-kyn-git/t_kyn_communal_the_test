@@ -1,0 +1,10 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>QR-like</title><body>
+<h1>簡易QR（短コード）</h1>
+<input id="txt" placeholder="変換するテキスト"><button id="go">生成</button>
+<div id="out"></div>
+<script>
+const db={};
+document.getElementById('go').onclick=()=>{ const t=document.getElementById('txt').value; if(!t) return; const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6); db[id]=t; document.getElementById('out').innerHTML=`コード: ${id}<br>復元: ${db[id]}`; };
+</script>
+</body></html>

@@ -111,24 +111,6 @@
             flex-grow: 1;
             margin-bottom: 15px;
         }
-        
-        /* ▼▼▼ ここから追加したCSS ▼▼▼ */
-        summary {
-            cursor: pointer; /* クリックできることを示すカーソルに変更 */
-            list-style: none; /* デフォルトのマーカー（▶）を非表示 */
-        }
-        summary::-webkit-details-marker {
-            display: none; /* Safari/Chrome用のマーカー非表示 */
-        }
-        details > summary > h2::after {
-            content: ' (Click to Expand)'; /* 閉じた状態のテキスト */
-            font-size: 0.7em;
-            color: #f0f0f0;
-        }
-        details[open] > summary > h2::after {
-            content: ' (Click to Collapse)'; /* 開いた状態のテキスト */
-        }
-        /* ▲▲▲ ここまで追加したCSS ▲▲▲ */
     </style>
 </head>
 <body>
@@ -141,15 +123,9 @@
     These contents are made from AI tools.</h6>
     <div class="content-grid" id="content-grid-container"></div>
 
-    <!-- ▼▼▼ ここから変更したHTML ▼▼▼ -->
-    <!-- トライアル機能のセクション（折りたたみ式） -->
-    <details>
-        <summary>
-            <h2><b><u>Trial Features</u></b></h2>
-        </summary>
-        <div class="content-grid" id="trial-grid-container"></div>
-    </details>
-    <!-- ▲▲▲ ここまで変更したHTML ▲▲▲ -->
+    <!-- トライアル機能のセクション -->
+    <h2><b><u>Trial Features</u></b></h2>
+    <div class="content-grid" id="trial-grid-container"></div>
 
     <script>
         // --- 通常コンテンツのデータ ---
@@ -177,37 +153,7 @@
         const trialData = [
             { category: 'Games', link: 'trial_features/games_worldtrackfield.html', linkText: '★games_World100mFinal', description: 'Games World track and field' },
             { category: 'Tools', link: 'trial_features/tools_wbs_generations.html', linkText: '★tools wbs Generations', description: 'WBS Generations' },
-            { category: 'Tools', link: 'trial_features/tools_receipt_ocr.html', linkText: '★tools OCR Generations text', description: 'The OCR of Picture to text' },
-            { category: 'Tools', link: 'trial_features/01_simple_todolist.html', linkText: 'Simple Todo List', description: 'A simple tool for managing your tasks.' },
-            { category: 'Tools', link: 'trial_features/02_countdown_timer.html', linkText: 'Countdown Timer', description: 'Set a timer that counts down to a specific time.' },
-            { category: 'Tools', link: 'trial_features/03_stopwatch.html', linkText: 'Stopwatch', description: 'A tool to measure elapsed time.' },
-            { category: 'Tools', link: 'trial_features/04calculator.html', linkText: 'Calculator', description: 'A simple calculator for basic arithmetic.' },
-            { category: 'Tools', link: 'trial_features/05_housiekeeping_memo.html', linkText: 'Housekeeping Memo', description: 'A memo pad for household chores and notes.' },
-            { category: 'Tools', link: 'trial_features/06_habittracker.html', linkText: 'Habit Tracker', description: 'Track your daily or weekly habits.' },
-            { category: 'Tools', link: 'trial_features/07_markdown_checker.html', linkText: 'Markdown Checker', description: 'Preview and check your Markdown syntax.' },
-            { category: 'Tools', link: 'trial_features/08_substitution_text.html', linkText: 'Text Substitution Tool', description: 'Replace specific text strings in a block of text.' },
-            { category: 'Tools', link: 'trial_features/09_clipboard_history.html', linkText: 'Clipboard History', description: 'View a history of items you have copied.' },
-            { category: 'Tools', link: 'trial_features/10_passwordgenerator.html', linkText: 'Password Generator', description: 'Generate strong and random passwords.' },
-            { category: 'Tools', link: 'trial_features/11_colorpalletgen.html', linkText: 'Color Palette Generator', description: 'Create and discover color palettes.' },
-            { category: 'Tools', link: 'trial_features/12_image_zoomout.html', linkText: 'Image Zoom Tool', description: 'Zoom in and out of an image.' },
-            { category: 'Tools', link: 'trial_features/13_imagetobase64.html', linkText: 'Image to Base64 Converter', description: 'Convert images into Base64 strings.' },
-            { category: 'Tools', link: 'trial_features/14_camera_dl.html', linkText: 'Camera Capture & Download', description: 'Take a picture with your camera and download it.' },
-            { category: 'Tools', link: 'trial_features/15_voicerecord.html', linkText: 'Voice Recorder', description: 'Record audio from your microphone.' },
-            { category: 'Tools', link: 'trial_features/16_qrsvg.html', linkText: 'QR Code to SVG Generator', description: 'Generate QR codes in SVG format.' },
-            { category: 'Tools', link: 'trial_features/17_json_formatter.html', linkText: 'JSON Formatter', description: 'Format and validate JSON data.' },
-            { category: 'Tools', link: 'trial_features/18_csv_to_table.html', linkText: 'CSV to Table Converter', description: 'Display CSV data in an HTML table.' },
-            { category: 'Tools', link: 'trial_features/19_unit_translations.html', linkText: 'Unit Converter', description: 'Convert between various units of measurement.' },
-            { category: 'Tools', link: 'trial_features/20_sentence_counter.html', linkText: 'Text Counter', description: 'Count characters, words, and sentences.' },
-            { category: 'Tools', link: 'trial_features/21_random_canvas_avater.html', linkText: 'Random Avatar Generator', description: 'Generate random avatars using canvas.' },
-            { category: 'Tools', link: 'trial_features/22_easy_diary.html', linkText: 'Easy Diary', description: 'A simple digital diary application.' },
-            { category: 'Tools', link: 'trial_features/23_pomoromo_timer.html', linkText: 'Pomodoro Timer', description: 'A timer using the Pomodoro Technique.' },
-            { category: 'Tools', link: 'trial_features/24_color_contrast_check.html', linkText: 'Color Contrast Checker', description: 'Check the contrast ratio between two colors.' },
-            { category: 'Tools', link: 'trial_features/25_table_to_csv_withdl.html', linkText: 'Table to CSV Exporter', description: 'Convert an HTML table to CSV and download it.' },
-            { category: 'Tools', link: 'trial_features/26_inpage_bookmarks.html', linkText: 'In-Page Bookmarks', description: 'Create bookmarks to jump to sections of a page.' },
-            { category: 'Tools', link: 'trial_features/27_mail_templater.html', linkText: 'Email Templater', description: 'Create and manage email templates.' },
-            { category: 'Tools', link: 'trial_features/28_short_url_gen.html', linkText: 'Short URL Generator', description: 'Create shortened versions of long URLs.' },
-            { category: 'Tools', link: 'trial_features/29_favicon_generator.html', linkText: 'Favicon Generator', description: 'Generate favicons for your website.' },
-            { category: 'Tools', link: 'trial_features/30_minichat.html', linkText: 'Mini Chat', description: 'A simple real-time chat application.' }
+            { category: 'Tools', link: 'trial_features/tools_receipt_ocr.html', linkText: '★tools OCR Generations text', description: 'The OCR of Picture to text' }
         ];
 
         // --- データからカードを動的に生成する関数 ---

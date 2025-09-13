@@ -1,0 +1,18 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Recorder</title><body>
+<h1>音声録音</h1>
+<h1>これ、パブリックにあっぷされるだけで意味ないじゃん・・・・</h1>
+<button id="rec">録音開始</button><div id="list"></div>
+<script>
+let rec, chunks=[];
+document.getElementById('rec').onclick=async()=>{
+  if(!rec){
+    const s=await navigator.mediaDevices.getUserMedia({audio:true});
+    rec=new MediaRecorder(s);
+    rec.ondataavailable=e=>chunks.push(e.data);
+    rec.onstop=()=>{ const b=new Blob(chunks,{type:'audio/webm'}); const url=URL.createObjectURL(b); const a=document.createElement('a'); a.href=url; a.download='rec.webm'; a.textContent='録音をダウンロード'; document.getElementById('list').appendChild(a); chunks=[]; rec=null; };
+    rec.start(); document.getElementById('rec').textContent='録音停止';
+  } else { rec.stop(); document.getElementById('rec').textContent='録音開始'; }
+};
+</script>
+</body></html>

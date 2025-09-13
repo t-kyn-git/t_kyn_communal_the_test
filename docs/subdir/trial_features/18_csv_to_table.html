@@ -1,0 +1,16 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>CSV to Table</title><body>
+<h1>CSV → Table</h1>
+<h1>これはめちゃくちゃつかえるかも！！！！！！★</h1>
+<textarea id="csv" style="width:100%;height:150px;">name,age\nAlice,30\nBob,25</textarea>
+<button id="go">変換</button>
+<div id="out"></div>
+<script>
+document.getElementById('go').onclick=()=>{
+  const s=document.getElementById('csv').value.trim().split(/\r?\n/).map(r=>r.split(','));
+  const t=document.createElement('table'); t.border=1;
+  s.forEach((r,i)=>{ const tr=document.createElement('tr'); r.forEach(c=>{ const cell=document.createElement(i===0?'th':'td'); cell.textContent=c; tr.appendChild(cell); }); t.appendChild(tr); });
+  document.getElementById('out').innerHTML=''; document.getElementById('out').appendChild(t);
+};
+</script>
+</body></html>

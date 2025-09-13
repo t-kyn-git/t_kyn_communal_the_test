@@ -1,0 +1,11 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Palette</title><body>
+<h1>カラーパレット</h1>
+<h1>このhtmlはなにがしたいのかよくわかりません・・・</h1>
+<button id="gen">生成</button>
+<div id="p"></div>
+<script>
+document.getElementById('gen').onclick=()=>{ const p=document.getElementById('p'); p.innerHTML=''; for(let i=0;i<5;i++){ const c='#'+Math.floor(Math.random()*16777215).toString(16).padStart(6,'0'); const d=document.createElement('div'); d.textContent=c; d.style.padding='8px'; d.style.display='inline-block'; d.style.margin='4px'; d.style.border='1px solid #ccc'; d.style.background=c; p.appendChild(d);} };
+document.getElementById('gen').onclick();
+</script>
+</body></html>

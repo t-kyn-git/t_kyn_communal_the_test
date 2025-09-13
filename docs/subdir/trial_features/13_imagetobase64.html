@@ -1,0 +1,15 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Img to Base64</title><body>
+<h1>画像 → Base64</h1>
+<h1>このhtmlは画像をbase64化してデータにしているんですが、これ意味あるんですかね？</h1>
+<h1>圧縮しても、縮まないので、意味ないと思うのですが・・・</h1>
+<input type="file" id="f"><pre id="out" style="white-space:pre-wrap;max-height:300px;overflow:auto;"></pre>
+<script>
+document.getElementById('f').onchange=e=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>document.getElementById('out').textContent=reader.result;
+  reader.readAsDataURL(file);
+};
+</script>
+</body></html>

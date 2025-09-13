@@ -1,0 +1,10 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>JSON Formatter</title><body>
+<h1>JSON Formatter</h1>
+<h1>これはめちゃくちゃつかえるかも！！！！！！★</h1>
+<textarea id="j" style="width:100%;height:200px;">{"hello":"world"}</textarea>
+<button id="f">整形</button><pre id="out"></pre>
+<script>
+document.getElementById('f').onclick=()=>{ try{ const o=JSON.parse(document.getElementById('j').value); document.getElementById('out').textContent=JSON.stringify(o,null,2);}catch(e){ document.getElementById('out').textContent='JSONエラー: '+e.message; } };
+</script>
+</body></html>

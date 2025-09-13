@@ -1,0 +1,15 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Contrast</title><body>
+<h1>コントラストチェック</h1>
+<h1>いろがわからないからわかりにくいですね。。。。。</h1>
+<input id="fg" value="#000000"> 前景 <input id="bg" value="#ffffff"> 背景 <button id="c">確認</button>
+<div id="out"></div>
+<script>
+function lum(hex){ const c=parseInt(hex.replace('#',''),16); const r=(c>>16)&255,g=(c>>8)&255,b=c&255; const sr=[r,g,b].map(v=>{ v/=255; return v<=0.03928? v/12.92: Math.pow((v+0.055)/1.055,2.4);} ); return 0.2126*sr[0]+0.7152*sr[1]+0.0722*sr[2]; }
+document.getElementById('c').onclick=()=>{
+  const fg=document.getElementById('fg').value, bg=document.getElementById('bg').value;
+  const L1=lum(fg), L2=lum(bg); const ratio=(Math.max(L1,L2)+0.05)/(Math.min(L1,L2)+0.05);
+  document.getElementById('out').textContent='コントラスト比: '+ratio.toFixed(2);
+};
+</script>
+</body></html>

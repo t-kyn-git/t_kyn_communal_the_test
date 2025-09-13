@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>ToDo</title></head>
+<body>
+<h1>ToDo</h1>
+<input id="task" placeholder="新しいタスク"><button id="add">追加</button>
+<ul id="list"></ul>
+<script>
+const key='todo_items';
+const list=()=>JSON.parse(localStorage.getItem(key)||'[]');
+function render(){
+  const ul=document.getElementById('list');
+  ul.innerHTML='';
+  list().forEach((t,i)=>{
+    const li=document.createElement('li');
+    li.textContent=t;
+    const btn=document.createElement('button'); btn.textContent='削除';
+    btn.onclick=()=>{ const a=list(); a.splice(i,1); localStorage.setItem(key,JSON.stringify(a)); render(); };
+    li.appendChild(btn); ul.appendChild(li);
+  });
+}
+document.getElementById('add').onclick=()=>{
+  const v=document.getElementById('task').value.trim(); if(!v) return;
+  const a=list(); a.push(v); localStorage.setItem(key,JSON.stringify(a)); document.getElementById('task').value=''; render();
+};
+render();
+</script>
+</body>
+</html>

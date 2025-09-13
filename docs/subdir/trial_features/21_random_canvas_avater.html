@@ -1,0 +1,16 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>Avatar</title><body>
+<h1>ランダムアバター</h1>
+<h1>形が一緒で、色だけがランダムなだけじゃん。。。</h1>
+<canvas id="c" width="200" height="200" style="border:1px solid #ccc"></canvas><button id="g">生成</button>
+<script>
+function gen(){
+  const c=document.getElementById('c'), ctx=c.getContext('2d');
+  ctx.fillStyle='#'+Math.floor(Math.random()*16777215).toString(16); ctx.fillRect(0,0,200,200);
+  ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.fillRect(20,20,160,160);
+  ctx.fillStyle='#'+Math.floor(Math.random()*16777215).toString(16); ctx.beginPath(); ctx.arc(100,90,36,0,2*Math.PI); ctx.fill();
+  ctx.fillStyle='#000'; ctx.fillRect(70,130,60,10);
+}
+document.getElementById('g').onclick=gen; gen();
+</script>
+</body></html>
