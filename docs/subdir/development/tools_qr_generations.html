@@ -2,16 +2,45 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>QRコード生成</title>
+<title>URLからQRコード生成</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  input { width: 300px; padding: 5px; }
+  button { padding: 5px 10px; margin-left: 5px; }
+  #qrcode { margin-top: 20px; }
+</style>
 </head>
 <body>
-<h3>QRコード生成例</h3>
+<h2>URLからQRコードを生成</h2>
+<br>Example:'https://t-kyn-git.github.io/t_kyn_communal_the_test/subdir/toppage.html'<br>
+<input type="text" id="urlInput" placeholder="URLを入力">
+<button onclick="generateQR()">生成</button>
+
 <div id="qrcode"></div>
+
 <script>
-  // QRコードにしたい文字列
-  var text = "https://t-kyn-git.github.io/t_kyn_communal_the_test/subdir/toppage.html";
-  new QRCode(document.getElementById("qrcode"), text);
+let qr;
+
+function generateQR() {
+    const url = document.getElementById("urlInput").value.trim();
+    const qrContainer = document.getElementById("qrcode");
+    
+    if (!url) {
+        alert("URLを入力してください\nExample:'https://t-kyn-git.github.io/t_kyn_communal_the_test/subdir/toppage.html'");
+        return;
+    }
+
+    // 前のQRコードがあれば削除
+    qrContainer.innerHTML = "";
+
+    // 新しいQRコードを生成
+    qr = new QRCode(qrContainer, {
+        text: url,
+        width: 200,
+        height: 200
+    });
+}
 </script>
 </body>
 </html>

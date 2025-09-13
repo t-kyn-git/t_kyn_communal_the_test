@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>レシートOCR JSON化</title>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+<style>
+  body { font-family: sans-serif; margin: 20px; }
+  #output { white-space: pre-wrap; margin-top: 20px; }
+  input, button { margin: 5px 0; }
+</style>
+</head>
+<body>
+
+<h1>レシート電子化</h1>
+<input type="file" id="fileInput" accept="image/*">
+<button id="processBtn">OCR実行</button>
+<button id="downloadBtn">JSONダウンロード</button>
+<br>
+※こちらですが、ちょっとですねー、OCRの精度があまり良くないので、あくまで試験的な機能としてお考えください。<br>
+<h2>OCR結果</h2>
+<div id="output"></div>
+
+<script>
+let jsonData = [];
+
+document.getElementById("processBtn").addEventListener("click", async () => {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return alert("画像を選択してください");
+
+    const outputDiv = document.getElementById("output");
+    outputDiv.textContent = "OCR実行中...";
+
+    const result = await Tesseract.recognize(file, 'jpn', { logger: m => console.log(m) });
+    const text = result.data.text.trim();
+
+    // JSONに追加
+    const record = {
+        timestamp: new Date().toISOString(),
+        text: text
+    };
+    jsonData.push(record);
+
+    outputDiv.textContent = JSON.stringify(jsonData, null, 2);
+});
+
+// JSONをファイルダウンロード
+document.getElementById("downloadBtn").addEventListener("click", () => {
+    if(jsonData.length === 0) return alert("データがありません");
+    const blob = new Blob([JSON.stringify(jsonData, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "receipts.json";
+    a.click();
+    URL.revokeObjectURL(url);
+});
+</script>
+
+</body>
+</html>
