@@ -1,0 +1,1081 @@
+[
+    {
+        "id": 1,
+        "name": "カレーライス",
+        "ingredients": [
+            { "name": "豚肉", "quantity": "200g" },
+            { "name": "玉ねぎ", "quantity": "1個" },
+            { "name": "じゃがいも", "quantity": "2個" },
+            { "name": "にんじん", "quantity": "1本" },
+            { "name": "カレールー", "quantity": "1/2箱" }
+        ],
+        "instructions": "1. 野菜と肉を一口大に切る。\n2. 鍋で肉と野菜を炒める。\n3. 水を加えて煮込み、アクを取る。\n4. 具材が柔らかくなったら火を止め、カレールーを溶き入れる。\n5. 再び弱火でとろみがつくまで煮込む。"
+    },
+    {
+        "id": 2,
+        "name": "肉じゃが",
+        "ingredients": [
+            { "name": "牛肉", "quantity": "150g" },
+            { "name": "じゃがいも", "quantity": "3個" },
+            { "name": "玉ねぎ", "quantity": "1個" },
+            { "name": "醤油", "quantity": "大さじ3" },
+            { "name": "みりん", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. じゃがいもは皮をむいて大きめの一口大に、玉ねぎはくし形に切る。\n2. 鍋に油を熱し、牛肉を炒める。\n3. 肉の色が変わったら野菜を加えて炒め合わせる。\n4. だし汁と調味料を加え、落し蓋をして中火で煮る。\n5. じゃがいもが柔らかくなったら火を止める。"
+    },
+    {
+        "id": 3,
+        "name": "豚の生姜焼き",
+        "ingredients": [
+            { "name": "豚ロース肉", "quantity": "200g" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "生姜", "quantity": "1かけ" },
+            { "name": "醤油", "quantity": "大さじ2" },
+            { "name": "みりん", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 玉ねぎは薄切り、生姜はすりおろす。\n2. 醤油、みりん、生姜を混ぜてタレを作る。\n3. フライパンに油を熱し、豚肉を焼く。\n4. 肉の色が変わったら玉ねぎを加えて炒める。\n5. タレを加えて絡める。"
+    },
+    {
+        "id": 4,
+        "name": "親子丼",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "100g" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "卵", "quantity": "2個" },
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "だし汁", "quantity": "100ml" }
+        ],
+        "instructions": "1. 鶏肉は小さく、玉ねぎは薄切りにする。\n2. フライパンにだし汁、醤油、みりんを入れ、鶏肉と玉ねぎを煮る。\n3. 鶏肉に火が通ったら溶き卵を回し入れ、半熟状になったら火を止める。\n4. ご飯の上にのせる。"
+    },
+    {
+        "id": 5,
+        "name": "天ぷら",
+        "ingredients": [
+            { "name": "えび", "quantity": "4尾" },
+            { "name": "なす", "quantity": "1本" },
+            { "name": "かぼちゃ", "quantity": "少々" },
+            { "name": "天ぷら粉", "quantity": "100g" },
+            { "name": "水", "quantity": "150ml" }
+        ],
+        "instructions": "1. 具材を食べやすい大きさに切る。\n2. 天ぷら粉と水を混ぜて衣を作る。\n3. 具材に衣をつけ、170℃の油で揚げる。\n4. 衣がカラッとしたら取り出し、油を切る。"
+    },
+    {
+        "id": 6,
+        "name": "味噌汁",
+        "ingredients": [
+            { "name": "豆腐", "quantity": "1/4丁" },
+            { "name": "わかめ", "quantity": "少々" },
+            { "name": "長ねぎ", "quantity": "少々" },
+            { "name": "だし汁", "quantity": "400ml" },
+            { "name": "味噌", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 豆腐はさいの目切り、ねぎは小口切りにする。\n2. 鍋にだし汁を入れて火にかけ、豆腐とわかめを入れる。\n3. 沸騰直前に火を弱め、味噌を溶き入れる。\n4. ねぎを加えて火を止める。"
+    },
+    {
+        "id": 7,
+        "name": "筑前煮",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "100g" },
+            { "name": "ごぼう", "quantity": "1/2本" },
+            { "name": "にんじん", "quantity": "1/2本" },
+            { "name": "れんこん", "quantity": "50g" },
+            { "name": "干し椎茸", "quantity": "2枚" }
+        ],
+        "instructions": "1. 干し椎茸は水で戻す。野菜と鶏肉は乱切りにする。\n2. 鍋にごま油を熱し、鶏肉と野菜を炒める。\n3. だし汁と調味料を加え、落し蓋をして煮る。\n4. 具材が柔らかくなるまで煮含める。"
+    },
+    {
+        "id": 8,
+        "name": "ぶりの照り焼き",
+        "ingredients": [
+            { "name": "ぶりの切り身", "quantity": "2切れ" },
+            { "name": "醤油", "quantity": "大さじ2" },
+            { "name": "みりん", "quantity": "大さじ2" },
+            { "name": "酒", "quantity": "大さじ1" },
+            { "name": "砂糖", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. ぶりに軽く塩を振り、水分を拭き取る。\n2. フライパンに油を熱し、ぶりを両面焼く。\n3. 合わせた調味料を加え、煮絡める。\n4. タレにとろみがついたら完成。"
+    },
+    {
+        "id": 9,
+        "name": "きんぴらごぼう",
+        "ingredients": [
+            { "name": "ごぼう", "quantity": "1本" },
+            { "name": "にんじん", "quantity": "1/3本" },
+            { "name": "唐辛子", "quantity": "1本" },
+            { "name": "醤油", "quantity": "大さじ1.5" },
+            { "name": "みりん", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. ごぼうはささがき、にんじんは千切りにする。\n2. フライパンにごま油と唐辛子を熱し、ごぼうとにんじんを炒める。\n3. 野菜がしんなりしたら調味料を加えて炒め合わせる。"
+    },
+    {
+        "id": 10,
+        "name": "だし巻き卵",
+        "ingredients": [
+            { "name": "卵", "quantity": "3個" },
+            { "name": "だし汁", "quantity": "50ml" },
+            { "name": "薄口醤油", "quantity": "小さじ1" },
+            { "name": "砂糖", "quantity": "小さじ2" }
+        ],
+        "instructions": "1. ボウルに卵を割りほぐし、調味料を加えて混ぜる。\n2. 卵焼き器を熱して油をひき、卵液を数回に分けて流し入れながら巻いていく。\n3. 巻きすで形を整える。"
+    },
+    {
+        "id": 11,
+        "name": "ハンバーグ",
+        "ingredients": [
+            { "name": "合いびき肉", "quantity": "300g" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "パン粉", "quantity": "大さじ5" },
+            { "name": "牛乳", "quantity": "大さじ3" },
+            { "name": "卵", "quantity": "1個" }
+        ],
+        "instructions": "1. 玉ねぎはみじん切りにし、炒めて冷ます。\n2. ボウルにひき肉、玉ねぎ、パン粉、牛乳、卵、塩こしょうを入れ、よく混ぜる。\n3. 小判形に成形し、中央をくぼませる。\n4. フライパンで両面に焼き色をつけ、蓋をして蒸し焼きにする。"
+    },
+    {
+        "id": 12,
+        "name": "ナポリタン",
+        "ingredients": [
+            { "name": "スパゲッティ", "quantity": "100g" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "ピーマン", "quantity": "1個" },
+            { "name": "ウインナー", "quantity": "2本" },
+            { "name": "ケチャップ", "quantity": "大さじ4" }
+        ],
+        "instructions": "1. スパゲッティを茹でる。野菜とウインナーは切っておく。\n2. フライパンで具材を炒める。\n3. 茹でたスパゲッティとケチャップを加えて炒め合わせる。"
+    },
+    {
+        "id": 13,
+        "name": "クリームシチュー",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "150g" },
+            { "name": "じゃがいも", "quantity": "1個" },
+            { "name": "にんじん", "quantity": "1/2本" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "牛乳", "quantity": "300ml" },
+            { "name": "シチュールー", "quantity": "2かけ" }
+        ],
+        "instructions": "1. 具材を一口大に切る。\n2. 鍋で鶏肉と野菜を炒める。\n3. 水を加えて煮込み、具材が柔らかくなったらルーと牛乳を加えて溶かす。\n4. とろみがつくまで弱火で煮込む。"
+    },
+    {
+        "id": 14,
+        "name": "オムライス",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "鶏もも肉", "quantity": "50g" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "卵", "quantity": "2個" },
+            { "name": "ケチャップ", "quantity": "大さじ3" }
+        ],
+        "instructions": "1. 鶏肉と玉ねぎを炒め、ごはんとケチャップを加えてケチャップライスを作る。\n2. フライパンで薄焼き卵を作る。\n3. ケチャップライスを卵で包む。"
+    },
+    {
+        "id": 15,
+        "name": "グラタン",
+        "ingredients": [
+            { "name": "マカロニ", "quantity": "50g" },
+            { "name": "鶏もも肉", "quantity": "100g" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "ホワイトソース", "quantity": "200g" },
+            { "name": "チーズ", "quantity": "適量" }
+        ],
+        "instructions": "1. マカロニを茹でる。鶏肉と玉ねぎは炒めておく。\n2. ホワイトソースに具材を混ぜ、耐熱皿に入れる。\n3. チーズをのせてオーブントースターで焼き色がつくまで焼く。"
+    },
+    {
+        "id": 16,
+        "name": "ミネストローネ",
+        "ingredients": [
+            { "name": "ベーコン", "quantity": "2枚" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "セロリ", "quantity": "1/4本" },
+            { "name": "トマト缶", "quantity": "1/2缶" },
+            { "name": "コンソメ", "quantity": "1個" }
+        ],
+        "instructions": "1. 野菜とベーコンを1cm角に切る。\n2. 鍋でベーコンと野菜を炒める。\n3. トマト缶、水、コンソメを加えて煮込む。\n4. 野菜が柔らかくなったら塩こしょうで味を調える。"
+    },
+    {
+        "id": 17,
+        "name": "ペペロンチーノ",
+        "ingredients": [
+            { "name": "スパゲッティ", "quantity": "100g" },
+            { "name": "にんにく", "quantity": "1かけ" },
+            { "name": "唐辛子", "quantity": "1本" },
+            { "name": "オリーブオイル", "quantity": "大さじ3" }
+        ],
+        "instructions": "1. スパゲッティを茹でる。\n2. フライパンにオリーブオイル、にんにく、唐辛子を入れ、弱火で香りを出す。\n3. 茹でたスパゲッティと茹で汁を加えて混ぜ合わせる。"
+    },
+    {
+        "id": 18,
+        "name": "シーザーサラダ",
+        "ingredients": [
+            { "name": "レタス", "quantity": "1/4個" },
+            { "name": "クルトン", "quantity": "適量" },
+            { "name": "ベーコン", "quantity": "1枚" },
+            { "name": "粉チーズ", "quantity": "大さじ2" },
+            { "name": "マヨネーズ", "quantity": "大さじ3" }
+        ],
+        "instructions": "1. レタスはちぎり、ベーコンは焼いて細かくする。\n2. ボウルにマヨネーズ、牛乳、粉チーズ、レモン汁、にんにくすりおろしを混ぜてドレッシングを作る。\n3. レタス、クルトン、ベーコンを盛り付け、ドレッシングをかける。"
+    },
+    {
+        "id": 19,
+        "name": "ポトフ",
+        "ingredients": [
+            { "name": "ウインナー", "quantity": "4本" },
+            { "name": "じゃがいも", "quantity": "1個" },
+            { "name": "にんじん", "quantity": "1/2本" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "キャベツ", "quantity": "1/8個" },
+            { "name": "コンソメ", "quantity": "1個" }
+        ],
+        "instructions": "1. 野菜は大きめに切る。\n2. 鍋に野菜、ウインナー、水、コンソメを入れて火にかける。\n3. 沸騰したらアクを取り、野菜が柔らかくなるまで煮込む。"
+    },
+    {
+        "id": 20,
+        "name": "ローストビーフ",
+        "ingredients": [
+            { "name": "牛ももブロック肉", "quantity": "300g" },
+            { "name": "塩こしょう", "quantity": "少々" },
+            { "name": "にんにく", "quantity": "1かけ" },
+            { "name": "赤ワイン", "quantity": "50ml" },
+            { "name": "醤油", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 牛肉に塩こしょう、にんにくをすり込み、常温に戻す。\n2. フライパンで牛肉の全面に焼き色をつける。\n3. アルミホイルで包み、予熱で火を通す。\n4. 肉を焼いたフライパンでソースを作る。"
+    },
+    {
+        "id": 21,
+        "name": "麻婆豆腐",
+        "ingredients": [
+            { "name": "豆腐", "quantity": "1丁" },
+            { "name": "豚ひき肉", "quantity": "100g" },
+            { "name": "長ねぎ", "quantity": "1/2本" },
+            { "name": "豆板醤", "quantity": "小さじ1" },
+            { "name": "甜麺醤", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 豆腐はさいの目に切り、ねぎはみじん切りにする。\n2. フライパンでひき肉を炒め、豆板醤と甜麺醤を加えてさらに炒める。\n3. スープ、豆腐を加えて煮立たせ、水溶き片栗粉でとろみをつける。"
+    },
+    {
+        "id": 22,
+        "name": "青椒肉絲",
+        "ingredients": [
+            { "name": "豚肉", "quantity": "150g" },
+            { "name": "ピーマン", "quantity": "3個" },
+            { "name": "たけのこ", "quantity": "50g" },
+            { "name": "オイスターソース", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 豚肉、ピーマン、たけのこは細切りにする。\n2. フライパンで豚肉を炒め、色が変わったら野菜を加えて炒める。\n3. オイスターソースなどの調味料を加えて炒め合わせる。"
+    },
+    {
+        "id": 23,
+        "name": "回鍋肉",
+        "ingredients": [
+            { "name": "豚バラ肉", "quantity": "150g" },
+            { "name": "キャベツ", "quantity": "1/4個" },
+            { "name": "ピーマン", "quantity": "1個" },
+            { "name": "甜麺醤", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 豚肉は茹でて薄切りに、野菜は食べやすく切る。\n2. フライパンで豚肉を炒め、野菜を加えてさらに炒める。\n3. 甜麺醤などの調味料を加えて全体に絡める。"
+    },
+    {
+        "id": 24,
+        "name": "エビチリ",
+        "ingredients": [
+            { "name": "エビ", "quantity": "10尾" },
+            { "name": "長ねぎ", "quantity": "1/2本" },
+            { "name": "ケチャップ", "quantity": "大さじ3" },
+            { "name": "豆板醤", "quantity": "小さじ1" }
+        ],
+        "instructions": "1. エビは下処理をし、片栗粉をまぶす。ねぎはみじん切りにする。\n2. フライパンでエビを炒め、色が変わったら取り出す。\n3. 同じフライパンでソースの材料を煮立たせ、エビを戻し入れて絡める。"
+    },
+    {
+        "id": 25,
+        "name": "餃子",
+        "ingredients": [
+            { "name": "豚ひき肉", "quantity": "150g" },
+            { "name": "キャベツ", "quantity": "1/8個" },
+            { "name": "ニラ", "quantity": "1/4束" },
+            { "name": "餃子の皮", "quantity": "20枚" }
+        ],
+        "instructions": "1. キャベツとニラはみじん切りにし、塩もみして水気を絞る。\n2. ひき肉と野菜、調味料を混ぜて餡を作る。\n3. 餃子の皮で餡を包む。\n4. フライパンで焼き、水を加えて蒸し焼きにする。"
+    },
+    {
+        "id": 26,
+        "name": "チャーハン",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "卵", "quantity": "1個" },
+            { "name": "チャーシュー", "quantity": "30g" },
+            { "name": "長ねぎ", "quantity": "1/4本" }
+        ],
+        "instructions": "1. チャーシューとねぎはみじん切りにする。\n2. フライパンに油を熱し、溶き卵を炒める。\n3. ごはんを加えてほぐしながら炒め、具材と調味料を加えてさらに炒める。"
+    },
+    {
+        "id": 27,
+        "name": "酢豚",
+        "ingredients": [
+            { "name": "豚ロース肉", "quantity": "200g" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "ピーマン", "quantity": "1個" },
+            { "name": "にんじん", "quantity": "1/3本" },
+            { "name": "酢", "quantity": "大さじ3" },
+            { "name": "砂糖", "quantity": "大さじ3" },
+            { "name": "醤油", "quantity": "大さじ1.5" }
+        ],
+        "instructions": "1. 豚肉に下味をつけ、片栗粉をまぶして揚げる。野菜は乱切りにする。\n2. フライパンで野菜を炒める。\n3. 甘酢あんの材料を混ぜてフライパンに加え、とろみがついたら揚げた豚肉と野菜を絡める。"
+    },
+    {
+        "id": 28,
+        "name": "中華スープ",
+        "ingredients": [
+            { "name": "卵", "quantity": "1個" },
+            { "name": "乾燥わかめ", "quantity": "少々" },
+            { "name": "鶏ガラスープの素", "quantity": "大さじ1" },
+            { "name": "ごま油", "quantity": "少々" }
+        ],
+        "instructions": "1. 鍋に水と鶏ガラスープの素を入れて火にかける。\n2. 沸騰したらわかめを加え、溶き卵を回し入れる。\n3. 火を止め、ごま油をたらす。"
+    },
+    {
+        "id": 29,
+        "name": "天津飯",
+        "ingredients": [
+            { "name": "卵", "quantity": "2個" },
+            { "name": "カニカマ", "quantity": "4本" },
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "水", "quantity": "150ml" },
+            { "name": "鶏ガラスープの素", "quantity": "小さじ1" },
+            { "name": "醤油", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 卵にほぐしたカニカマを混ぜ、半熟の卵焼きを作る。\n2. ご飯の上に卵をのせる。\n3. 鍋にあんの材料を入れて火にかけ、とろみがついたら卵の上にかける。"
+    },
+    {
+        "id": 30,
+        "name": "棒棒鶏",
+        "ingredients": [
+            { "name": "鶏むね肉", "quantity": "1枚" },
+            { "name": "きゅうり", "quantity": "1本" },
+            { "name": "ごまだれ", "quantity": "適量" }
+        ],
+        "instructions": "1. 鶏むね肉は茹でて冷まし、手で細かく裂く。\n2. きゅうりは千切りにする。\n3. 皿にきゅうりと鶏肉を盛り付け、ごまだれをかける。"
+    },
+    {
+        "id": 31,
+        "name": "ビビンバ",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "牛肉", "quantity": "50g" },
+            { "name": "ほうれん草", "quantity": "1/4束" },
+            { "name": "もやし", "quantity": "50g" },
+            { "name": "コチュジャン", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 牛肉は炒めて焼肉のたれで味付けする。\n2. ほうれん草ともやしは茹でてナムルにする。\n3. 器にご飯を盛り、具材をのせ、中央に卵黄とコチュジャンを添える。"
+    },
+    {
+        "id": 32,
+        "name": "タコライス",
+        "ingredients": [
+            { "name": "合いびき肉", "quantity": "100g" },
+            { "name": "レタス", "quantity": "2枚" },
+            { "name": "トマト", "quantity": "1/4個" },
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "チリパウダー", "quantity": "小さじ1" }
+        ],
+        "instructions": "1. ひき肉を炒め、ケチャップ、ソース、チリパウダーで味付けする（タコミート）。\n2. レタスは千切り、トマトは角切りにする。\n3. ご飯の上にタコミート、野菜、チーズをのせる。"
+    },
+    {
+        "id": 33,
+        "name": "ガパオライス",
+        "ingredients": [
+            { "name": "鶏ひき肉", "quantity": "100g" },
+            { "name": "バジル", "quantity": "10枚" },
+            { "name": "パプリカ", "quantity": "1/4個" },
+            { "name": "ナンプラー", "quantity": "大さじ1" },
+            { "name": "卵", "quantity": "1個" }
+        ],
+        "instructions": "1. フライパンでひき肉と刻んだ野菜を炒める。\n2. ナンプラーなどで味付けし、バジルを加えてさっと炒める。\n3. 別のフライパンで目玉焼きを作る。\n4. ご飯の上に具と目玉焼きをのせる。"
+    },
+    {
+        "id": 34,
+        "name": "グリーンカレー",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "100g" },
+            { "name": "なす", "quantity": "1本" },
+            { "name": "たけのこ", "quantity": "50g" },
+            { "name": "グリーンカレーペースト", "quantity": "大さじ2" },
+            { "name": "ココナッツミルク", "quantity": "200ml" }
+        ],
+        "instructions": "1. 具材を食べやすい大きさに切る。\n2. 鍋でカレーペーストを炒め、香りが立ったら鶏肉を炒める。\n3. ココナッツミルクと野菜を加えて煮込む。"
+    },
+    {
+        "id": 35,
+        "name": "フォー",
+        "ingredients": [
+            { "name": "フォー（乾麺）", "quantity": "100g" },
+            { "name": "牛薄切り肉", "quantity": "50g" },
+            { "name": "もやし", "quantity": "ひとつかみ" },
+            { "name": "鶏ガラスープの素", "quantity": "大さじ1" },
+            { "name": "ナンプラー", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. フォーを茹でる。\n2. 鍋にスープの材料を入れて煮立たせ、牛肉にさっと火を通す。\n3. 器にフォーを入れ、スープと具材を盛り付ける。"
+    },
+    {
+        "id": 36,
+        "name": "ほうれん草のおひたし",
+        "ingredients": [
+            { "name": "ほうれん草", "quantity": "1束" },
+            { "name": "醤油", "quantity": "適量" },
+            { "name": "かつお節", "quantity": "適量" }
+        ],
+        "instructions": "1. ほうれん草を茹でて冷水にとり、水気を絞る。\n2. 食べやすい長さに切り、醤油とかつお節で和える。"
+    },
+    {
+        "id": 37,
+        "name": "ポテトサラダ",
+        "ingredients": [
+            { "name": "じゃがいも", "quantity": "3個" },
+            { "name": "きゅうり", "quantity": "1/2本" },
+            { "name": "ハム", "quantity": "2枚" },
+            { "name": "マヨネーズ", "quantity": "大さじ4" }
+        ],
+        "instructions": "1. じゃがいもは茹でて潰す。きゅうりは薄切りにして塩もみする。\n2. 潰したじゃがいもに、きゅうり、ハム、マヨネーズ、塩こしょうを混ぜる。"
+    },
+    {
+        "id": 38,
+        "name": "切り干し大根の煮物",
+        "ingredients": [
+            { "name": "切り干し大根", "quantity": "30g" },
+            { "name": "にんじん", "quantity": "1/4本" },
+            { "name": "油揚げ", "quantity": "1/2枚" }
+        ],
+        "instructions": "1. 切り干し大根は水で戻す。\n2. 鍋にだし汁と調味料、具材を入れて煮る。"
+    },
+    {
+        "id": 39,
+        "name": "ひじきの煮物",
+        "ingredients": [
+            { "name": "乾燥ひじき", "quantity": "15g" },
+            { "name": "大豆", "quantity": "50g" },
+            { "name": "にんじん", "quantity": "1/4本" }
+        ],
+        "instructions": "1. ひじきは水で戻す。\n2. 鍋にだし汁と調味料、具材を入れて煮る。"
+    },
+    {
+        "id": 40,
+        "name": "マカロニサラダ",
+        "ingredients": [
+            { "name": "マカロニ", "quantity": "50g" },
+            { "name": "きゅうり", "quantity": "1/4本" },
+            { "name": "ツナ缶", "quantity": "1/2缶" }
+        ],
+        "instructions": "1. マカロニを茹でて冷ます。\n2. きゅうりは薄切りにする。\n3. 全ての材料をマヨネーズで和える。"
+    },
+    {
+        "id": 41,
+        "name": "鶏のから揚げ",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "300g" },
+            { "name": "醤油", "quantity": "大さじ2" },
+            { "name": "酒", "quantity": "大さじ1" },
+            { "name": "片栗粉", "quantity": "適量" }
+        ],
+        "instructions": "1. 鶏肉に下味をつける。\n2. 片栗粉をまぶし、170℃の油で揚げる。"
+    },
+    {
+        "id": 42,
+        "name": "豚の角煮",
+        "ingredients": [
+            { "name": "豚バラブロック", "quantity": "400g" },
+            { "name": "長ねぎの青い部分", "quantity": "1本分" },
+            { "name": "生姜", "quantity": "1かけ" }
+        ],
+        "instructions": "1. 豚肉を下茹でする。\n2. 鍋に豚肉と調味料を入れ、柔らかくなるまで煮込む。"
+    },
+    {
+        "id": 43,
+        "name": "サバの味噌煮",
+        "ingredients": [
+            { "name": "サバ", "quantity": "2切れ" },
+            { "name": "味噌", "quantity": "大さじ2" },
+            { "name": "砂糖", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. サバは下処理をする。\n2. 鍋に煮汁の材料を入れて煮立たせ、サバを入れて煮る。"
+    },
+    {
+        "id": 44,
+        "name": "アジの開き",
+        "ingredients": [{ "name": "アジの開き", "quantity": "2枚" }],
+        "instructions": "1. グリルで両面をこんがりと焼く。"
+    },
+    {
+        "id": 45,
+        "name": "カツ丼",
+        "ingredients": [
+            { "name": "とんかつ", "quantity": "1枚" },
+            { "name": "玉ねぎ", "quantity": "1/4個" },
+            { "name": "卵", "quantity": "1個" }
+        ],
+        "instructions": "1. 割り下で玉ねぎを煮る。\n2. とんかつをのせ、溶き卵でとじる。"
+    },
+    {
+        "id": 46,
+        "name": "牛丼",
+        "ingredients": [
+            { "name": "牛薄切り肉", "quantity": "150g" },
+            { "name": "玉ねぎ", "quantity": "1/2個" },
+            { "name": "醤油", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 割り下で玉ねぎと牛肉を煮る。\n2. ご飯の上にのせる。"
+    },
+    {
+        "id": 47,
+        "name": "おでん",
+        "ingredients": [
+            { "name": "大根", "quantity": "1/4本" },
+            { "name": "ゆで卵", "quantity": "2個" },
+            { "name": "こんにゃく", "quantity": "1/2枚" }
+        ],
+        "instructions": "1. 大根は下茹でする。\n2. 鍋にだし汁と具材を入れ、味が染みるまで煮込む。"
+    },
+    {
+        "id": 48,
+        "name": "すき焼き",
+        "ingredients": [
+            { "name": "牛肉", "quantity": "200g" },
+            { "name": "白菜", "quantity": "1/8個" },
+            { "name": "焼き豆腐", "quantity": "1/2丁" }
+        ],
+        "instructions": "1. 割り下を準備する。\n2. 鍋で肉を焼き、野菜や豆腐を加えて煮る。"
+    },
+    {
+        "id": 49,
+        "name": "お好み焼き",
+        "ingredients": [
+            { "name": "薄力粉", "quantity": "100g" },
+            { "name": "キャベツ", "quantity": "1/4個" },
+            { "name": "豚バラ肉", "quantity": "50g" }
+        ],
+        "instructions": "1. 生地を作り、キャベツと混ぜる。\n2. ホットプレートで焼き、豚肉をのせて裏返す。"
+    },
+    {
+        "id": 50,
+        "name": "たこ焼き",
+        "ingredients": [
+            { "name": "たこ焼き粉", "quantity": "100g" },
+            { "name": "タコ", "quantity": "50g" },
+            { "name": "紅生姜", "quantity": "少々" }
+        ],
+        "instructions": "1. 生地を作り、たこ焼き器に流し込む。\n2. 具材を入れて丸く焼き上げる。"
+    },
+    {
+        "id": 51,
+        "name": "チキンソテー",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "1枚" },
+            { "name": "塩こしょう", "quantity": "少々" },
+            { "name": "にんにく", "quantity": "1かけ" }
+        ],
+        "instructions": "1. 鶏肉に塩こしょうをする。\n2. フライパンで皮目からパリッと焼く。"
+    },
+    {
+        "id": 52,
+        "name": "ポークソテー",
+        "ingredients": [
+            { "name": "豚ロース肉", "quantity": "2枚" },
+            { "name": "塩こしょう", "quantity": "少々" },
+            { "name": "醤油", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 豚肉の筋を切る。\n2. フライパンで両面を焼き、最後に醤油を絡める。"
+    },
+    {
+        "id": 53,
+        "name": "ビーフシチュー",
+        "ingredients": [
+            { "name": "牛すね肉", "quantity": "300g" },
+            { "name": "玉ねぎ", "quantity": "1個" },
+            { "name": "デミグラスソース缶", "quantity": "1缶" }
+        ],
+        "instructions": "1. 牛肉と野菜を炒める。\n2. 赤ワインで煮込み、デミグラスソースを加えてさらに煮込む。"
+    },
+    {
+        "id": 54,
+        "name": "ミートソーススパゲッティ",
+        "ingredients": [
+            { "name": "スパゲッティ", "quantity": "100g" },
+            { "name": "合いびき肉", "quantity": "100g" },
+            { "name": "トマト缶", "quantity": "1/2缶" }
+        ],
+        "instructions": "1. ひき肉と玉ねぎを炒め、トマト缶で煮込む。\n2. 茹でたスパゲッティにかける。"
+    },
+    {
+        "id": 55,
+        "name": "カルボナーラ",
+        "ingredients": [
+            { "name": "スパゲッティ", "quantity": "100g" },
+            { "name": "ベーコン", "quantity": "2枚" },
+            { "name": "卵黄", "quantity": "1個" },
+            { "name": "生クリーム", "quantity": "50ml" }
+        ],
+        "instructions": "1. 卵黄、生クリーム、粉チーズを混ぜる。\n2. 炒めたベーコンと茹でたパスタを混ぜ、ソースを絡める。"
+    },
+    {
+        "id": 56,
+        "name": "ピザ",
+        "ingredients": [
+            { "name": "ピザ生地", "quantity": "1枚" },
+            { "name": "ピザソース", "quantity": "適量" },
+            { "name": "サラミ", "quantity": "適量" },
+            { "name": "チーズ", "quantity": "適量" }
+        ],
+        "instructions": "1. ピザ生地にソースと具材、チーズをのせる。\n2. オーブンで焼く。"
+    },
+    {
+        "id": 57,
+        "name": "ドリア",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "ホワイトソース", "quantity": "100g" },
+            { "name": "チーズ", "quantity": "適量" }
+        ],
+        "instructions": "1. ごはんにホワイトソースとチーズをかける。\n2. オーブントースターで焼く。"
+    },
+    {
+        "id": 58,
+        "name": "コロッケ",
+        "ingredients": [
+            { "name": "じゃがいも", "quantity": "3個" },
+            { "name": "合いびき肉", "quantity": "50g" },
+            { "name": "玉ねぎ", "quantity": "1/4個" }
+        ],
+        "instructions": "1. じゃがいもを茹でて潰し、炒めた具材と混ぜる。\n2. 成形し、衣をつけて揚げる。"
+    },
+    {
+        "id": 59,
+        "name": "メンチカツ",
+        "ingredients": [
+            { "name": "合いびき肉", "quantity": "200g" },
+            { "name": "玉ねぎ", "quantity": "1/2個" }
+        ],
+        "instructions": "1. ハンバーグの種を作り、成形する。\n2. 衣をつけて揚げる。"
+    },
+    {
+        "id": 60,
+        "name": "エビフライ",
+        "ingredients": [
+            { "name": "エビ", "quantity": "6尾" },
+            { "name": "小麦粉", "quantity": "適量" },
+            { "name": "卵", "quantity": "1個" },
+            { "name": "パン粉", "quantity": "適量" }
+        ],
+        "instructions": "1. エビの下処理をする。\n2. 小麦粉、卵、パン粉の順に衣をつけ、揚げる。"
+    },
+    {
+        "id": 61,
+        "name": "油淋鶏",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "1枚" },
+            { "name": "長ねぎ", "quantity": "1/4本" },
+            { "name": "醤油", "quantity": "大さじ2" },
+            { "name": "酢", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 鶏肉に片栗粉をまぶして揚げる。\n2. 刻んだねぎと調味料でタレを作り、かける。"
+    },
+    {
+        "id": 62,
+        "name": "ニラレバ炒め",
+        "ingredients": [
+            { "name": "豚レバー", "quantity": "150g" },
+            { "name": "ニラ", "quantity": "1束" },
+            { "name": "もやし", "quantity": "1/2袋" }
+        ],
+        "instructions": "1. レバーは下処理をする。\n2. フライパンでレバー、野菜の順に炒め、調味料で味付けする。"
+    },
+    {
+        "id": 63,
+        "name": "かに玉",
+        "ingredients": [
+            { "name": "卵", "quantity": "3個" },
+            { "name": "カニカマ", "quantity": "5本" },
+            { "name": "グリーンピース", "quantity": "少々" }
+        ],
+        "instructions": "1. 卵に具材を混ぜて焼き、皿に盛る。\n2. 甘酢あんを作り、かける。"
+    },
+    {
+        "id": 64,
+        "name": "春巻き",
+        "ingredients": [
+            { "name": "春巻きの皮", "quantity": "5枚" },
+            { "name": "豚ひき肉", "quantity": "50g" },
+            { "name": "たけのこ", "quantity": "30g" }
+        ],
+        "instructions": "1. 具材を炒めて餡を作る。\n2. 皮で包み、揚げる。"
+    },
+    {
+        "id": 65,
+        "name": "坦々麺",
+        "ingredients": [
+            { "name": "中華麺", "quantity": "1玉" },
+            { "name": "豚ひき肉", "quantity": "50g" },
+            { "name": "練りごま", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 肉味噌を作る。\n2. スープを作り、茹でた麺と肉味噌を盛り付ける。"
+    },
+    {
+        "id": 66,
+        "name": "おにぎり",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "塩", "quantity": "少々" },
+            { "name": "梅干し", "quantity": "1個" }
+        ],
+        "instructions": "1. 手に塩をつけ、温かいご飯で具を包みながら握る。"
+    },
+    {
+        "id": 67,
+        "name": "炊き込みご飯",
+        "ingredients": [
+            { "name": "米", "quantity": "2合" },
+            { "name": "鶏肉", "quantity": "50g" },
+            { "name": "ごぼう", "quantity": "1/4本" }
+        ],
+        "instructions": "1. 研いだ米に調味料と具材を入れ、炊飯する。"
+    },
+    {
+        "id": 68,
+        "name": "いなり寿司",
+        "ingredients": [
+            { "name": "油揚げ", "quantity": "4枚" },
+            { "name": "ごはん", "quantity": "1合" },
+            { "name": "酢", "quantity": "大さじ2" }
+        ],
+        "instructions": "1. 油揚げを甘辛く煮る。\n2. 酢飯を作り、油揚げに詰める。"
+    },
+    {
+        "id": 69,
+        "name": "ざるそば",
+        "ingredients": [
+            { "name": "そば", "quantity": "1人前" },
+            { "name": "めんつゆ", "quantity": "適量" },
+            { "name": "ねぎ", "quantity": "少々" }
+        ],
+        "instructions": "1. そばを茹でて冷水でしめる。\n2. つゆと薬味を添える。"
+    },
+    {
+        "id": 70,
+        "name": "かけうどん",
+        "ingredients": [
+            { "name": "うどん", "quantity": "1玉" },
+            { "name": "だし汁", "quantity": "300ml" },
+            { "name": "醤油", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. うどんを茹でる。\n2. だし汁を温めてうどんにかける。"
+    },
+    {
+        "id": 71,
+        "name": "チヂミ",
+        "ingredients": [
+            { "name": "ニラ", "quantity": "1/2束" },
+            { "name": "薄力粉", "quantity": "100g" }
+        ],
+        "instructions": "1. 材料を混ぜて焼く。"
+    },
+    {
+        "id": 72,
+        "name": "キムチ鍋",
+        "ingredients": [
+            { "name": "豚バラ肉", "quantity": "150g" },
+            { "name": "キムチ", "quantity": "200g" },
+            { "name": "豆腐", "quantity": "1丁" }
+        ],
+        "instructions": "1. 具材を煮込む。"
+    },
+    {
+        "id": 73,
+        "name": "ラタトゥイユ",
+        "ingredients": [
+            { "name": "ズッキーニ", "quantity": "1本" },
+            { "name": "トマト缶", "quantity": "1缶" }
+        ],
+        "instructions": "1. 野菜を煮込む。"
+    },
+    {
+        "id": 74,
+        "name": "アクアパッツァ",
+        "ingredients": [
+            { "name": "白身魚", "quantity": "1切れ" },
+            { "name": "アサリ", "quantity": "100g" }
+        ],
+        "instructions": "1. 魚介を蒸し煮にする。"
+    },
+    {
+        "id": 75,
+        "name": "パエリア",
+        "ingredients": [
+            { "name": "米", "quantity": "1合" },
+            { "name": "エビ", "quantity": "4尾" },
+            { "name": "サフラン", "quantity": "少々" }
+        ],
+        "instructions": "1. 具材と米を炊く。"
+    },
+    {
+        "id": 76,
+        "name": "ブリ大根",
+        "ingredients": [
+            { "name": "ブリ", "quantity": "2切れ" },
+            { "name": "大根", "quantity": "1/4本" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 77,
+        "name": "豚汁",
+        "ingredients": [
+            { "name": "豚バラ肉", "quantity": "100g" },
+            { "name": "ごぼう", "quantity": "1/2本" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 78,
+        "name": "茶碗蒸し",
+        "ingredients": [
+            { "name": "卵", "quantity": "1個" },
+            { "name": "だし汁", "quantity": "150ml" }
+        ],
+        "instructions": "1. 蒸す。"
+    },
+    {
+        "id": 79,
+        "name": "冷やし中華",
+        "ingredients": [
+            { "name": "中華麺", "quantity": "1玉" },
+            { "name": "きゅうり", "quantity": "1/2本" }
+        ],
+        "instructions": "1. 麺を冷やし具を乗せる。"
+    },
+    {
+        "id": 80,
+        "name": "焼きそば",
+        "ingredients": [
+            { "name": "中華麺", "quantity": "1玉" },
+            { "name": "豚肉", "quantity": "50g" }
+        ],
+        "instructions": "1. 炒める。"
+    },
+    {
+        "id": 81,
+        "name": "ロールキャベツ",
+        "ingredients": [
+            { "name": "ひき肉", "quantity": "150g" },
+            { "name": "キャベツ", "quantity": "4枚" }
+        ],
+        "instructions": "1. 煮込む。"
+    },
+    {
+        "id": 82,
+        "name": "フレンチトースト",
+        "ingredients": [
+            { "name": "食パン", "quantity": "1枚" },
+            { "name": "卵", "quantity": "1個" }
+        ],
+        "instructions": "1. 焼く。"
+    },
+    {
+        "id": 83,
+        "name": "パンケーキ",
+        "ingredients": [
+            { "name": "ホットケーキミックス", "quantity": "100g" },
+            { "name": "卵", "quantity": "1個" }
+        ],
+        "instructions": "1. 焼く。"
+    },
+    {
+        "id": 84,
+        "name": "クッキー",
+        "ingredients": [
+            { "name": "薄力粉", "quantity": "120g" },
+            { "name": "バター", "quantity": "60g" }
+        ],
+        "instructions": "1. 焼く。"
+    },
+    {
+        "id": 85,
+        "name": "プリン",
+        "ingredients": [
+            { "name": "卵", "quantity": "2個" },
+            { "name": "牛乳", "quantity": "200ml" }
+        ],
+        "instructions": "1. 蒸し焼きにする。"
+    },
+    {
+        "id": 86,
+        "name": "唐揚げ（塩）",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "300g" },
+            { "name": "塩", "quantity": "小さじ1" }
+        ],
+        "instructions": "1. 揚げる。"
+    },
+    {
+        "id": 87,
+        "name": "鶏肉のトマト煮",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "1枚" },
+            { "name": "トマト缶", "quantity": "1缶" }
+        ],
+        "instructions": "1. 煮込む。"
+    },
+    {
+        "id": 88,
+        "name": "麻婆春雨",
+        "ingredients": [
+            { "name": "春雨", "quantity": "50g" },
+            { "name": "ひき肉", "quantity": "50g" }
+        ],
+        "instructions": "1. 炒め煮にする。"
+    },
+    {
+        "id": 89,
+        "name": "八宝菜",
+        "ingredients": [
+            { "name": "豚肉", "quantity": "100g" },
+            { "name": "白菜", "quantity": "2枚" }
+        ],
+        "instructions": "1. 炒める。"
+    },
+    {
+        "id": 90,
+        "name": "トムヤムクン",
+        "ingredients": [
+            { "name": "エビ", "quantity": "6尾" },
+            { "name": "トムヤムペースト", "quantity": "大さじ1" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 91,
+        "name": "カオマンガイ",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "1枚" },
+            { "name": "米", "quantity": "1合" }
+        ],
+        "instructions": "1. 炊く。"
+    },
+    {
+        "id": 92,
+        "name": "大学芋",
+        "ingredients": [
+            { "name": "さつまいも", "quantity": "1本" },
+            { "name": "砂糖", "quantity": "大さじ3" }
+        ],
+        "instructions": "1. 揚げて絡める。"
+    },
+    {
+        "id": 93,
+        "name": "肉豆腐",
+        "ingredients": [
+            { "name": "牛肉", "quantity": "100g" },
+            { "name": "豆腐", "quantity": "1丁" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 94,
+        "name": "焼き鳥",
+        "ingredients": [
+            { "name": "鶏もも肉", "quantity": "1枚" },
+            { "name": "長ねぎ", "quantity": "1本" }
+        ],
+        "instructions": "1. 串に刺して焼く。"
+    },
+    {
+        "id": 95,
+        "name": "お茶漬け",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1膳" },
+            { "name": "お茶", "quantity": "適量" }
+        ],
+        "instructions": "1. かける。"
+    },
+    {
+        "id": 96,
+        "name": "冷奴",
+        "ingredients": [
+            { "name": "豆腐", "quantity": "1丁" },
+            { "name": "醤油", "quantity": "適量" }
+        ],
+        "instructions": "1. 薬味を乗せて醤油をかける。"
+    },
+    {
+        "id": 97,
+        "name": "ゴーヤチャンプルー",
+        "ingredients": [
+            { "name": "ゴーヤ", "quantity": "1本" },
+            { "name": "豆腐", "quantity": "1/2丁" }
+        ],
+        "instructions": "1. 炒める。"
+    },
+    {
+        "id": 98,
+        "name": "ちらし寿司",
+        "ingredients": [
+            { "name": "ごはん", "quantity": "1合" },
+            { "name": "刺身", "quantity": "適量" }
+        ],
+        "instructions": "1. 酢飯に具材を混ぜる・乗せる。"
+    },
+    {
+        "id": 99,
+        "name": "そうめん",
+        "ingredients": [
+            { "name": "そうめん", "quantity": "1束" },
+            { "name": "めんつゆ", "quantity": "適量" }
+        ],
+        "instructions": "1. 茹でて冷やす。"
+    },
+    {
+        "id": 100,
+        "name": "お雑煮",
+        "ingredients": [
+            { "name": "餅", "quantity": "2個" },
+            { "name": "鶏肉", "quantity": "少々" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 101,
+        "name": "鮭の塩焼き",
+        "ingredients": [{ "name": "鮭", "quantity": "1切れ" }],
+        "instructions": "1. 焼く。"
+    },
+    {
+        "id": 102,
+        "name": "アヒージョ",
+        "ingredients": [
+            { "name": "エビ", "quantity": "5尾" },
+            { "name": "オリーブオイル", "quantity": "100ml" }
+        ],
+        "instructions": "1. 煮る。"
+    },
+    {
+        "id": 103,
+        "name": "バーニャカウダ",
+        "ingredients": [
+            { "name": "にんにく", "quantity": "2かけ" },
+            { "name": "アンチョビ", "quantity": "3枚" }
+        ],
+        "instructions": "1. ソースを作る。"
+    },
+    {
+        "id": 104,
+        "name": "カプレーゼ",
+        "ingredients": [
+            { "name": "トマト", "quantity": "1個" },
+            { "name": "モッツァレラチーズ", "quantity": "1個" }
+        ],
+        "instructions": "1. スライスして並べる。"
+    },
+    {
+        "id": 105,
+        "name": "ラザニア",
+        "ingredients": [
+            { "name": "ミートソース", "quantity": "100g" },
+            { "name": "ラザニア生地", "quantity": "2枚" }
+        ],
+        "instructions": "1. 重ねて焼く。"
+    }
