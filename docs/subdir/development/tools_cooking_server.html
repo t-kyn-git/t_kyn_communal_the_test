@@ -62,27 +62,64 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // UI要素の取得
+    // ============================= ▼▼▼ 修正箇所 ▼▼▼ =============================
+    // UI要素の取得（ここの定義が不足していました）
     const recipeForm = document.getElementById('recipe-form');
-    // ... (他のUI要素の取得は変更なし)
+    const recipeIdInput = document.getElementById('recipe-id');
+    const recipeNameInput = document.getElementById('recipe-name');
+    const recipeIngredientsInput = document.getElementById('recipe-ingredients');
+    const recipeInstructionsInput = document.getElementById('recipe-instructions');
+    const recipeList = document.getElementById('recipe-list');
+    const searchBox = document.getElementById('search-box');
+    const exportBtn = document.getElementById('export-btn');
+    const importFile = document.getElementById('import-file');
     const loadDefaultBtn = document.getElementById('load-default-btn');
     const clearFormBtn = document.getElementById('clear-form-btn');
-
-    // ▼▼▼ ここにあった defaultRecipes の巨大な配列は削除する ▼▼▼
+    // ============================= ▲▲▲ 修正箇所 ▲▲▲ =============================
 
     // ローカルストレージからレシピを読み込む
     let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
 
-    // renderRecipes, saveRecipes, clearForm などの関数は変更なし
+    // ============================= ▼▼▼ 修正箇所 ▼▼▼ =============================
+    // 描画や保存のための関数（ここの定義も不足していました）
     const renderRecipes = (recipeData) => {
-        // ... (変更なし)
+        recipeList.innerHTML = '';
+        if (recipeData.length === 0) {
+            recipeList.innerHTML = '<p>該当するレシピはありません。</p>';
+            return;
+        }
+        recipeData.forEach(recipe => {
+            const recipeItem = document.createElement('div');
+            recipeItem.className = 'recipe-item';
+            
+            const instructionsHTML = recipe.instructions ? recipe.instructions.split('\n').filter(step => step.trim() !== '').map(step => `<li>${step}</li>`).join('') : '';
+
+            recipeItem.innerHTML = `
+                <h3>${recipe.name}</h3>
+                <h4>材料</h4>
+                <ul>
+                    ${recipe.ingredients.map(ing => `<li>${ing.name}: ${ing.quantity}</li>`).join('')}
+                </ul>
+                <h4>作り方・手順</h4>
+                <ol>
+                    ${instructionsHTML}
+                </ol>
+                <button onclick="editRecipe(${recipe.id})">編集</button>
+                <button onclick="deleteRecipe(${recipe.id})">削除</button>
+            `;
+            recipeList.appendChild(recipeItem);
+        });
     };
+
     const saveRecipes = () => {
-        // ... (変更なし)
+        localStorage.setItem('recipes', JSON.stringify(recipes));
     };
+    
     const clearForm = () => {
-        // ... (変更なし)
+        recipeForm.reset();
+        recipeIdInput.value = '';
     };
+    // ============================= ▲▲▲ 修正箇所 ▲▲▲ =============================
 
     // レシピの登録・更新
     recipeForm.addEventListener('submit', (e) => {
@@ -90,14 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const id = recipeIdInput.value;
         const name = recipeNameInput.value.trim();
         const ingredientsText = recipeIngredientsInput.value.trim();
-        const instructions = recipeInstructionsInput.value.trim(); // 手順を取得
+        const instructions = recipeInstructionsInput.value.trim();
 
-        if (!name || !ingredientsText || !instructions) { // 手順も必須入力に
+        if (!name || !ingredientsText || !instructions) {
             alert('料理名、材料、作り方をすべて入力してください。');
             return;
         }
         
-        // 材料のテキストをオブジェクトの配列に変換
         const ingredients = ingredientsText.split('\n').map(line => {
             const parts = line.trim().split(/\s+/);
             const quantity = parts.pop() || '';
@@ -105,17 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
             return { name, quantity };
         }).filter(ing => ing.name);
 
-        if (id) { // 更新
+        if (id) {
             const recipeIndex = recipes.findIndex(r => r.id == id);
             if (recipeIndex > -1) {
                 recipes[recipeIndex] = { ...recipes[recipeIndex], name, ingredients, instructions };
             }
-        } else { // 新規登録
+        } else {
             const newRecipe = {
-                id: Date.now(), // ユニークなIDとしてタイムスタンプを使用
+                id: Date.now(),
                 name,
                 ingredients,
-                instructions // 新規レシピに手順を追加
+                instructions
             };
             recipes.push(newRecipe);
         }
@@ -125,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearForm();
     });
 
-    // 検索機能 (変更なし)
+    // 検索機能
     searchBox.addEventListener('input', () => {
         const searchTerm = searchBox.value.toLowerCase();
         const filteredRecipes = recipes.filter(recipe => 
@@ -136,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRecipes(filteredRecipes);
     });
 
-    // エクスポート機能 (変更なし)
+    // エクスポート機能
     exportBtn.addEventListener('click', () => {
         if (recipes.length === 0) {
             alert('エクスポートするレシピがありません。');
@@ -154,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
         URL.revokeObjectURL(url);
     });
 
-    // インポート機能 (変更なし)
+    // インポート機能
     importFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (!file) return;
@@ -179,22 +215,20 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         reader.readAsText(file);
-        // 同じファイルを再度選択できるように値をリセット
         e.target.value = '';
     });
 
-    // ▼▼▼ デフォルトデータ読み込み機能を書き換える ▼▼▼
-    loadDefaultBtn.addEventListener('click', async () => { // async を追加
+    // デフォルトデータ読み込み機能
+    loadDefaultBtn.addEventListener('click', async () => {
         if (confirm('現在のレシピを上書きしてデフォルトデータを読み込みますか？')) {
             try {
-                // 'recipes.json'ファイルを読み込む
                 const response = await fetch('public_datas/recipes.json');
                 if (!response.ok) {
                     throw new Error('ネットワークの応答が正しくありませんでした。');
                 }
-                const defaultRecipes = await response.json(); // JSONデータを解析
+                const defaultRecipes = await response.json();
 
-                recipes = defaultRecipes; // 読み込んだデータをrecipesに代入
+                recipes = defaultRecipes;
                 saveRecipes();
                 renderRecipes(recipes);
                 alert('デフォルトデータを読み込みました。');
@@ -208,13 +242,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // フォームクリアボタン
     clearFormBtn.addEventListener('click', clearForm);
 
-    // グローバルスコープに関数を公開
+    // ============================= ▼▼▼ 修正箇所 ▼▼▼ =============================
+    // グローバルスコープに関数を公開（ここの関数の中身も不足していました）
     window.editRecipe = (id) => {
-        // ... (変更なし)
+        const recipe = recipes.find(r => r.id === id);
+        if (recipe) {
+            recipeIdInput.value = recipe.id;
+            recipeNameInput.value = recipe.name;
+            recipeIngredientsInput.value = recipe.ingredients.map(ing => `${ing.name} ${ing.quantity}`).join('\n');
+            recipeInstructionsInput.value = recipe.instructions || '';
+            window.scrollTo(0, 0); // ページ上部にスクロール
+        }
     };
+
     window.deleteRecipe = (id) => {
-        // ... (変更なし)
+        if (confirm('このレシピを削除してもよろしいですか？')) {
+            recipes = recipes.filter(r => r.id !== id);
+            saveRecipes();
+            renderRecipes(recipes);
+        }
     };
+    // ============================= ▲▲▲ 修正箇所 ▲▲▲ =============================
     
     // 初期描画
     renderRecipes(recipes);
