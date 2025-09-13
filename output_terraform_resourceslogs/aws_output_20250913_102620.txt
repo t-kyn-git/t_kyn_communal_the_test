@@ -1,0 +1,147 @@
+===== VPC一覧 =====
+VPCS	172.31.0.0/16	default	default	True	000000000000	available	vpc-9c27eb7fab09ab115
+CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-2244c2b8599fc783a	172.31.0.0/16
+CIDRBLOCKSTATE	associated
+VPCS	10.0.0.0/16	default	default	False	000000000000	available	vpc-39a40bb1cc1bf082f
+CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-9bc8cfa72a48806fc	10.0.0.0/16
+CIDRBLOCKSTATE	associated
+VPCS	10.0.0.0/16	default	default	False	000000000000	available	vpc-aaa517b717c1197a0
+CIDRBLOCKASSOCIATIONSET	vpc-cidr-assoc-dfaae5e27b4f3411a	10.0.0.0/16
+CIDRBLOCKSTATE	associated
+===== サブネット一覧 =====
+SUBNETS	False	us-east-1a	use1-az6	4091	172.31.0.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-d00161575298d3ef1	subnet-d00161575298d3ef1	vpc-9c27eb7fab09ab115
+SUBNETS	False	us-east-1a	use1-az6	250	10.0.1.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-f4faaebf8fed92763	subnet-f4faaebf8fed92763	vpc-39a40bb1cc1bf082f
+PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
+SUBNETS	False	us-east-1b	use1-az1	4091	172.31.16.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-f5dbc85d8710e522a	subnet-f5dbc85d8710e522a	vpc-9c27eb7fab09ab115
+SUBNETS	False	us-east-1b	use1-az1	250	10.0.2.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-51156045cd46f9312	subnet-51156045cd46f9312	vpc-39a40bb1cc1bf082f
+PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
+SUBNETS	False	us-east-1c	use1-az2	4091	172.31.32.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-c36d58298f28c04b7	subnet-c36d58298f28c04b7	vpc-9c27eb7fab09ab115
+SUBNETS	False	us-east-1c	use1-az2	250	10.0.3.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-4525dfbea7b462488	subnet-4525dfbea7b462488	vpc-39a40bb1cc1bf082f
+PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
+SUBNETS	False	us-east-1d	use1-az4	4091	172.31.48.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-d3607410372dc0698	subnet-d3607410372dc0698	vpc-9c27eb7fab09ab115
+SUBNETS	False	us-east-1d	use1-az4	250	10.0.4.0/24	False	False	False	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-46e69a1dddf2170c1	subnet-46e69a1dddf2170c1	vpc-39a40bb1cc1bf082f
+PRIVATEDNSNAMEOPTIONSONLAUNCH	ip-name
+SUBNETS	False	us-east-1e	use1-az3	4091	172.31.64.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-29bbd1344800e050a	subnet-29bbd1344800e050a	vpc-9c27eb7fab09ab115
+SUBNETS	False	us-east-1f	use1-az5	4091	172.31.80.0/20	True	False	True	000000000000	available	arn:aws:ec2:us-east-1:000000000000:subnet/subnet-d388e1b8b8416643e	subnet-d388e1b8b8416643e	vpc-9c27eb7fab09ab115
+===== セキュリティグループ一覧 =====
+SECURITYGROUPS	default VPC security group	sg-41e3cb00e626289fd	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-41e3cb00e626289fd	vpc-9c27eb7fab09ab115
+IPPERMISSIONSEGRESS	-1
+IPRANGES	0.0.0.0/0
+SECURITYGROUPS	default VPC security group	sg-81f22e2d9a314a795	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-81f22e2d9a314a795	vpc-39a40bb1cc1bf082f
+IPPERMISSIONSEGRESS	-1
+IPRANGES	0.0.0.0/0
+SECURITYGROUPS	Managed by Terraform	sg-21906aad437240cc4	terraform-20250913102544667900000002	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-21906aad437240cc4	vpc-39a40bb1cc1bf082f
+IPPERMISSIONS	3307	tcp	3307
+IPRANGES	0.0.0.0/0
+SECURITYGROUPS	Managed by Terraform	sg-839b8ba78423ff6f2	terraform-20250913102544672400000003	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-839b8ba78423ff6f2	vpc-39a40bb1cc1bf082f
+IPPERMISSIONS	3306	tcp	3306
+IPRANGES	0.0.0.0/0
+SECURITYGROUPS	Managed by Terraform	sg-71e8124f94e29b8a4	terraform-20250913102544697000000004	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-71e8124f94e29b8a4	vpc-39a40bb1cc1bf082f
+IPPERMISSIONS	80	tcp	80
+IPRANGES	0.0.0.0/0
+IPPERMISSIONS	22	tcp	22
+IPRANGES	0.0.0.0/0
+IPPERMISSIONSEGRESS	-1
+IPRANGES	0.0.0.0/0
+SECURITYGROUPS	default VPC security group	sg-9f6a9b43a86c63f1f	default	000000000000	arn:aws:ec2:us-east-1:000000000000:security-group/sg-9f6a9b43a86c63f1f	vpc-aaa517b717c1197a0
+IPPERMISSIONSEGRESS	-1
+IPRANGES	0.0.0.0/0
+===== ルートテーブル一覧 =====
+ROUTETABLES	000000000000	rtb-88539a9c5ab9f3224	vpc-9c27eb7fab09ab115
+ASSOCIATIONS	True	rtbassoc-683c54655f51c95a2	rtb-88539a9c5ab9f3224
+ASSOCIATIONSTATE	associated
+ROUTES	172.31.0.0/16	local	CreateRouteTable	active
+ROUTETABLES	000000000000	rtb-0f743c84a99ac23cc	vpc-39a40bb1cc1bf082f
+ASSOCIATIONS	True	rtbassoc-7e0361b77d5fb02b3	rtb-0f743c84a99ac23cc
+ASSOCIATIONSTATE	associated
+ROUTES	10.0.0.0/16	local	CreateRouteTable	active
+ROUTETABLES	000000000000	rtb-e8e6b4499450d8162	vpc-aaa517b717c1197a0
+ASSOCIATIONS	True	rtbassoc-73fe889012c09cab4	rtb-e8e6b4499450d8162
+ASSOCIATIONSTATE	associated
+ROUTES	10.0.0.0/16	local	CreateRouteTable	active
+===== EC2インスタンス一覧 =====
+RESERVATIONS	000000000000	r-1231c85af7bf81299
+INSTANCES	0	x86_64	ABCDE0000000000003	False	xen	ami-12345678	i-5a8075438c1d443e2	t2.micro	None	2025-09-13T10:25:44Z	ip-10-0-4-4.ec2.internal	10.0.4.4	None	/dev/sda1	ebs	True		subnet-46e69a1dddf2170c1	paravirtual	vpc-39a40bb1cc1bf082f
+BLOCKDEVICEMAPPINGS	/dev/sda1
+EBS	2025-09-13T10:25:44Z	True	in-use	vol-689637257891db326
+HIBERNATIONOPTIONS	False
+METADATAOPTIONS	enabled	disabled	1	optional	disabled
+MONITORING	disabled
+NETWORKINTERFACES	Primary network interface	1b:2b:3c:4d:5e:6f	eni-25fc0ff0614e4d5bf	000000000000	10.0.4.4	True	in-use	subnet-46e69a1dddf2170c1	vpc-39a40bb1cc1bf082f
+ATTACHMENT	2015-01-01T00:00:00Z	eni-attach-7536bb413f5f43b9b	True	0	attached
+GROUPS	sg-81f22e2d9a314a795	default
+PRIVATEIPADDRESSES	True	10.0.4.4
+PLACEMENT	us-east-1d		default
+STATE	16	running
+STATEREASON		
+TAGS	Name	PrivateInstance
+RESERVATIONS	000000000000	r-df37edf95fc313453
+INSTANCES	0	x86_64	ABCDE0000000000003	False	xen	ami-mysql3306	i-d626853c1a2dd5e7c	t2.micro	None	2025-09-13T10:25:45Z	ip-10-0-3-4.ec2.internal	10.0.3.4	None	/dev/sda1	ebs	True		subnet-4525dfbea7b462488	paravirtual	vpc-39a40bb1cc1bf082f
+BLOCKDEVICEMAPPINGS	/dev/sda1
+EBS	2025-09-13T10:25:45Z	True	in-use	vol-928890863947bb97a
+HIBERNATIONOPTIONS	False
+METADATAOPTIONS	enabled	disabled	1	optional	disabled
+MONITORING	disabled
+NETWORKINTERFACES	Primary network interface	1b:2b:3c:4d:5e:6f	eni-4731ea0a8f7dff60b	000000000000	10.0.3.4	True	in-use	subnet-4525dfbea7b462488	vpc-39a40bb1cc1bf082f
+ATTACHMENT	2015-01-01T00:00:00Z	eni-attach-500682033da6ce5b1	True	0	attached
+GROUPS	sg-21906aad437240cc4	terraform-20250913102544667900000002
+PRIVATEIPADDRESSES	True	10.0.3.4
+PLACEMENT	us-east-1c		default
+SECURITYGROUPS	sg-21906aad437240cc4	terraform-20250913102544667900000002
+STATE	16	running
+STATEREASON		
+TAGS	Name	PrivateMysqlSlaveInstance
+RESERVATIONS	000000000000	r-088c3e7def04686c3
+INSTANCES	0	x86_64	ABCDE0000000000003	False	xen	ami-12345678	i-1ebac5880d8e5ce81	t2.micro	None	2025-09-13T10:25:45Z	ip-10-0-1-4.ec2.internal	10.0.1.4	ec2-54-214-198-249.compute-1.amazonaws.com	54.214.198.249	/dev/sda1	ebs	True		subnet-f4faaebf8fed92763	paravirtual	vpc-39a40bb1cc1bf082f
+BLOCKDEVICEMAPPINGS	/dev/sda1
+EBS	2025-09-13T10:25:45Z	True	in-use	vol-1e0c89ec9fc566b80
+HIBERNATIONOPTIONS	False
+METADATAOPTIONS	enabled	disabled	1	optional	disabled
+MONITORING	disabled
+NETWORKINTERFACES	Primary network interface	1b:2b:3c:4d:5e:6f	eni-bb2d09d265e733720	000000000000	10.0.1.4	True	in-use	subnet-f4faaebf8fed92763	vpc-39a40bb1cc1bf082f
+ASSOCIATION	000000000000	54.214.198.249
+ATTACHMENT	2015-01-01T00:00:00Z	eni-attach-e1ab174e741e42a74	True	0	attached
+GROUPS	sg-71e8124f94e29b8a4	terraform-20250913102544697000000004
+PRIVATEIPADDRESSES	True	10.0.1.4
+ASSOCIATION	000000000000	54.214.198.249
+PLACEMENT	us-east-1a		default
+STATE	16	running
+STATEREASON		
+TAGS	Name	PublicInstance
+RESERVATIONS	000000000000	r-3e65e4072396e1632
+INSTANCES	0	x86_64	ABCDE0000000000003	False	xen	ami-mysql3306	i-40edb823d43086745	t2.micro	None	2025-09-13T10:25:45Z	ip-10-0-2-4.ec2.internal	10.0.2.4	None	/dev/sda1	ebs	True		subnet-51156045cd46f9312	paravirtual	vpc-39a40bb1cc1bf082f
+BLOCKDEVICEMAPPINGS	/dev/sda1
+EBS	2025-09-13T10:25:45Z	True	in-use	vol-2185d6f52e15eff20
+HIBERNATIONOPTIONS	False
+METADATAOPTIONS	enabled	disabled	1	optional	disabled
+MONITORING	disabled
+NETWORKINTERFACES	Primary network interface	1b:2b:3c:4d:5e:6f	eni-96bc549c568957197	000000000000	10.0.2.4	True	in-use	subnet-51156045cd46f9312	vpc-39a40bb1cc1bf082f
+ATTACHMENT	2015-01-01T00:00:00Z	eni-attach-456ffb5c7204a6d96	True	0	attached
+GROUPS	sg-21906aad437240cc4	terraform-20250913102544667900000002
+GROUPS	sg-839b8ba78423ff6f2	terraform-20250913102544672400000003
+PRIVATEIPADDRESSES	True	10.0.2.4
+PLACEMENT	us-east-1b		default
+SECURITYGROUPS	sg-839b8ba78423ff6f2	terraform-20250913102544672400000003
+SECURITYGROUPS	sg-21906aad437240cc4	terraform-20250913102544667900000002
+STATE	16	running
+STATEREASON		
+TAGS	Name	PrivateMysqlMasterInstance
+===== キーペア一覧 =====
+===== S3バケット一覧 =====
+None
+BUCKETS	us-east-1	2025-09-13T10:25:42.000Z	my-test-bucket
+OWNER	webfile	75aa57f09aa0c8caeab4f8c24e99d10f8e7faeebf76c078efc7c6caea54ba06a
+===== Lambda関数一覧 =====
+FUNCTIONS	/H6bqnYROQ+uHmn8pr7Bd9PdRhEzUqkb2ir9ugu300c=	234		arn:aws:lambda:us-east-1:000000000000:function:lambda_function_payload	lambda_function_payload	index.handler	2025-09-13T10:25:43.468377+0000	128	Zip	32731ae7-63d8-4288-a96d-5dc4ca1def2b	arn:aws:iam::000000000000:role/lambda_role	nodejs14.x	3	$LATEST
+ARCHITECTURES	x86_64
+EPHEMERALSTORAGE	512
+LOGGINGCONFIG	Text	/aws/lambda/lambda_function_payload
+SNAPSTART	None	Off
+TRACINGCONFIG	PassThrough
+===== API Gateway一覧 =====
+ITEMS	HEADER	1757759143.0	False	n4kvh2zvir	MyAPI	qtdpalor4a
+ENDPOINTCONFIGURATION	ipv4
+TYPES	EDGE
+===== Route53ホストゾーン一覧 =====
+HOSTEDZONES	terraform-20250913102541143100000001	/hostedzone/RNXZIE5EKH8XFTB4RJTLKB	t_kyn.testaws.product.com.	2
+CONFIG	Managed by Terraform	False
