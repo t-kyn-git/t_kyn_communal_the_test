@@ -8,6 +8,7 @@
   button { margin: 5px; padding: 10px; }
   table { border-collapse: collapse; margin-top: 15px; width: 100%; }
   th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+  .delete-btn { color: white; background: red; border: none; padding: 5px 10px; cursor: pointer; }
 </style>
 </head>
 <body>
@@ -29,7 +30,7 @@
 
 <table>
   <thead>
-    <tr><th>イベント</th><th>日時</th></tr>
+    <tr><th>イベント</th><th>日時</th><th>削除</th></tr>
   </thead>
   <tbody id="logTable"></tbody>
 </table>
@@ -72,6 +73,15 @@
       timeCell.style.cursor = "pointer";
       timeCell.onclick = () => editTime(index, timeCell);
       row.appendChild(timeCell);
+
+      // 削除ボタンセル
+      const deleteCell = document.createElement("td");
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "🗑";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => deleteLog(index);
+      deleteCell.appendChild(delBtn);
+      row.appendChild(deleteCell);
 
       table.appendChild(row);
     });
@@ -123,6 +133,15 @@
     input.onkeydown = (e) => {
       if (e.key === "Enter") input.blur();
     };
+  }
+
+  function deleteLog(index) {
+    const logs = getLogs();
+    if (confirm("この行を削除しますか？")) {
+      logs.splice(index, 1);
+      saveLogs(logs);
+      renderLogs();
+    }
   }
 
   function exportData() {
