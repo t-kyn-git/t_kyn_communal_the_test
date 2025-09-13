@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マンション理事会効率化ツール</title>
+<style>
+  body { font-family: sans-serif; padding: 20px; }
+  h2 { margin-top: 30px; }
+  input, button, select, textarea { margin: 5px 0; }
+  .task-done { text-decoration: line-through; color: gray; }
+  table { border-collapse: collapse; margin-top: 10px; }
+  th, td { border: 1px solid #ccc; padding: 5px 10px; }
+  .red { color: red; font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h1>マンション理事会効率化ツール</h1>
+
+<!-- 1. 議題管理 -->
+<h2>議題管理</h2>
+<input id="topicInput" placeholder="議題を入力">
+<input type="date" id="topicDue">
+<select id="topicPriority">
+  <option value="高">高</option>
+  <option value="中">中</option>
+  <option value="低">低</option>
+</select>
+<button onclick="addTopic()">追加</button>
+
+<ul id="topicList"></ul>
+
+<!-- 2. 出席管理 -->
+<h2>出席管理</h2>
+<input id="memberName" placeholder="理事名">
+<button onclick="addMember()">追加</button>
+<ul id="memberList"></ul>
+<p>出席率: <span id="attendanceRate">0%</span></p>
+
+<!-- 3. 投票機能 -->
+<h2>議題投票</h2>
+<select id="voteTopic"></select>
+<button onclick="vote('賛成')">賛成</button>
+<button onclick="vote('反対')">反対</button>
+<p>賛成: <span id="voteYes">0</span> 反対: <span id="voteNo">0</span></p>
+
+<!-- 4. タスク進捗管理 -->
+<h2>タスク進捗管理</h2>
+<input id="taskInput" placeholder="タスクを追加">
+<button onclick="addTask()">追加</button>
+<ul id="taskList"></ul>
+
+<!-- 5. 会議メモ -->
+<h2>会議メモ</h2>
+<textarea id="memoInput" rows="5" cols="50" placeholder="議事録を入力"></textarea><br>
+<button onclick="saveMemo()">保存</button>
+<button onclick="downloadMemo()">CSVでダウンロード</button>
+<ul id="memoList"></ul>
+
+<script>
+  // ---- 議題管理 ----
+  let topics = JSON.parse(localStorage.getItem('topics') || '[]');
+  function addTopic(){
+    const title = document.getElementById('topicInput').value;
+    const due = document.getElementById('topicDue').value;
+    const priority = document.getElementById('topicPriority').value;
+    if(!title) return;
+    topics.push({title, due, priority});
+    localStorage.setItem('topics', JSON.stringify(topics));
+    document.getElementById('topicInput').value = '';
+    renderTopics();
+    renderVoteOptions();
+  }
+  function renderTopics(){
+    const ul = document.getElementById('topicList');
+    ul.innerHTML = '';
+    const today = new Date().toISOString().split('T')[0];
+    topics.forEach((t,i)=>{
+      const li = document.createElement('li');
+      li.innerHTML = `${t.title} (期日: <span class="${t.due<=today?'red':''}">${t.due}</span>, 優先度: ${t.priority}) <button onclick="deleteTopic(${i})">削除</button>`;
+      ul.appendChild(li);
+    });
+  }
+  function deleteTopic(i){
+    topics.splice(i,1);
+    localStorage.setItem('topics', JSON.stringify(topics));
+    renderTopics();
+    renderVoteOptions();
+  }
+  renderTopics();
+
+  // ---- 出席管理 ----
+  let members = JSON.parse(localStorage.getItem('members') || '[]');
+  function addMember(){
+    const name = document.getElementById('memberName').value;
+    if(!name) return;
+    members.push({name, present: false});
+    localStorage.setItem('members', JSON.stringify(members));
+    document.getElementById('memberName').value='';
+    renderMembers();
+  }
+  function renderMembers(){
+    const ul = document.getElementById('memberList');
+    ul.innerHTML = '';
+    let presentCount = 0;
+    members.forEach((m,i)=>{
+      const li = document.createElement('li');
+      const cb = document.createElement('input');
+      cb.type='checkbox';
+      cb.checked = m.present;
+      cb.onchange = ()=>{ members[i].present=cb.checked; localStorage.setItem('members', JSON.stringify(members)); renderMembers();}
+      li.appendChild(cb);
+      li.appendChild(document.createTextNode(' ' + m.name));
+      ul.appendChild(li);
+      if(m.present) presentCount++;
+    });
+    document.getElementById('attendanceRate').innerText = members.length ? Math.round(100*presentCount/members.length)+'%' : '0%';
+  }
+  renderMembers();
+
+  // ---- 投票機能 ----
+  let votes = JSON.parse(localStorage.getItem('votes') || '{}');
+  function renderVoteOptions(){
+    const select = document.getElementById('voteTopic');
+    select.innerHTML = '';
+    topics.forEach((t,i)=>{
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.innerText = t.title;
+      select.appendChild(opt);
+    });
+    updateVoteCount();
+  }
+  function vote(choice){
+    const topicIndex = document.getElementById('voteTopic').value;
+    if(topicIndex==='') return;
+    votes[topicIndex] = votes[topicIndex] || {賛成:0, 反対:0};
+    votes[topicIndex][choice]++;
+    localStorage.setItem('votes', JSON.stringify(votes));
+    updateVoteCount();
+  }
+  function updateVoteCount(){
+    const topicIndex = document.getElementById('voteTopic').value;
+    if(topicIndex && votes[topicIndex]){
+      document.getElementById('voteYes').innerText = votes[topicIndex]['賛成'];
+      document.getElementById('voteNo').innerText = votes[topicIndex]['反対'];
+    }else{
+      document.getElementById('voteYes').innerText = 0;
+      document.getElementById('voteNo').innerText = 0;
+    }
+  }
+  renderVoteOptions();
+  document.getElementById('voteTopic').onchange = updateVoteCount;
+
+  // ---- タスク進捗管理 ----
+  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+  function addTask(){
+    const text = document.getElementById('taskInput').value;
+    if(!text) return;
+    tasks.push({text, done:false});
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+    document.getElementById('taskInput').value='';
+    renderTasks();
+  }
+  function renderTasks(){
+    const ul = document.getElementById('taskList');
+    ul.innerHTML='';
+    tasks.forEach((t,i)=>{
+      const li = document.createElement('li');
+      const cb = document.createElement('input');
+      cb.type='checkbox';
+      cb.checked = t.done;
+      cb.onchange = ()=>{
+        tasks[i].done = cb.checked;
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        renderTasks();
+      };
+      li.appendChild(cb);
+      li.appendChild(document.createTextNode(' ' + t.text));
+      if(t.done) li.classList.add('task-done');
+      ul.appendChild(li);
+    });
+  }
+  renderTasks();
+
+  // ---- 会議メモ ----
+  let memos = JSON.parse(localStorage.getItem('memos') || '[]');
+  function saveMemo(){
+    const text = document.getElementById('memoInput').value;
+    if(!text) return;
+    memos.push(text);
+    localStorage.setItem('memos', JSON.stringify(memos));
+    document.getElementById('memoInput').value='';
+    renderMemos();
+  }
+  function renderMemos(){
+    const ul = document.getElementById('memoList');
+    ul.innerHTML='';
+    memos.forEach((m,i)=>{
+      const li = document.createElement('li');
+      li.innerText = m;
+      ul.appendChild(li);
+    });
+  }
+  renderMemos();
+
+  function downloadMemo(){
+    let csv = 'メモ内容\n';
+    memos.forEach(m=>{ csv += `"${m.replace(/"/g,'""')}"\n`; });
+    const blob = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'meeting_memo.csv';
+    a.click();
+  }
+</script>
+
+</body>
+</html>
