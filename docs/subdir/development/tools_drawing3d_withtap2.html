@@ -4,22 +4,23 @@
 <meta charset="UTF-8">
 <title>3D Drawing Tool with Three.js</title>
 <style>
-  body { font-family: sans-serif; margin: 20px; }
-  button { margin: 5px; }
-  canvas { display: block; }
+  body { margin: 0; overflow: hidden; }
+  button, input { margin: 5px; z-index: 10; position: relative; }
+  #ui { position: absolute; top: 10px; left: 10px; background: rgba(255,255,255,0.8); padding: 5px; border-radius: 5px; }
 </style>
 </head>
 <body>
-  <h1>3D Drawing Tool with Three.js</h1>
-  <button onclick="exportData()">エクスポート</button>
-  <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+  <div id="ui">
+    <button onclick="exportData()">エクスポート</button>
+    <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+  </div>
   <div id="container"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.min.js"></script>
 
 <script>
 let scene, camera, renderer;
-let objects = []; // 3Dオブジェクトを管理
+let objects = [];
 
 init();
 animate();
@@ -28,18 +29,20 @@ function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0xffffff);
 
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const container = document.getElementById("container");
+
+    camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1000);
     camera.position.z = 5;
 
     renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setPixelRatio(window.devicePixelRatio); // ← スマホ対応
     renderer.setSize(window.innerWidth, window.innerHeight);
-    document.getElementById("container").appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
 
     const light = new THREE.DirectionalLight(0xffffff, 1);
     light.position.set(5, 5, 5).normalize();
     scene.add(light);
 
-    // デモ用に立方体を追加
     addCube(0, 0, 0, 0xff0000);
     addCube(2, 1, -1, 0x0000ff);
 
@@ -57,7 +60,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-// 立方体を追加
 function addCube(x, y, z, color=0x00ff00) {
     const geometry = new THREE.BoxGeometry(1,1,1);
     const material = new THREE.MeshPhongMaterial({color});
@@ -67,7 +69,6 @@ function addCube(x, y, z, color=0x00ff00) {
     objects.push(cube);
 }
 
-// エクスポート
 function exportData() {
     const data = objects.map(obj => ({
         type: "cube",
@@ -76,7 +77,6 @@ function exportData() {
         scale: obj.scale,
         color: obj.material.color.getHex()
     }));
-
     const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -86,20 +86,15 @@ function exportData() {
     URL.revokeObjectURL(url);
 }
 
-// インポート
 function importData(event) {
     const file = event.target.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = e => {
         try {
             const data = JSON.parse(e.target.result);
-
-            // 既存オブジェクトをクリア
             objects.forEach(obj => scene.remove(obj));
             objects = [];
-
             data.forEach(item => {
                 if (item.type === "cube") {
                     addCube(item.position.x, item.position.y, item.position.z, item.color);
