@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>迷路アプリ</title>
+  <style>
+    body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5; }
+    canvas { border: 2px solid #333; touch-action: none; }
+    #msg { position: absolute; top: 10px; font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div id="msg">スタートからゴールまで線をなぞって！</div>
+  <canvas id="maze" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("maze");
+    const ctx = canvas.getContext("2d");
+    const size = 20; // セルの大きさ
+    const rows = canvas.height / size;
+    const cols = canvas.width / size;
+
+    // ---- 迷路生成 (穴掘り法) ----
+    let grid = [];
+    for (let y = 0; y < rows; y++) {
+      grid[y] = [];
+      for (let x = 0; x < cols; x++) {
+        grid[y][x] = 1; // 1 = 壁
+      }
+    }
+    function carve(x, y) {
+      const dirs = [[0,-2],[0,2],[-2,0],[2,0]].sort(() => Math.random() - 0.5);
+      for (const [dx, dy] of dirs) {
+        let nx = x + dx, ny = y + dy;
+        if (ny > 0 && ny < rows && nx > 0 && nx < cols && grid[ny][nx] === 1) {
+          grid[y + dy/2][x + dx/2] = 0;
+          grid[ny][nx] = 0;
+          carve(nx, ny);
+        }
+      }
+    }
+    grid[1][1] = 0;
+    carve(1,1);
+    grid[rows-2][cols-2] = 0;
+
+    // ---- 描画 ----
+    function drawMaze() {
+      ctx.fillStyle = "white";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      for (let y=0;y<rows;y++) {
+        for (let x=0;x<cols;x++) {
+          if (grid[y][x] === 1) {
+            ctx.fillStyle = "black";
+            ctx.fillRect(x*size,y*size,size,size);
+          }
+        }
+      }
+      ctx.fillStyle = "green";
+      ctx.fillRect(size, size, size, size); // start
+      ctx.fillStyle = "red";
+      ctx.fillRect((cols-2)*size,(rows-2)*size,size,size); // goal
+    }
+    drawMaze();
+
+    // ---- プレイヤーの操作 ----
+    let player = {x:1,y:1};
+    function drawPlayer() {
+      drawMaze();
+      ctx.fillStyle = "blue";
+      ctx.beginPath();
+      ctx.arc(player.x*size+size/2, player.y*size+size/2, size/3, 0, Math.PI*2);
+      ctx.fill();
+    }
+    drawPlayer();
+
+    function moveTo(mx, my) {
+      let x = Math.floor(mx/size), y = Math.floor(my/size);
+      if (grid[y] && grid[y][x] === 0) { // 壁以外なら移動
+        player.x = x;
+        player.y = y;
+        drawPlayer();
+        if (x === cols-2 && y === rows-2) {
+          document.getElementById("msg").innerText = "🎉 ゴール！";
+        }
+      }
+    }
+
+    let isDrawing = false;
+    canvas.addEventListener("mousedown", e => { isDrawing=true; moveTo(e.offsetX,e.offsetY); });
+    canvas.addEventListener("mousemove", e => { if(isDrawing) moveTo(e.offsetX,e.offsetY); });
+    canvas.addEventListener("mouseup", ()=>{isDrawing=false;});
+
+    canvas.addEventListener("touchstart", e => {
+      isDrawing = true;
+      const rect = canvas.getBoundingClientRect();
+      moveTo(e.touches[0].clientX-rect.left, e.touches[0].clientY-rect.top);
+    });
+    canvas.addEventListener("touchmove", e => {
+      if (isDrawing) {
+        const rect = canvas.getBoundingClientRect();
+        moveTo(e.touches[0].clientX-rect.left, e.touches[0].clientY-rect.top);
+      }
+    });
+    canvas.addEventListener("touchend", ()=>{isDrawing=false;});
+  </script>
+</body>
+</html>
