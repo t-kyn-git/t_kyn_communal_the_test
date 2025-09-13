@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoJSONインポート/エクスポート with OpenStreetMap (詳細情報版)</title>
+    <!-- Leaflet.jsのCSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <style>
+        /* 基本的なスタイル */
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #map {
+            height: 100%;
+            flex-grow: 1;
+        }
+        .controls {
+            padding: 10px;
+            background: #f2f2f2;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .controls span {
+            font-size: 0.9em;
+        }
+        button, input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #e6e6e6;
+        }
+
+        /* ポップアップのスタイル */
+        .popup-container {
+            width: 250px;
+            font-size: 14px;
+        }
+        .popup-container h3 {
+            margin: 0 0 10px;
+            font-size: 16px;
+        }
+        .popup-container p {
+            margin: 5px 0;
+            white-space: pre-wrap; /* メモの改行を反映 */
+            word-wrap: break-word;
+        }
+        .popup-container .form-group {
+            margin-bottom: 10px;
+        }
+        .popup-container label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+        .popup-container input[type="text"],
+        .popup-container select,
+        .popup-container textarea {
+            width: 95%;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        .popup-container textarea {
+            height: 60px;
+            resize: vertical;
+        }
+        .popup-container .popup-buttons {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="controls">
+        <input type="file" id="importFile" accept=".geojson,.json">
+        <button id="exportButton">現在のマーカーをエクスポート</button>
+        <span>地図をクリックしてマーカーを追加し、情報を入力してください。</span>
+    </div>
+    <div id="map"></div>
+
+    <!-- Leaflet.jsのJavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+     crossorigin=""></script>
+
+    <script>
+        // --- 設定項目 ---
+        // カテゴリの選択肢をここで定義します。自由に追加・変更してください。
+        const categories = ['お店', '観光地', 'お気に入り', '訪問予定', 'その他'];
+        // ----------------
+
+        // 1. 地図の初期化
+        const map = L.map('map').setView([35.681236, 139.767125], 13);
+
+        // 2. OpenStreetMapタイルレイヤーを追加
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // マーカーを管理するためのレイヤーグループ
+        const markersLayer = L.layerGroup().addTo(map);
+
+        // HTML文字列を安全にエスケープする関数
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // 3. ポップアップのHTMLを生成する関数
+        function createPopupContent(marker) {
+            const props = marker.feature.properties;
+            const container = document.createElement('div');
+            container.className = 'popup-container';
+
+            // 表示モードのHTMLを生成
+            const createViewHtml = () => `
+                <h3>${escapeHtml(props.title) || '（件名なし）'}</h3>
+                <p><strong>カテゴリ:</strong> ${escapeHtml(props.category)}</p>
+                <p>${escapeHtml(props.memo).replace(/\n/g, '<br>') || '（メモなし）'}</p>
+                <div class="popup-buttons">
+                    <button class="edit-btn">編集</button>
+                    <button class="delete-btn">削除</button>
+                </div>
+            `;
+
+            // 編集モードのHTMLを生成
+            const createEditHtml = () => {
+                const categoryOptions = categories.map(cat =>
+                    `<option value="${escapeHtml(cat)}" ${cat === props.category ? 'selected' : ''}>${escapeHtml(cat)}</option>`
+                ).join('');
+
+                return `
+                    <div class="form-group">
+                        <label>件名:</label>
+                        <input type="text" class="title-input" value="${escapeHtml(props.title)}">
+                    </div>
+                    <div class="form-group">
+                        <label>カテゴリ:</label>
+                        <select class="category-select">${categoryOptions}</select>
+                    </div>
+                    <div class="form-group">
+                        <label>メモ:</label>
+                        <textarea class="memo-input">${escapeHtml(props.memo)}</textarea>
+                    </div>
+                    <div class="popup-buttons">
+                        <button class="save-btn">保存</button>
+                        <button class="cancel-btn">キャンセル</button>
+                    </div>
+                `;
+            };
+            
+            // 初期状態は表示モード
+            container.innerHTML = createViewHtml();
+
+            // イベント処理を一括で設定
+            container.addEventListener('click', (e) => {
+                // 削除ボタン
+                if (e.target.classList.contains('delete-btn')) {
+                    markersLayer.removeLayer(marker);
+                }
+                // 編集ボタン
+                if (e.target.classList.contains('edit-btn')) {
+                    container.innerHTML = createEditHtml();
+                }
+                // キャンセルボタン
+                if (e.target.classList.contains('cancel-btn')) {
+                    container.innerHTML = createViewHtml();
+                }
+                // 保存ボタン
+                if (e.target.classList.contains('save-btn')) {
+                    props.title = container.querySelector('.title-input').value;
+                    props.category = container.querySelector('.category-select').value;
+                    props.memo = container.querySelector('.memo-input').value;
+                    container.innerHTML = createViewHtml();
+                    // ポップアップのサイズを再計算
+                    marker.getPopup().update();
+                }
+            });
+
+            return container;
+        }
+
+        // 4. マーカーを追加するメインの関数
+        function addMarker(lat, lng, properties = {}) {
+            const defaultProps = {
+                title: properties.title || '',
+                memo: properties.memo || '',
+                category: properties.category || categories[0]
+            };
+
+            const marker = L.marker([lat, lng]).addTo(markersLayer);
+
+            // GeoJSON互換のデータをマーカーに持たせる
+            marker.feature = {
+                type: 'Feature',
+                geometry: {
+                    type: 'Point',
+                    coordinates: [lng, lat]
+                },
+                properties: defaultProps
+            };
+
+            marker.bindPopup(() => createPopupContent(marker), {
+                minWidth: 280 // ポップアップの最小幅を指定
+            });
+            
+            return marker;
+        }
+
+        // 5. 地図クリックでマーカーを追加し、ポップアップを開く
+        map.on('click', function(e) {
+            const newMarker = addMarker(e.latlng.lat, e.latlng.lng);
+            newMarker.openPopup();
+        });
+
+        // 6. エクスポート機能
+        document.getElementById('exportButton').addEventListener('click', () => {
+            const geojson = {
+                "type": "FeatureCollection",
+                "features": []
+            };
+
+            markersLayer.eachLayer(marker => {
+                // マーカーに保存されているfeatureオブジェクトをそのまま利用
+                if (marker.feature) {
+                    // 最新の座標を反映
+                    marker.feature.geometry.coordinates = [marker.getLatLng().lng, marker.getLatLng().lat];
+                    geojson.features.push(marker.feature);
+                }
+            });
+
+            const geojsonStr = JSON.stringify(geojson, null, 2);
+            const blob = new Blob([geojsonStr], { type: 'application/json' });
+            
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'markers.geojson';
+            a.click();
+            URL.revokeObjectURL(a.href);
+        });
+
+        // 7. インポート機能
+        document.getElementById('importFile').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const geojson = JSON.parse(e.target.result);
+                    markersLayer.clearLayers();
+
+                    L.geoJSON(geojson, {
+                        onEachFeature: (feature, layer) => {
+                           if (feature.geometry && feature.geometry.type === 'Point') {
+                               const [lng, lat] = feature.geometry.coordinates;
+                               // feature.propertiesを渡してマーカーを復元
+                               addMarker(lat, lng, feature.properties);
+                           }
+                        }
+                    });
+                    if (geojson.features.length > 0) {
+                        map.fitBounds(markersLayer.getBounds(), {padding: [50, 50]});
+                    }
+                } catch (error) {
+                    alert('ファイルの読み込みに失敗しました。有効なGeoJSONファイルを選択してください。');
+                    console.error(error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = ''; // 同じファイルを再度選択できるように値をリセット
+        });
+    </script>
+
+</body>
+</html>
