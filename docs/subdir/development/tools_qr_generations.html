@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>QRコード生成</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<h3>QRコード生成例</h3>
+<div id="qrcode"></div>
+<script>
+  // QRコードにしたい文字列
+  var text = "https://t-kyn-git.github.io/t_kyn_communal_the_test/subdir/toppage.html";
+  new QRCode(document.getElementById("qrcode"), text);
+</script>
+</body>
+</html>
