@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>迷路 - HTMLのみで完結（タッチ/マウス対応）</title>
+<style>
+  :root{--bg:#0b1220;--path:#eaf2ff;--wall:#0f2b4b;--trace:#2ecc71;--fail:#ff4d4d;--goal:#ffd166;}
+  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:system-ui,Arial;}
+  header,footer{padding:8px 12px;text-align:center;font-weight:700;}
+  main{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px;}
+  #canvasWrap{width:100%;max-width:820px;aspect-ratio:1/1;background:var(--wall);touch-action:none;border-radius:8px;overflow:hidden;}
+  canvas{display:block;width:100%;height:100%;}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  button{padding:8px 12px;border-radius:6px;border:0;background:#1976d2;color:#fff;font-weight:600;cursor:pointer;}
+  button.secondary{background:#444;}
+  .hint{font-size:14px;color:#ddd;text-align:center;max-width:820px;}
+  .status{font-weight:700;}
+  pre.commands{background:#071126;color:#bfe3ff;padding:10px;border-radius:6px;max-width:820px;overflow:auto;}
+</style>
+</head>
+<body>
+<header>▪️▪️▪️</header>
+
+<main>
+  <div class="status" id="status">読み込み中…</div>
+
+  <div id="canvasWrap">
+    <canvas id="mazeCanvas"></canvas>
+  </div>
+
+  <div class="controls">
+    <button id="regen">ランダム迷路を生成</button>
+    <button id="resize">サイズ切替（グリッド変更）</button>
+    <button class="secondary" id="showSolution">解答パスを表示</button>
+  </div>
+
+  <div class="hint">開始は左上セル（緑の始点）を押してなぞってください。ゴールは右下（黄色）。壁を越えると失敗します。</div>
+
+  <pre class="commands">
+# 保存:
+save as maze.html
+
+# 実行:
+# ブラウザで maze.html を開く（ローカルでOK）
+  </pre>
+</main>
+
+<footer>▪️▪️▪️</footer>
+
+<script>
+/*
+  迷路生成: 深さ優先（Recursive backtracker）
+  なぞり判定: pointer events をセル単位で判定。
+  - 開始は左上セルの中から pointerdown
+  - pointermove で現在セルを取得、直前セルと隣接し、通路があることを確認して進行
+  - もし壁を通る（通路がない隣接）か不連続なジャンプがあれば失敗（リセット）
+  - 右下セルに到達したら成功表示
+*/
+
+const canvas = document.getElementById('mazeCanvas');
+const ctx = canvas.getContext('2d', { alpha:false });
+let cols = 21; // 奇数推奨: 通路と壁の扱いを簡素化
+let rows = 21;
+let cellSize = 20;
+let grid = []; // cells
+let stack = [];
+let widthPx, heightPx;
+let startCell = {x:0,y:0}, goalCell;
+let tracing = false;
+let tracePath = [];
+let lastCell = null;
+let statusEl = document.getElementById('status');
+
+function setCanvasSize(){
+  // キャンバス物理サイズをcssに合わせて高DPi対応
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = Math.floor(rect.width * devicePixelRatio);
+  canvas.height = Math.floor(rect.height * devicePixelRatio);
+  canvas.style.width = rect.width + 'px';
+  canvas.style.height = rect.height + 'px';
+  ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  widthPx = rect.width;
+  heightPx = rect.height;
+  computeCellSize();
+}
+
+function computeCellSize(){
+  // グリッドに合わせてセルサイズを自動計算
+  cellSize = Math.floor(Math.min(widthPx / cols, heightPx / rows));
+}
+
+function makeGrid(c, r){
+  cols = c; rows = r;
+  grid = new Array(rows);
+  for(let y=0;y<rows;y++){
+    grid[y] = new Array(cols);
+    for(let x=0;x<cols;x++){
+      // cell walls: [N,E,S,W] true means wall exists
+      grid[y][x] = {x,y,visited:false,walls:[true,true,true,true]};
+    }
+  }
+  startCell = {x:0,y:0};
+  goalCell = {x:cols-1,y:rows-1};
+}
+
+function neighbors(cell){
+  const n = [];
+  const dirs = [
+    {dx:0,dy:-1,dir:0,opp:2},
+    {dx:1,dy:0,dir:1,opp:3},
+    {dx:0,dy:1,dir:2,opp:0},
+    {dx:-1,dy:0,dir:3,opp:1},
+  ];
+  for(const d of dirs){
+    const nx = cell.x + d.dx, ny = cell.y + d.dy;
+    if(nx>=0 && nx<cols && ny>=0 && ny<rows) n.push({cell:grid[ny][nx],dir:d.dir,opp:d.opp});
+  }
+  return n;
+}
+
+function carveMaze(){
+  // 深さ優先スタック
+  const start = grid[startCell.y][startCell.x];
+  stack = [start];
+  for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) grid[y][x].visited=false;
+  start.visited = true;
+
+  while(stack.length){
+    const current = stack[stack.length-1];
+    const neigh = neighbors(current).filter(n=>!n.cell.visited);
+    if(neigh.length){
+      const pick = neigh[Math.floor(Math.random()*neigh.length)];
+      // 壁を壊す
+      current.walls[pick.dir] = false;
+      pick.cell.walls[pick.opp] = false;
+      pick.cell.visited = true;
+      stack.push(pick.cell);
+    } else {
+      stack.pop();
+    }
+  }
+}
+
+function drawMaze(showSolution=false){
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall').trim() || '#0f2b4b';
+  ctx.fillRect(0,0,widthPx,heightPx);
+
+  const offsetX = (widthPx - cellSize*cols)/2;
+  const offsetY = (heightPx - cellSize*rows)/2;
+
+  // path fill
+  for(let y=0;y<rows;y++){
+    for(let x=0;x<cols;x++){
+      const cell = grid[y][x];
+      const px = offsetX + x*cellSize;
+      const py = offsetY + y*cellSize;
+      // 背景（通路色）
+      ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--path').trim() || '#eaf2ff';
+      ctx.fillRect(px,py,cellSize,cellSize);
+
+      // draw walls
+      ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--wall').trim() || '#0f2b4b';
+      ctx.lineWidth = Math.max(2, cellSize * 0.12);
+      ctx.beginPath();
+      if(cell.walls[0]){ ctx.moveTo(px,py); ctx.lineTo(px+cellSize,py); }
+      if(cell.walls[1]){ ctx.moveTo(px+cellSize,py); ctx.lineTo(px+cellSize,py+cellSize); }
+      if(cell.walls[2]){ ctx.moveTo(px+cellSize,py+cellSize); ctx.lineTo(px,py+cellSize); }
+      if(cell.walls[3]){ ctx.moveTo(px,py+cellSize); ctx.lineTo(px,py); }
+      ctx.stroke();
+    }
+  }
+
+  // start & goal markers
+  const startPx = {x: offsetX + startCell.x*cellSize, y: offsetY + startCell.y*cellSize};
+  const goalPx = {x: offsetX + goalCell.x*cellSize, y: offsetY + goalCell.y*cellSize};
+  // start small green square
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--trace').trim() || '#2ecc71';
+  ctx.fillRect(startPx.x+cellSize*0.15, startPx.y+cellSize*0.15, cellSize*0.7, cellSize*0.7);
+  // goal yellow
+  ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--goal').trim() || '#ffd166';
+  ctx.fillRect(goalPx.x+cellSize*0.12, goalPx.y+cellSize*0.12, cellSize*0.76, cellSize*0.76);
+
+  // draw trace path
+  if(tracePath.length){
+    ctx.lineWidth = Math.max(3, cellSize*0.18);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    for(let i=0;i<tracePath.length;i++){
+      const p = tracePath[i];
+      const cx = offsetX + (p.x+0.5)*cellSize;
+      const cy = offsetY + (p.y+0.5)*cellSize;
+      if(i===0) ctx.moveTo(cx,cy); else ctx.lineTo(cx,cy);
+    }
+    ctx.strokeStyle = tracing ? (getComputedStyle(document.documentElement).getPropertyValue('--trace').trim() || '#2ecc71') : (getComputedStyle(document.documentElement).getPropertyValue('--fail').trim() || '#ff4d4d');
+    ctx.stroke();
+  }
+
+  // optional: show solution by BFS if requested
+  if(showSolution){
+    const sol = shortestPathBFS();
+    if(sol){
+      ctx.lineWidth = Math.max(2, cellSize*0.12);
+      ctx.beginPath();
+      for(let i=0;i<sol.length;i++){
+        const p = sol[i];
+        const cx = offsetX + (p.x+0.5)*cellSize;
+        const cy = offsetY + (p.y+0.5)*cellSize;
+        if(i===0) ctx.moveTo(cx,cy); else ctx.lineTo(cx,cy);
+      }
+      ctx.strokeStyle = '#ffffff66';
+      ctx.stroke();
+    }
+  }
+}
+
+function shortestPathBFS(){
+  // BFS on graph of cells using openings (walls false)
+  const q = [];
+  const prev = Array.from({length:rows},()=>Array(cols).fill(null));
+  q.push(startCell);
+  prev[startCell.y][startCell.x] = {x:-1,y:-1};
+  while(q.length){
+    const cur = q.shift();
+    if(cur.x===goalCell.x && cur.y===goalCell.y) break;
+    const cell = grid[cur.y][cur.x];
+    // directions N,E,S,W
+    const dd = [{dx:0,dy:-1,dir:0},{dx:1,dy:0,dir:1},{dx:0,dy:1,dir:2},{dx:-1,dy:0,dir:3}];
+    for(const d of dd){
+      if(!cell.walls[d.dir]){
+        const nx = cur.x + d.dx, ny = cur.y + d.dy;
+        if(prev[ny][nx]===null){
+          prev[ny][nx] = cur;
+          q.push({x:nx,y:ny});
+        }
+      }
+    }
+  }
+  if(prev[goalCell.y][goalCell.x]===null) return null;
+  const path = [];
+  let cur = goalCell;
+  while(!(cur.x===startCell.x && cur.y===startCell.y)){
+    path.push(cur);
+    cur = prev[cur.y][cur.x];
+  }
+  path.push(startCell);
+  path.reverse();
+  return path;
+}
+
+function cellAtClient(x,y){
+  const rect = canvas.getBoundingClientRect();
+  const offsetX = (rect.width - cellSize*cols)/2;
+  const offsetY = (rect.height - cellSize*rows)/2;
+  const cx = x - rect.left;
+  const cy = y - rect.top;
+  const gridX = Math.floor((cx - offsetX) / cellSize);
+  const gridY = Math.floor((cy - offsetY) / cellSize);
+  if(gridX<0 || gridY<0 || gridX>=cols || gridY>=rows) return null;
+  return {x:gridX,y:gridY};
+}
+
+function cellsAreAdjacent(a,b){
+  const dx = Math.abs(a.x-b.x), dy = Math.abs(a.y-b.y);
+  return (dx+dy)===1;
+}
+
+function passageBetween(a,b){
+  if(!cellsAreAdjacent(a,b)) return false;
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const dir = dy===-1?0:dx===1?1:dy===1?2:3;
+  return !grid[a.y][a.x].walls[dir];
+}
+
+function startTracing(start){
+  tracing = true;
+  tracePath = [start];
+  lastCell = start;
+  statusEl.textContent = 'なぞり中…';
+  drawMaze();
+}
+
+function failTrace(){
+  tracing = false;
+  statusEl.textContent = '壁を通ったか通路外に出ました — 失敗。画面をタップして再スタートしてください。';
+  // mark trace as fail (red) and keep it visible briefly
+  drawMaze(false);
+}
+
+function successTrace(){
+  tracing = false;
+  statusEl.textContent = 'おめでとう！ゴールしました🎉 — 「ランダム迷路を生成」で新しい迷路。';
+  drawMaze(false);
+}
+
+function pointerDownHandler(e){
+  e.preventDefault();
+  const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+  const c = cellAtClient(p.clientX, p.clientY);
+  if(!c){ statusEl.textContent = '開始セルを押してください（左上）。'; return; }
+  // must start inside startCell
+  if(c.x===startCell.x && c.y===startCell.y){
+    startTracing(c);
+  } else {
+    statusEl.textContent = '開始は左上セル（緑）から。';
+  }
+}
+
+function pointerMoveHandler(e){
+  if(!tracing) return;
+  e.preventDefault();
+  const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+  const c = cellAtClient(p.clientX, p.clientY);
+  if(!c){ failTrace(); return; }
+  // if same as last, ignore
+  if(c.x===lastCell.x && c.y===lastCell.y) return;
+  // must be adjacent and must have passage both ways
+  if(!cellsAreAdjacent(c,lastCell) || !passageBetween(lastCell,c)){
+    failTrace();
+    drawMaze(false);
+    return;
+  }
+  // append
+  tracePath.push(c);
+  lastCell = c;
+  drawMaze(false);
+
+  // check goal
+  if(c.x===goalCell.x && c.y===goalCell.y){
+    successTrace();
+    drawMaze(false);
+  }
+}
+
+function pointerUpHandler(e){
+  if(!tracing) return;
+  // If released before reaching goal => fail
+  if(lastCell.x===goalCell.x && lastCell.y===goalCell.y){
+    successTrace();
+  } else {
+    failTrace();
+  }
+  drawMaze(false);
+}
+
+function attachPointerEvents(){
+  const wrap = canvas.parentElement;
+  // touch
+  wrap.addEventListener('touchstart', pointerDownHandler, {passive:false});
+  wrap.addEventListener('touchmove', pointerMoveHandler, {passive:false});
+  wrap.addEventListener('touchend', pointerUpHandler, {passive:false});
+  // mouse
+  wrap.addEventListener('mousedown', pointerDownHandler);
+  window.addEventListener('mousemove', pointerMoveHandler);
+  window.addEventListener('mouseup', pointerUpHandler);
+}
+
+function init(c=21,r=21){
+  makeGrid(c,r);
+  setCanvasSize();
+  carveMaze();
+  tracePath = [];
+  lastCell = null;
+  tracing = false;
+  statusEl.textContent = '左上を押してなぞってゴール（右下）へ。';
+  drawMaze(false);
+}
+
+window.addEventListener('resize', ()=>{
+  setCanvasSize();
+  drawMaze(false);
+});
+
+document.getElementById('regen').addEventListener('click', ()=>{
+  init(cols,rows);
+});
+
+document.getElementById('resize').addEventListener('click', ()=>{
+  // toggle between sizes
+  if(cols===21){ init(31,31); } else if(cols===31){ init(15,15); } else { init(21,21); }
+});
+
+document.getElementById('showSolution').addEventListener('click', ()=>{
+  drawMaze(true);
+});
+
+attachPointerEvents();
+setCanvasSize();
+init(cols,rows);
+
+// 初期ヒント: スマホで使うなら両手の親指や指でなぞってみてください
+</script>
+
+</body>
+</html>
