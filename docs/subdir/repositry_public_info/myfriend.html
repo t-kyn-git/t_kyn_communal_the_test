@@ -1,1 +1,73 @@
-Always shining
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Docker Compose configuration</title>
+    <!-- Mermaid CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <style>
+        body {
+        margin: 0;
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        background: linear-gradient(270deg, #f8f9fa, #e9ecef, #dee2e6, #f1f3f5);
+        background-size: 800% 800%;
+        animation: gradientFlow 20s ease infinite;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+        }
+        h2 {
+        margin-bottom: 20px;
+        }
+        .mermaid {
+        background: #ffffffcc; /* 半透明の白 */
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        max-width: 90%;
+        backdrop-filter: blur(1px); /* ふわっと */
+        }
+        @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <h2>Nextcloud Architecture</h2>
+    <h2>Always shining</h2>
+    <p>Nextcloud is a self-hosted productivity platform that allows you to manage your files, calendars, contacts, and more. <br>
+        It provides a secure and private cloud solution for individuals and organizations.<br>
+        This diagram illustrates a Docker Compose setup for Nextcloud with MariaDB and NGINX services.<br>
+        The services are connected through Docker volumes for data persistence.<br>
+    </p>
+    <div class="mermaid">
+        graph TD
+            subgraph Volumes
+                db_data["db_data"]
+                nextcloud_data["nextcloud_data"]
+            end
+
+            subgraph Services
+                DB["MariaDB 10.11<br>Container: nextcloud_db"]
+                Nextcloud["Nextcloud 29<br>Container: nextcloud_app"]
+                Nginx["NGINX Alpine<br>Container: nextcloud_nginx"]
+            end
+
+            DB -->|uses| db_data
+            Nextcloud -->|uses| nextcloud_data
+            Nextcloud -->|connects to| DB
+            Nginx -->|depends_on| Nextcloud
+    </div>
+</body>
+</html>

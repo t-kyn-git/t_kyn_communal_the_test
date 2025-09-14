@@ -1,1 +1,231 @@
-If we pick up our shattered dreams
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Web Application Architecture</title>
+
+    <!-- Mermaid.js -->
+    <script type="module">
+      import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+      mermaid.initialize({ startOnLoad: true });
+    </script>
+
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            color: #333;
+            background: linear-gradient(135deg, #a8e0ff, #c9a8ff, #ffb3e1, #a8ffcb);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .content-wrapper {
+            background-color: rgba(255, 255, 255, 0.8); /* 背景が少し見えるように調整 */
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .zoom-controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .zoom-controls button {
+            padding: 8px 15px;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            width: 100px;
+        }
+        .zoom-controls button:hover { background-color: #e0e0e0; }
+
+        .mermaid-container {
+            overflow: auto;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.7); /* こちらも少し透明に */
+        }
+
+        /* 重要: SVG と .mermaid ラッパーに transform の振る舞いを整える */
+        .mermaid-container .mermaid,
+        .mermaid-container svg {
+            display: inline-block;
+            transform-origin: center center;
+            transition: transform 0.2s ease-in-out;
+            transform-box: fill-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <h2>Django Web applications</h2>
+        <h2>If we pick up our shattered dreams</h2>
+        <p>
+            This diagram illustrates a standard web application architecture using <strong>Nginx</strong> as the web server, <strong>Django</strong> as the application framework, and <strong>SQLite</strong> as the database. It visualizes the flow of how user requests are processed and returned as web pages.
+        </p>
+        
+        <h4>Architecture Explanation</h4>
+        <p>
+            <ul>
+            User's Browser (Client): This is the starting point for a user to access the website. An HTTP request is sent from here.<br>
+            Nginx (Web Server / Reverse Proxy):** Acts as the gatekeeper that first receives requests. It directly serves static files like images, CSS, and JavaScript at high speed. Meanwhile, requests that require dynamic processing are forwarded (proxied) to the back-end application server (Gunicorn).<br>
+            Gunicorn (WSGI Server): Receives requests forwarded from Nginx and is responsible for calling the main Django application via Python's standard interface (WSGI).<br>
+            Django Application (The Application Itself):<br>
+                Views: The "control center" of the application, which executes the necessary logic based on the request. It fetches data from the database, performs calculations, and coordinates the response.<br>
+                Models: The "blueprint" that defines the database table structure. Through Django's ORM (Object-Relational Mapper), it allows developers to interact with the database using Python code instead of writing raw SQL.<br>
+                Templates: The "presentation layer" that generates the final HTML displayed to the user. It creates dynamic pages by embedding data passed from the Views.<br>
+            SQLite (Database): This is where the application's data (such as user information, posts, etc.) is stored. Data is read from and written to the database through Django's Models.<br>
+            </ul>
+        </p>
+
+        <div class="mermaid-container">
+            <pre class="mermaid">
+                graph LR
+                    subgraph ClientSG ["Client"]
+                        Browser[User's Browser]
+                    end
+
+                    subgraph WebServer ["Web Server"]
+                        Nginx[Nginx<br>Reverse Proxy & Static Files]
+                    end
+
+                    subgraph AppInfra ["Application Infrastructure"]
+                        Gunicorn[Gunicorn<br>WSGI Server]
+                        
+                        %% DjangoAppを最初からサブグラフとして定義
+                        subgraph DjangoApp ["Django Application"]
+                            direction TB
+                            Views[Views<br>Request/Response Logic]
+                            Models[Models<br>Data & ORM]
+                            Templates[Templates<br>HTML Presentation]
+                        end
+                        
+                        DB[(SQLite<br>Database)]
+                    end
+
+                    %% --- Connections ---
+                    Browser -- "HTTP Request" --> Nginx
+                    
+                    Nginx -- "Serves Static Files" --> Browser
+                    Nginx -- "Proxy Pass" --> Gunicorn
+                    
+                    %% GunicornはDjangoのViewsを呼び出す
+                    Gunicorn -- "Calls" --> Views
+                    
+                    %% Django内部の連携
+                    Views -- "Uses" --> Models
+                    Views -- "Renders" --> Templates
+                    Models -- "Reads/Writes Data" --> DB
+                    
+                    %% レスポンスの流れ
+                    Views -- "HTTP Response" --> Gunicorn
+                    Gunicorn --> Nginx
+                    Nginx --> Browser
+            </pre>
+        </div>
+
+        <div class="zoom-controls">
+            <button id="zoom-in" title="拡大">Zoom In</button><br>
+            <button id="zoom-out" title="縮小">Zoom Out</button><br>
+            <button id="zoom-reset" title="リセット">Reset</button><br>
+        </div>
+    </div>
+
+    <!-- 正常動作が確認されているズーム用スクリプト -->
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let currentScale = 1.0;
+        const scaleStep = 0.1;
+        const minScale = 0.5;
+        const maxScale = 2.0;
+        let isZoomInitialized = false;
+
+        const mermaidContainer = document.querySelector('.mermaid-container');
+        if (!mermaidContainer) return;
+
+        const findTarget = () => {
+            const mermaidDiv = mermaidContainer.querySelector('.mermaid');
+            if (mermaidDiv) return mermaidDiv;
+            const svg = mermaidContainer.querySelector('svg');
+            if (svg) return svg;
+            return null;
+        };
+
+        const updateTransform = (el) => {
+            el.style.transform = `scale(${currentScale.toFixed(2)})`;
+        };
+
+        const setupZoom = (targetElement) => {
+            if (!targetElement || isZoomInitialized) return;
+
+            targetElement.style.transformOrigin = 'center center';
+            targetElement.style.transition = 'transform 0.2s ease-in-out';
+            if (targetElement.tagName && targetElement.tagName.toLowerCase() === 'svg') {
+                targetElement.style.transformBox = 'fill-box';
+                targetElement.style.display = 'inline-block';
+            }
+
+            document.getElementById('zoom-in').addEventListener('click', () => {
+                if (currentScale < maxScale) {
+                    currentScale = Math.min(maxScale, currentScale + scaleStep);
+                    updateTransform(targetElement);
+                }
+            });
+
+            document.getElementById('zoom-out').addEventListener('click', () => {
+                if (currentScale > minScale) {
+                    currentScale = Math.max(minScale, currentScale - scaleStep);
+                    updateTransform(targetElement);
+                }
+            });
+
+            document.getElementById('zoom-reset').addEventListener('click', () => {
+                currentScale = 1.0;
+                updateTransform(targetElement);
+            });
+
+            updateTransform(targetElement);
+            isZoomInitialized = true;
+        };
+
+        const immediate = findTarget();
+        if (immediate) setupZoom(immediate);
+
+        const observer = new MutationObserver((mutationsList, obs) => {
+            if (isZoomInitialized) { obs.disconnect(); return; }
+            const found = findTarget();
+            if (found) {
+                setupZoom(found);
+                obs.disconnect();
+            }
+        });
+
+        observer.observe(mermaidContainer, { childList: true, subtree: true });
+
+        setTimeout(() => {
+            if (!isZoomInitialized) {
+                const found = findTarget();
+                if (found) {
+                    setupZoom(found);
+                    observer.disconnect();
+                }
+            }
+        }, 2000);
+    });
+    </script>
+</body>
+</html>
