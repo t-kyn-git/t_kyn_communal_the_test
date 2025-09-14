@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>k3d アーキテクチャ図</title>
+    <title>k3d Architecture</title>
     <style>
         body {
             font-family: sans-serif;
@@ -44,11 +44,12 @@
 <body>
 
     <div class="container">
-        <h1>k3d アーキテクチャ図</h1>
-        <p>提供されたREADME.mdに基づき、t_kynシステムのk3dアーキテクチャを視覚化したものです。</p>
+        <h1>k3d Architecture</h1>
+        <p>This diagram illustrates the architecture of a k3d cluster running in GitHub Codespaces of t_kyn system, <br>
+            including various services, pods, and their interactions.</p>
 
-        <h2>1. Mermaid図</h2>
-        <p>システム全体のコンポーネントとデータの流れを示します。</p>
+        <h2>1. Mermaid Diagram</h2>
+        <p>The diagram below represents the components and data flow of the entire system.</p>
         <div class="mermaid">
 graph TD
     subgraph "User Environment"
@@ -127,11 +128,11 @@ graph TD
     FluentdServer -- "Aggregates Logs" --> NginxPod1 & PythonPod1 & MySQLPod1
         </div>
 
-        <h2>2. PlantUML図</h2>
-        <p>同じアーキテクチャをコンポーネント図のスタイルで表現したものです。</p>
+        <h2>2. PlantUML</h2>
+        <p>The same architecture represented in a component diagram style.</p>
         <img class="plantuml-img" src="https://www.plantuml.com/plantuml/svg/VP1BRT8n48Rl-HH5sMvL59R4-Jm720LKbYc0f_uF34Hl8D1Q166g082_y-Xq65V9j1uMTAI60p4s9u82t6-u5v8jQ2M42l6M20p0tE7Qk_23Rj4pE7iBv8r-s4E9Hl8-yqI-Xq7P5Q1wR4K-n64mKac55bYvL9R9A0u009pX9m3-8D00nL-9l-9hXQh7p4-m607fW4U6c4O9X-E6vYm8e8m_4g6b-d3nLd5f4iC3F-T3c5mK20t4l5l6j5D0b0u6Ym62n5C3H1i2t5G2n0O-T3b4X-E6Yl4i-XnB-G6Yg4e-Wp2b-Wp2b-g3mHnBd5j4hC3F-n3i5g20X-f60vB-g1_5g2_25H3E2X-E6vYg8f8g_4h6b-W_3v9j4iC3F-n4d2n4O-HnCd_2n4O8X-f40nB-Z3c5mK20v4j6f4h_2m_m1c5mK20d0f4d3c5f4n4f2p_sA6YvL5R8-WqI-XnB-G6vYl5f8l_4h6b-d3nLf4t_g-Z24b5l6j5D0b0p7Ym62p5C3X-g_m5C1H2n4t_oO-Lnb_W35l6j5D1c6t5C3nC9_4t5C3X_oO-T24H-g_m0" alt="PlantUML Architecture Diagram">
 
-        <h2>参考：HTMLに埋め込んだコード</h2>
+        <h2>References URLs.</h2>
 
         <h3>Mermaid Code</h3>
         <pre><code>
