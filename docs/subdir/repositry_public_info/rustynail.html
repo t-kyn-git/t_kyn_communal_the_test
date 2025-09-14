@@ -74,33 +74,39 @@
         <h2>a rose drawn on a piece of memory</h2>
         <h2>Docker Compose 構成図</h2>
         <p>
-            Ansible が複数ノードを管理する例です。ノードは将来的に増やせるように図に「Future Node」も用意しています。
+            This configuration shows an Ansible container managing multiple node containers.<br>
+            Each node provides services on its own port, and the Ansible container controls them.<br>
+            Adding new nodes in the future is also easy.<br>
+            For example, if a new node called NodeX is added, it will be reflected in the configuration diagram as follows.<br>
+            This indicates that the added node will be managed by the Ansible container.<br>
+            This improves the scalability and flexibility of the system.<br>
+            For example, if a new node called NodeX is added, it will be reflected in the configuration diagram as follows.<br>
         </p>
 
         <div class="mermaid-container">
             <pre class="mermaid">
-graph TD
-    subgraph Services
-        Ansible["Ansible Container<br>Container: ansible"]
+                graph TD
+                    subgraph Services
+                        Ansible["Ansible Container<br>Container: ansible"]
 
-        %% ノード群 (将来的に増やせる形)
-        Node01["Node01<br>Container: node01<br>Port: port1"]
-        Node02["Node02<br>Container: node02<br>Port: port2"]
-        Node03["Node03<br>Container: node03<br>Port: port3"]
-        Node04["Node04<br>Container: node04<br>Port: port4"]
-        Node05["Node05<br>Container: node05<br>Port: port5"]
-    end
+                        %% ノード群 (将来的に増やせる形)
+                        Node01["Node01<br>Container: node01<br>Port: port1"]
+                        Node02["Node02<br>Container: node02<br>Port: port2"]
+                        Node03["Node03<br>Container: node03<br>Port: port3"]
+                        Node04["Node04<br>Container: node04<br>Port: port4"]
+                        Node05["Node05<br>Container: node05<br>Port: port5"]
+                    end
 
-    Ansible --> Node01
-    Ansible --> Node02
-    Ansible --> Node03
-    Ansible --> Node04
-    Ansible --> Node05
+                    Ansible --> Node01
+                    Ansible --> Node02
+                    Ansible --> Node03
+                    Ansible --> Node04
+                    Ansible --> Node05
 
-    subgraph Future_Nodes
-        NodeX["NodeX<br>Container: nodeXX<br>Port: XXXX"]
-    end
-    Ansible --> NodeX
+                    subgraph Future_Nodes
+                        NodeX["NodeX<br>Container: nodeXX<br>Port: XXXX"]
+                    end
+                    Ansible --> NodeX
             </pre>
         </div>
 
