@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lua 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+
+---
+
+```markdown
+# Lua 詳細リファレンス & 主要ライブラリ一覧
+
+## Lua 主要リファレンス
+
+Luaは、シンプルさ、効率性、移植性を重視して設計された、強力で軽量なスクリプト言語です。
+
+### 1. 基本構文と特徴
+
+*   **コメント**: 一行コメントは`--`、複数行コメントは`--[[ ... ]]`で記述します。
+*   **変数**: 変数宣言にキーワードは不要ですが、スコープを限定するために`local`を使うことが強く推奨されます。`local`を付けないとグローバル変数になります。
+    ```lua
+    local name = "Lua" -- ローカル変数 (推奨)
+    version = 5.4     -- グローバル変数
+    ```
+*   **文の終わり**: セミコロンは不要です（省略可能）。
+*   **ブロック**: `do ... end`でコードブロックを明示的に作成できます。if文やfor文なども`end`でブロックを閉じます。
+
+### 2. データ型
+
+Luaには8つの基本データ型があります。
+*   **`nil`**: 値が存在しないことを表す型。未定義の変数の値も`nil`です。
+*   **`boolean`**: `true`または`false`。
+*   **`number`**: 数値型。デフォルトで浮動小数点数（double）として扱われます。
+*   **`string`**: 文字列。`'`または`"`で囲みます。
+*   **`function`**: 関数。Luaでは関数も値として扱えます（第一級オブジェクト）。
+*   **`table`**: テーブル型。Luaで最も重要なデータ構造です（後述）。
+*   **`userdata`**: C言語のデータをLuaから扱うための型。
+*   **`thread`**: コルーチン（協調的マルチスレッド）を表す型。
+
+### 3. テーブル (Tables) - 最も重要な概念
+
+テーブルはLuaで唯一の構造化データ型であり、配列、辞書（ハッシュマップ）、オブジェクトなど、あらゆる役割を担います。
+
+*   **配列（リスト）として**:
+    ```lua
+    -- 注意: Luaのインデックスは1から始まります
+    local fruits = {"apple", "banana", "cherry"}
+    print(fruits) -- "apple"
+    ```
+*   **辞書（マップ）として**:
+    ```lua
+    local person = {
+        name = "Taro",
+        age = 30
+    }
+    print(person.name)    -- "Taro"
+    print(person["age"])  -- 30
+    ```
+
+### 4. 制御フロー
+
+*   **`if-elseif-else`**:
+    ```lua
+    if score > 80 then
+        print("Great")
+    elseif score > 60 then
+        print("Good")
+    else
+        print("Try again")
+    end
+    ```
+*   **`while` ループ**:
+    ```lua
+    local i = 1
+    while i <= 5 do
+        print(i)
+        i = i + 1
+    end
+    ```
+*   **`for` ループ**:
+    *   **数値 for**:
+        ```lua
+        -- 1から10まで1ずつ増加
+        for i = 1, 10, 1 do
+            print(i)
+        end
+        ```
+    *   **汎用 for (イテレータ)**: テーブルの要素を走査するためによく使います。
+        ```lua
+        local fruits = {"apple", "banana"}
+        for index, value in ipairs(fruits) do
+            print(index, value) -- 1 apple, 2 banana
+        end
+
+        local person = {name = "Taro", age = 30}
+        for key, value in pairs(person) do
+            print(key, value) -- name Taro, age 30 (順序は保証されない)
+        end
+        ```
+
+### 5. 関数
+
+関数は`function`キーワードで定義します。戻り値は複数返すことができます。
+
+```lua
+function add(a, b)
+    return a + b
+end
+
+function get_user()
+    return "Taro", 25 -- 多重返り値
+end
+
+local user_name, user_age = get_user()
+```
+
+### 6. メタテーブルとメタメソッド
+
+テーブルに特別な動作（演算子のオーバーロードなど）を定義するための仕組みです。`setmetatable`関数でテーブルにメタテーブルを関連付けます。
+
+*   **`__index`**: オブジェクト指向プログラミングの「継承」を模倣するためによく使われます。
+    ```lua
+    Vector = {}
+    Vector.__index = Vector -- 自身を参照
+
+    function Vector:new(x, y)
+        local obj = setmetatable({}, Vector)
+        obj.x = x
+        obj.y = y
+        return obj
+    end
+
+    function Vector:length()
+        return math.sqrt(self.x^2 + self.y^2)
+    end
+
+    local v = Vector:new(3, 4)
+    print(v:length()) -- 5
+    ```
+
+### 7. モジュールと`require`
+
+コードをファイルに分割し、再利用するための仕組みです。
+
+*   **モジュールの作成 (`mymodule.lua`)**:
+    ```lua
+    local M = {} -- モジュールテーブル
+
+    function M.say_hello()
+        print("Hello from module!")
+    end
+
+    return M -- テーブルを返す
+    ```
+*   **モジュールの利用**:
+    ```lua
+    local my_module = require("mymodule")
+    my_module.say_hello()
+    ```
+
+---
+
+## Lua 主要ライブラリ／フレームワーク一覧
+
+Luaは組み込み言語としての性質が強いため、エコシステムは特定のアプリケーション（ゲームエンジン、Webサーバーなど）に密接に関連しています。パッケージ管理には**LuaRocks** ([luarocks.org](https://luarocks.org/)) が広く使われています。
+
+### Webフレームワーク
+
+*   **Lapis**: [leafo.net/lapis/](http://leafo.net/lapis/)
+    *   OpenResty (Nginx+Lua) 上で動作するWebフレームワーク。Ruby on RailsやDjangoに似た開発体験を提供。
+*   **OpenResty**: [openresty.org](http://openresty.org/)
+    *   フレームワークというよりは、NginxにLuaの実行環境を深く統合したWebプラットフォーム。非常に高性能。
+
+### ゲーム開発
+
+*   **LÖVE (Love2D)**: [love2d.org](https://love2d.org/)
+    *   2Dゲーム開発のための、シンプルで非常に人気のあるフレームワーク。
+*   **Solar2D (旧 Corona SDK)**: [solar2d.com](https://solar2d.com/)
+    *   クロスプラットフォーム（iOS/Android/Desktop）のモバイルアプリ・ゲーム開発フレームワーク。
+*   **Defold**: [defold.com](https://defold.com/)
+    *   King社（Candy Crushの開発元）が開発した、2Dに強い軽量なゲームエンジン。
+
+### 汎用／ユーティリティ
+
+*   **Penlight**: [github.com/lunarmodules/Penlight](https://github.com/lunarmodules/Penlight)
+    *   Luaの標準ライブラリを大幅に拡張するユーティリティライブラリ群。配列操作、パス操作、文字列操作など、多くの便利な関数を提供。
+*   **lua-cjson**: [github.com/openresty/lua-cjson](https://github.com/openresty/lua-cjson)
+    *   C言語で実装された、非常に高速なJSONパーサー/エンコーダー。
+*   **LuaFileSystem (LFS)**: [github.com/lunarmodules/luafilesystem](https://github.com/lunarmodules/luafilesystem)
+    *   プラットフォームに依存しないファイルシステム操作（ディレクトリ作成、ファイル属性取得など）を提供。
+
+### 非同期処理／ネットワーキング
+
+*   **Copas**: [github.com/lunarmodules/copas](https://github.com/lunarmodules/copas)
+    *   コルーチンをベースにした非同期ソケット通信のディスパッチャー。
+*   **LuaSocket**: [github.com/lunarmodules/luasocket](https://github.com/lunarmodules/luasocket)
+    *   TCP/UDPソケット通信を扱うための基本的なライブラリ。
+
+### オブジェクト指向
+
+*   **middleclass**: [github.com/kikito/middleclass](https://github.com/kikito/middleclass)
+    *   Luaのテーブルとメタテーブルを使い、クラスベースのオブジェクト指向プログラミングを簡単に行うためのライブラリ。
+
+### LuaJITとFFI
+*   **LuaJIT**: [luajit.org](https://luajit.org/)
+    *   LuaのJust-In-Timeコンパイラ。標準のLuaインタプリタより劇的に高速。
+    *   **FFI (Foreign Function Interface)**: LuaJITのキラー機能。C言語の関数やデータ構造を、ラッパーコードなしでLuaから直接呼び出すことができる。これにより、既存のCライブラリを非常に効率的に利用できる。
+```
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+---
+
+# HTML 詳細リファレンス & 関連技術一覧
+
+## HTML 主要リファレンス
+
+HTML (HyperText Markup Language) は、ウェブページの構造を定義するための標準的なマークアップ言語です。タグを使ってコンテンツの意味や役割を示します。
+
+### 1. 基本構造
+
+全てのHTML文書の基本となる骨格です。
+
+```html
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ページのタイトル</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ここに表示されるコンテンツを記述 -->
+</body>
+</html>
+```
+*   **`<!DOCTYPE html>`**: この文書がHTML5であることを宣言します。
+*   **`<html>`**: HTML文書全体のルート要素です。`lang`属性で言語を指定します。
+*   **`<head>`**: ページのメタデータ（文字コード、タイトル、CSSのリンクなど）を格納します。ブラウザには直接表示されません。
+*   **`<body>`**: 実際にブラウザに表示される全てのコンテンツ（テキスト、画像、リンクなど）を格納します。
+
+### 2. headタグ内の主要な要素
+
+*   **`<title>`**: ブラウザのタブや検索結果に表示されるページのタイトルを定義します。
+*   **`<meta>`**: 文字コード、ページの概要、ビューポートの設定など、様々なメタデータを指定します。
+    *   `<meta charset="UTF-8">`: 文字コードをUTF-8に指定。
+    *   `<meta name="viewport" ...>`: レスポンシブデザインのための設定。
+*   **`<link>`**: 外部リソース（主にCSSファイル）との関連を定義します。
+*   **`<script>`**: JavaScriptファイルを読み込んだり、直接スクリプトを記述したりします。
+
+### 3. テキスト関連のタグ
+
+*   **`<h1>`〜`<h6>`**: 見出し (Heading)。`<h1>`が最上位の見出しです。
+*   **`<p>`**: 段落 (Paragraph)。文章のまとまりを示します。
+*   **`<a>`**: アンカー (Anchor)。ハイパーリンクを作成します。`href`属性でリンク先を指定します。
+*   **`<span>`**: テキストの一部をグループ化するための汎用的なインライン要素。CSSでスタイルを当てるためによく使います。
+*   **`<strong>`**: 内容の重要性が高いことを示します。（通常は太字で表示）
+*   **`<em>`**: 内容を強調することを示します。（通常は斜体で表示）
+*   **`<br>`**: 改行 (Break)。
+
+### 4. リスト
+
+*   **`<ul>`**: 順序なしリスト (Unordered List)。箇条書きリストを作成します。
+*   **`<ol>`**: 順序付きリスト (Ordered List)。番号付きリストを作成します。
+*   **`<li>`**: リスト項目 (List Item)。`<ul>`または`<ol>`の中で使います。
+
+### 5. 画像とメディア
+
+*   **`<img>`**: 画像 (Image)。`src`属性で画像の場所を、`alt`属性で代替テキストを指定します。
+*   **`<video>`**: 動画を埋め込みます。`src`属性や`<source>`タグで動画ファイルを指定します。
+*   **`<audio>`**: 音声を埋め込みます。
+
+### 6. テーブル
+
+*   **`<table>`**: 表を作成します。
+*   **`<tr>`**: 表の行 (Table Row) を定義します。
+*   **`<th>`**: 見出しセル (Table Header) を定義します。
+*   **`<td>`**: データセル (Table Data) を定義します。
+*   **`<thead>`, `<tbody>`, `<tfoot>`**: 表のヘッダー、ボディ、フッター部分をグループ化します。
+
+### 7. フォーム
+
+ユーザーがデータを入力し、サーバーに送信するための要素群です。
+
+*   **`<form>`**: フォーム全体を囲みます。`action`属性で送信先URLを、`method`属性で送信方法 (`GET` or `POST`) を指定します。
+*   **`<input>`**: 入力欄を作成します。`type`属性で種類が変わります。
+    *   `type="text"`: 一行テキスト入力。
+    *   `type="password"`: パスワード入力。
+    *   `type="email"`: メールアドレス入力。
+    *   `type="checkbox"`: チェックボックス。
+    *   `type="radio"`: ラジオボタン。
+    *   `type="submit"`: 送信ボタン。
+*   **`<label>`**: 入力欄のラベル（項目名）を定義します。`for`属性で`<input>`の`id`と関連付けます。
+*   **`<textarea>`**: 複数行のテキスト入力欄。
+*   **`<select>`**: ドロップダウンリストを作成します。
+*   **`<option>`**: `<select>`内の選択肢を定義します。
+*   **`<button>`**: クリック可能なボタンを作成します。
+
+### 8. セマンティック要素
+
+文書構造に意味を与えるためのタグです。これにより、検索エンジンや支援技術がコンテンツをより良く理解できます。
+
+*   **`<header>`**: ヘッダー部分。サイトのタイトルやナビゲーションを含みます。
+*   **`<footer>`**: フッター部分。コピーライト情報や連絡先などを含みます。
+*   **`<nav>`**: ナビゲーションリンクのセクション。
+*   **`<main>`**: ページの主要なコンテンツ。1ページに1つだけ配置します。
+*   **`<article>`**: 独立した自己完結型のコンテンツ。（例: ブログ記事、ニュース記事）
+*   **`<section>`**: 文書内のテーマごとのセクション。
+*   **`<aside>`**: サイドバーなど、補足的なコンテンツ。
+
+---
+
+## HTML 関連ライブラリ／技術一覧
+
+### テンプレートエンジン (Template Engines)
+HTMLをより効率的かつ動的に生成するためのツールです。変数やループ、条件分岐などのプログラミングの概念をHTMLに持ち込むことができます。
+
+*   **Pug (旧Jade)**: [pugjs.org](https://pugjs.org/)
+    *   インデント（字下げ）を使ってHTMLの階層構造を表現する、クリーンでDRYな構文が特徴。
+*   **EJS (Embedded JavaScript)**: [ejs.co](https://ejs.co/)
+    *   HTMLの中に`<% ... %>`のようなタグを埋め込んでJavaScriptのロジックを記述できる、シンプルなテンプレートエンジン。
+*   **Handlebars**: [handlebarsjs.com](https://handlebarsjs.com/)
+    *   ロジックを最小限に抑えた、セマンティックなテンプレートが特徴。Mustache.jsのスーパーセット。
+*   **Jinja2**: [jinja.palletsprojects.com](https://jinja.palletsprojects.com/)
+    *   PythonのWebフレームワーク (Django, Flask) で広く使われている、強力で高速なテンプレートエンジン。
+*   **Thymeleaf**: [www.thymeleaf.org](https://www.thymeleaf.org/)
+    *   JavaのWebアプリケーションで人気のテンプレートエンジン。HTMLファイルとして直接ブラウザで表示できる自然なテンプレートが書ける。
+
+### HTMLプリプロセッサ
+テンプレートエンジンと似ていますが、主にHTMLの記述を簡潔にするためのツールです。
+
+*   **Haml (HTML Abstraction Markup Language)**: [haml.info](https://haml.info/)
+    *   Ruby on Railsで人気。Pugと同様にインデントベースで、DRYなHTML記述を目指す。
+
+### Web Components
+再利用可能なカスタムHTMLタグを作成するためのWeb標準技術の総称です。特定のライブラリに依存せず、素のHTML/CSS/JSでカプセル化されたコンポーネントを作れます。
+
+*   **Lit**: [lit.dev](https://lit.dev/)
+    *   Googleが開発した、高速で軽量なWeb Components作成用ライブラリ。
+*   **Stencil**: [stenciljs.com](https://stenciljs.com/)
+    *   Web Componentsを生成するためのコンパイラ。Reactのような構文で記述できる。
+
+### 静的サイトジェネレータ (Static Site Generators)
+Markdownなどのテキストファイルから、完全に静的なHTML/CSS/JSのサイトを生成するツールです。ブログやドキュメンテーションサイトで人気があります。
+
+*   **Next.js**: [nextjs.org](https://nextjs.org/)
+    *   Reactベースのフレームワークだが、強力な静的サイト生成(SSG)機能を持つ。
+*   **Gatsby**: [www.gatsbyjs.com](https://www.gatsbyjs.com/)
+    *   ReactとGraphQLをベースにした、高機能な静的サイトジェネレータ。
+*   **Astro**: [astro.build](https://astro.build/)
+    *   コンテンツ駆動のサイトに最適化されており、デフォルトでJavaScriptをほとんど出力しないのが特徴。
+*   **Jekyll**: [jekyllrb.com](https://jekyllrb.com/)
+    *   Ruby製で、GitHub Pagesで標準サポートされている人気の静的サイトジェネレータ。
+*   **Hugo**: [gohugo.io](https://gohugo.io/)
+    *   Go言語で書かれており、非常に高速なビルドが特徴。
+```
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>
