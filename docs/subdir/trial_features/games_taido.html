@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>胎動ゲーム</title>
+<style>
+  body {
+    background: #fcefe8;
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    margin: 10px;
+    color: #444;
+  }
+  #gameArea {
+    margin: 20px auto;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: #ffccbb;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3) inset;
+  }
+  .kick {
+    width: 30px;
+    height: 30px;
+    background: #ff6666;
+    border-radius: 50%;
+    position: absolute;
+    cursor: pointer;
+    animation: pulse 1s infinite alternate;
+  }
+  @keyframes pulse {
+    from { transform: scale(1); opacity: 0.7; }
+    to   { transform: scale(1.3); opacity: 1; }
+  }
+  #score {
+    font-size: 20px;
+    margin-top: 10px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+<h1>胎動ゲーム</h1>
+<div id="gameArea"></div>
+<div id="score">スコア: 0</div>
+
+<script>
+  const gameArea = document.getElementById("gameArea");
+  const scoreDisplay = document.getElementById("score");
+  let score = 0;
+
+  function createKick() {
+    const kick = document.createElement("div");
+    kick.className = "kick";
+
+    // ランダム位置に出現
+    const x = Math.random() * (gameArea.clientWidth - 30);
+    const y = Math.random() * (gameArea.clientHeight - 30);
+    kick.style.left = x + "px";
+    kick.style.top = y + "px";
+
+    gameArea.appendChild(kick);
+
+    // クリックしたら得点
+    kick.addEventListener("click", () => {
+      score++;
+      scoreDisplay.textContent = "スコア: " + score;
+      gameArea.removeChild(kick);
+    });
+
+    // 2秒で消える
+    setTimeout(() => {
+      if (gameArea.contains(kick)) {
+        gameArea.removeChild(kick);
+      }
+    }, 2000);
+  }
+
+  // 一定間隔で胎動出現
+  setInterval(createKick, 1500);
+</script>
+</body>
+</html>
