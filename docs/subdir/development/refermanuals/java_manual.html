@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Java 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+# Java 詳細リファレンス & 主要ライブラリ一覧
+
+## Java 主要リファレンス
+
+Javaは、プラットフォームに依存しない堅牢なアプリケーションを開発するための、静的型付けオブジェクト指向プログラミング言語です。「Write once, run anywhere（一度書けば、どこでも実行できる）」という思想で設計されています。
+
+### 1. 基本構造と構文
+
+全てのJavaアプリケーションは、クラスから構成されます。プログラムの実行は`main`メソッドから始まります。
+
+```java
+// publicなクラス。ファイル名とクラス名は一致させる必要がある (例: Main.java)
+public class Main {
+    // プログラムのエントリーポイント（開始地点）となるmainメソッド
+    public static void main(String[] args) {
+        // コンソールに文字列を出力
+        System.out.println("Hello, World!");
+    }
+}
+```
+*   **クラス (`class`)**: Javaプログラムの基本単位。フィールド（データ）とメソッド（処理）を持ちます。
+*   **`main`メソッド**: プログラムを実行したときに最初に呼び出される特別なメソッド。
+*   **セミコロン (`;`)**: 文の終わりには必ずセミコロンが必要です。
+*   **コメント**: `//`で一行コメント、`/* ... */`で複数行コメント。
+
+### 2. データ型
+
+*   **プリミティブ型**: 基本的な値を直接保持する型。
+    *   `int`: 整数 (例: `10`)
+    *   `double`: 浮動小数点数 (例: `3.14`)
+    *   `boolean`: 真偽値 (`true` または `false`)
+    *   `char`: 1文字 (例: `'A'`)
+    *   その他: `byte`, `short`, `long`, `float`
+*   **参照型**: オブジェクトが格納されているメモリ上のアドレス（参照）を保持する型。
+    *   `String`: 文字列 (例: `"Hello"`)
+    *   `Array`: 配列 (例: `int[] numbers = {1, 2, 3};`)
+    *   その他、全てのクラス（`ArrayList`, `HashMap`など）
+
+### 3. 制御フロー
+
+*   **`if-else`**: 条件によって処理を分岐させます。
+*   **`for`**: 指定した回数やコレクションの要素数だけ処理を繰り返します。
+    *   `for (int i = 0; i < 5; i++) { ... }`
+    *   `for (String str : stringList) { ... }` (拡張for文)
+*   **`while`**: 条件が`true`である間、処理を繰り返します。
+*   **`switch`**: 一つの変数の値に応じて、処理を多岐に分岐させます。
+
+### 4. オブジェクト指向プログラミング (OOP)
+
+*   **クラスとオブジェクト**: `class`を設計図として、`new`キーワードを使ってオブジェクト（インスタンス）を生成します。
+*   **継承 (`extends`)**: あるクラス（親クラス）の機能を引き継いで、新しいクラス（子クラス）を作成します。
+*   **インターフェース (`interface`)**: クラスが実装すべきメソッドの仕様（シグネチャ）だけを定義したものです。`implements`キーワードで実装します。多重継承の代わりとして使われます。
+*   **カプセル化**: フィールドを`private`にして外部から直接アクセスできないようにし、`public`なメソッド（ゲッター/セッター）経由でアクセスさせることで、データの整合性を保ちます。
+*   **ポリモーフィズム（多態性）**: 親クラスやインターフェース型の変数に、その子クラスのオブジェクトを代入できる性質。これにより、同じメソッド呼び出しでも、実際のオブジェクトの種類によって異なる動作をさせることができます。
+
+### 5. 例外処理
+
+*   **`try-catch-finally`**: エラーが発生する可能性のある処理を`try`ブロックに記述し、発生したエラー（例外）を`catch`ブロックで捕捉します。`finally`ブロックは、エラーの有無にかかわらず必ず実行されます。
+
+### 6. コレクションフレームワーク
+
+データの集合を効率的に扱うためのクラス群です。
+
+*   **`List`**: 順序があり、重複を許すコレクション。（例: `ArrayList`, `LinkedList`）
+*   **`Set`**: 順序がなく、重複を許さないコレクション。（例: `HashSet`, `TreeSet`）
+*   **`Map`**: キーと値のペアでデータを格納するコレクション。キーの重複は許しません。（例: `HashMap`, `TreeMap`）
+
+### 7. Stream API (Java 8+)
+
+コレクションや配列の要素を、宣言的かつ効率的に処理するための機能です。中間操作（`filter`, `map`など）と終端操作（`forEach`, `collect`など）を連結して使います。
+
+```java
+List<String> names = Arrays.asList("apple", "banana", "cherry");
+List<String> result = names.stream()
+                           .filter(s -> s.startsWith("a"))
+                           .map(String::toUpperCase)
+                           .collect(Collectors.toList()); // ["APPLE"]
+```
+
+---
+
+## Java 主要ライブラリ／フレームワーク一覧
+
+### Webアプリケーションフレームワーク
+サーバーサイドのWebアプリケーションやAPIを構築するための土台です。
+
+*   **Spring Framework**: [spring.io](https://spring.io/)
+    *   Javaのエコシステムで最も広く使われているフレームワーク。特に**Spring Boot**は、最小限の設定で迅速にアプリケーションを立ち上げられるため、デファクトスタンダード。
+*   **Jakarta EE (旧 Java EE)**: [jakarta.ee](https://jakarta.ee/)
+    *   エンタープライズ（大規模システム）向けJavaの標準仕様。JPA, JSP/Servletなど多くの仕様が含まれる。
+*   **Quarkus**: [quarkus.io](https://quarkus.io/)
+    *   クラウドネイティブ、コンテナ、サーバーレス環境に最適化された、起動が非常に高速なフレームワーク。
+*   **Micronaut**: [micronaut.io](https://micronaut.io/)
+    *   Quarkusと同様に、高速な起動と低いメモリ消費を特徴とするモダンなフレームワーク。
+*   **Play Framework**: [www.playframework.com](https://www.playframework.com/)
+    *   軽量で生産性が高く、非同期処理を前提とした設計が特徴。
+
+### ビルドツール
+ソースコードのコンパイル、テスト、パッケージ化、依存関係の管理などを自動化するツールです。
+
+*   **Maven**: [maven.apache.org](https://maven.apache.org/)
+    *   XML形式の`pom.xml`で設定を記述する、古くからある標準的なビルドツール。
+*   **Gradle**: [gradle.org](https://gradle.org/)
+    *   GroovyやKotlinといったDSL（ドメイン固有言語）で設定を記述する、より柔軟で高性能なビルドツール。Android開発の標準。
+
+### ユニットテスト
+プログラムの小さな単位（メソッドやクラス）が正しく動作するかを検証するためのツールです。
+
+*   **JUnit**: [junit.org](https://junit.org/)
+    *   Javaのユニットテストにおけるデファクトスタンダードのフレームワーク。
+*   **Mockito**: [site.mockito.org](https://site.mockito.org/)
+    *   テスト対象が依存する他のオブジェクトの振る舞いを模倣（モック）するためのライブラリ。JUnitと組み合わせて使うことが多い。
+
+### ORM (Object-Relational Mapping)
+Javaオブジェクトとリレーショナルデータベースのテーブルを対応付け、プログラマがSQLを直接書かなくてもDB操作ができるようにする技術です。
+
+*   **Hibernate**: [hibernate.org](https://hibernate.org/)
+    *   最も有名で高機能なORMフレームワーク。
+*   **JPA (Jakarta Persistence API)**: [jakarta.ee/specifications/persistence/](https://jakarta.ee/specifications/persistence/)
+    *   ORMの標準仕様。Hibernateなど多くのORMフレームワークがこの仕様を実装している。
+
+### ユーティリティ
+様々な場面で役立つ便利な機能を提供するライブラリです。
+
+*   **Apache Commons**: [commons.apache.org](https://commons.apache.org/)
+    *   文字列操作、ファイルI/O、コレクション操作など、多岐にわたる便利な機能を提供するライブラリ群。
+*   **Guava**: [github.com/google/guava](https://github.com/google/guava)
+    *   Googleが開発した、コレクション、キャッシュ、プリミティブ型サポートなど、強力なユーティリティを提供するライブラリ。
+
+### JSON / XML処理
+JSONやXML形式のデータをJavaオブジェクトに変換（デシリアライズ）、またはその逆（シリアライズ）を行うライブラリです。
+
+*   **Jackson**: [github.com/FasterXML/jackson](https://github.com/FasterXML/jackson)
+    *   高性能で非常に広く使われているJSON処理ライブラリ。
+*   **Gson**: [github.com/google/gson](https://github.com/google/gson)
+    *   Googleが開発した、シンプルで使いやすいJSON処理ライブラリ。
+
+### ロギング
+アプリケーションの動作状況を記録（ログ出力）するためのライブラリです。
+
+*   **Logback**: [logback.qos.ch](http://logback.qos.ch/)
+    *   Log4jの後継として開発された、高速で柔軟なロギングフレームワーク。SLF4Jと組み合わせて使うのが一般的。
+*   **Log4j 2**: [logging.apache.org/log4j/2.x/](https://logging.apache.org/log4j/2.x/)
+    *   Apacheが開発する、Logbackと同様に高性能なロギングフレームワーク。
+```
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>

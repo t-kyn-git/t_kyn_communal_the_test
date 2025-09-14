@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+# Python 詳細リファレンス & ライブラリ一覧
+
+## Python 主要リファレンス
+
+#### 1. 基本的な構文とデータ型
+
+*   **変数**: `x = 10` のように値を代入します。型宣言は不要です。
+*   **コメント**: `#` から始まる行はコメントになります。
+*   **データ型**:
+    *   `int`: 整数 (例: `10`, `-3`)
+    *   `float`: 浮動小数点数 (例: `3.14`, `-0.01`)
+    *   `str`: 文字列 (例: `'hello'`, `"world"`)
+    *   `bool`: 真偽値 (`True` または `False`)
+    *   `list`: リスト（順序があり、変更可能なシーケンス） (例: `[1, 'a', True]`)
+    *   `tuple`: タプル（順序があり、変更不可能なシーケンス） (例: `(1, 'a', True)`)
+    *   `dict`: 辞書（キーと値のペア） (例: `{'name': 'Taro', 'age': 20}`)
+    *   `set`: 集合（重複しない要素のコレクション） (例: `{1, 2, 3}`)
+
+#### 2. 制御フロー
+
+*   **`if...elif...else`**: 条件によって処理を分岐させます。インデント（字下げ）でブロックを表現します。
+*   **`for`**: シーケンス（リストや文字列など）の各要素に対して処理を繰り返します。
+    *   `for i in range(5):` -> 0から4まで繰り返す
+*   **`while`**: 指定した条件が`True`である間、処理を繰り返します。
+*   **`try...except`**: エラーが発生する可能性のある処理を試行し、エラーを捕捉して対応します。
+
+#### 3. 関数
+
+*   **`def`**: 関数を定義します。
+    ```python
+    def add(a, b):
+        return a + b
+    ```
+*   **引数**: 関数に渡す値。デフォルト値や可変長引数も指定可能です。
+*   **`return`**: 関数の実行結果として値を返します。
+
+#### 4. クラスとオブジェクト (オブジェクト指向)
+
+*   **`class`**: オブジェクトの設計図（クラス）を定義します。
+    ```python
+    class Person:
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+        def greet(self):
+            print(f"こんにちは、{self.name}です。")
+    ```
+*   **`__init__`**: オブジェクトが生成されるときに呼ばれる初期化メソッド（コンストラクタ）。
+*   **`self`**: インスタンス自身を指す特別な引数。
+
+#### 5. ファイル操作
+
+*   **`open()`**: ファイルを開き、読み書きの準備をします。`with`構文と合わせて使うのが一般的です。
+    ```python
+    with open('file.txt', 'r', encoding='utf-8') as f:
+        content = f.read()
+    ```
+
+#### 6. モジュールとパッケージ
+
+*   **`import`**: 他のPythonファイル（モジュール）を読み込んで、その中の関数やクラスを利用します。
+    *   `import math`
+    *   `from datetime import datetime`
+*   **`pip`**: Pythonのパッケージ管理ツール。ライブラリのインストールや管理に使います。
+    *   `pip install requests`
+
+---
+
+## Python 主要ライブラリ一覧
+
+### Web開発／フレームワーク
+
+*   **Django**: [djangoproject.com](https://www.djangoproject.com/)
+    *   フルスタックフレームワーク。「バッテリー同梱」で多くの機能が標準で含まれる。
+*   **Flask**: [flask.palletsprojects.com](https://flask.palletsprojects.com/)
+    *   マイクロフレームワーク。軽量で、必要な機能だけを拡張して使うスタイル。
+*   **FastAPI**: [fastapi.tiangolo.com](https://fastapi.tiangolo.com/)
+    *   モダンで高性能なAPI開発用フレームワーク。非同期処理や型ヒントを強力にサポート。
+*   **Bottle**: [bottlepy.org](https://bottlepy.org/)
+    *   超軽量なマイクロフレームワーク。単一ファイルで動作する。
+
+### データサイエンス／機械学習
+
+*   **NumPy**: [numpy.org](https://numpy.org/)
+    *   数値計算の基本ライブラリ。高性能な多次元配列オブジェクトを提供。
+*   **Pandas**: [pandas.pydata.org](https://pandas.pydata.org/)
+    *   データ解析支援ライブラリ。DataFrameというデータ構造で、表形式データを柔軟に操作。
+*   **Matplotlib**: [matplotlib.org](https://matplotlib.org/)
+    *   データ可視化ライブラリ。グラフやプロットを柔軟に描画できる。
+*   **Scikit-learn**: [scikit-learn.org](https://scikit-learn.org/)
+    *   機械学習の総合ライブラリ。分類、回帰、クラスタリングなど多くのアルゴリズムを実装。
+*   **TensorFlow**: [www.tensorflow.org](https://www.tensorflow.org/)
+    *   Googleが開発した、機械学習・ディープラーニングのためのプラットフォーム。
+*   **PyTorch**: [pytorch.org](https://pytorch.org/)
+    *   Facebookが開発した、柔軟性の高いディープラーニングフレームワーク。
+*   **Keras**: [keras.io](https://keras.io/)
+    *   TensorFlow上で動作する、より高水準なディープラーニングAPI。
+*   **SciPy**: [scipy.org](https://scipy.org/)
+    *   科学技術計算のためのライブラリ。NumPyをベースに、より高度な数学的アルゴリズムを提供。
+*   **Seaborn**: [seaborn.pydata.org](https://seaborn.pydata.org/)
+    *   Matplotlibをベースに、より美しく統計的なグラフを簡単に描画できる。
+*   **Jupyter**: [jupyter.org](https://jupyter.org/)
+    *   コード、テキスト、グラフなどをノートブック形式で対話的に実行できる環境。
+
+### Webスクレイピング／HTTP通信
+
+*   **Requests**: [requests.readthedocs.io](https://requests.readthedocs.io/)
+    *   人間にとって使いやすいHTTP通信ライブラリ。デファクトスタンダード。
+*   **Beautiful Soup**: [www.crummy.com/software/BeautifulSoup/](https://www.crummy.com/software/BeautifulSoup/)
+    *   HTMLやXMLファイルからデータを抽出するためのライブラリ。
+*   **Scrapy**: [scrapy.org](https://scrapy.org/)
+    *   Webクローリングとスクレイピングのための強力なフレームワーク。
+*   **Selenium**: [www.selenium.dev](https://www.selenium.dev/)
+    *   ブラウザを自動操作するためのライブラリ。JavaScriptで動的に生成されるサイトに強い。
+*   **Playwright**: [playwright.dev/python/](https://playwright.dev/python/)
+    *   モダンなブラウザ自動化ライブラリ。Seleniumよりも新しい。
+
+### 画像処理
+
+*   **Pillow (PIL Fork)**: [python-pillow.org](https://python-pillow.org/)
+    *   画像の読み込み、加工、保存など基本的な画像処理を行うためのライブラリ。
+*   **OpenCV-Python**: [opencv.org](https://opencv.org/)
+    *   高度な画像処理やコンピュータビジョンのためのライブラリ。
+
+### GUI開発
+
+*   **Tkinter**: (標準ライブラリ) [docs.python.org/3/library/tkinter.html](https://docs.python.org/3/library/tkinter.html)
+    *   Pythonに標準で付属するGUIツールキット。
+*   **PyQt**: [riverbankcomputing.com/software/pyqt/](https://riverbankcomputing.com/software/pyqt/)
+    *   クロスプラットフォームなGUIフレームワークQtのPythonバインディング。
+*   **Kivy**: [kivy.org](https://kivy.org/)
+    *   マルチタッチに対応した、クロスプラットフォームなUIフレームワーク。
+
+### その他
+
+*   **SQLAlchemy**: [www.sqlalchemy.org](https://www.sqlalchemy.org/)
+    *   PythonのためのSQLツールキットおよびORM（オブジェクトリレーショナルマッパー）。
+*   **Pygame**: [www.pygame.org](https://www.pygame.org/)
+    *   ゲーム開発のためのライブラリ。
+*   **pytest**: [docs.pytest.org](https://docs.pytest.org/)
+    *   シンプルで強力なテストフレームワーク。
+*   **Celery**: [docs.celeryq.dev](https://docs.celeryq.dev/)
+    *   非同期タスクキュー/ジョブキュー。時間のかかる処理をバックグラウンドで実行させる。
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>

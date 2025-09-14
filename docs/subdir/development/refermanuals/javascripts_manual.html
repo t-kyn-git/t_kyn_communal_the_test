@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+### JavaScript 主要リファレンス一覧
+
+#### 1. 基本的な構文と宣言
+
+*   **`let`**: 再代入が可能な変数を宣言します。ブロックスコープを持ちます。
+*   **`const`**: 再代入が不可能な定数を宣言します。ブロックスコープを持ちます。
+*   **データ型**:
+    *   `String`: 文字列
+    *   `Number`: 数値
+    *   `Boolean`: `true` (真) または `false` (偽)
+    *   `null`: 値が存在しないことを意図的に示す値
+    *   `undefined`: 値が未定義の状態
+    *   `Object`: オブジェクト (複数の値をまとめたもの)
+    *   `Array`: 配列 (順序付けられたリスト)
+*   **演算子**:
+    *   **算術演算子**: `+`, `-`, `*`, `/`, `%` (剰余), `++` (インクリメント), `--` (デクリメント)
+    *   **比較演算子**: `==` (等しい), `===` (厳密に等しい), `!=`, `!==`, `>`, `<`, `>=`, `<=`
+    *   **論理演算子**: `&&` (AND), `||` (OR), `!` (NOT)
+    *   **代入演算子**: `=`, `+=`, `-=`
+
+#### 2. 制御フロー
+
+*   **`if...else`**: 条件によって処理を分岐させます。
+*   **`switch`**: 一つの式の値に基づいて、複数のケースから処理を分岐させます。
+*   **`for`**: 指定した回数だけ処理を繰り返します。
+*   **`while`**: 指定した条件が真である間、処理を繰り返します。
+*   **`try...catch`**: エラーが発生する可能性のある処理を試行し、エラーを捕捉して対応します。
+
+#### 3. 関数
+
+*   **`function`**: 処理をまとめたブロック（関数）を定義します。
+*   **アロー関数 (`=>`)**: `function`キーワードよりも短く記述できる関数構文です。
+*   **引数**: 関数に渡す値です。
+*   **`return`**: 関数の実行結果として値を返します。
+
+#### 4. 組み込みオブジェクト
+
+##### **String (文字列)**
+*   **`.length`**: 文字列の長さを取得します。
+*   **`.slice(beginIndex, endIndex)`**: 文字列の一部を切り出して新しい文字列を返します。
+*   **`.split(separator)`**: 文字列を指定した区切り文字で分割し、配列にします。
+*   **`.replace(searchValue, newValue)`**: 文字列の一部を検索し、置き換えます。
+*   **`.toLowerCase()` / `.toUpperCase()`**: 文字列を小文字または大文字に変換します。
+
+##### **Array (配列)**
+*   **`.length`**: 配列の要素数を取得します。
+*   **`.push(element)`**: 配列の末尾に要素を追加します。
+*   **`.pop()`**: 配列の末尾の要素を削除して返します。
+*   **`.forEach(callback)`**: 各要素に対して一度ずつ関数を実行します。
+*   **`.map(callback)`**: 各要素に関数を実行し、その結果からなる新しい配列を作成します。
+*   **`.filter(callback)`**: 関数が `true` を返した要素だけで構成される新しい配列を作成します。
+*   **`.find(callback)`**: 条件に一致する最初の要素を返します。
+*   **`.join(separator)`**: 配列の全要素を連結した一つの文字列を返します。
+
+##### **Math**
+*   **`Math.random()`**: 0以上1未満のランダムな数値を返します。
+*   **`Math.floor(x)`**: 数値の小数点以下を切り捨てます。
+*   **`Math.ceil(x)`**: 数値の小数点以下を切り上げます。
+*   **`Math.round(x)`**: 数値を四捨五入します。
+*   **`Math.max(...)` / `Math.min(...)`**: 引数の中から最大値または最小値を返します。
+
+##### **Date**
+*   **`new Date()`**: 現在の日付と時刻でDateオブジェクトを生成します。
+*   **`.getFullYear()`**: 年を取得します。
+*   **`.getMonth()`**: 月を取得します (0-11で返されるので注意)。
+*   **`.getDate()`**: 日を取得します。
+*   **`.getHours()` / `.getMinutes()` / `.getSeconds()`**: 時、分、秒を取得します。
+
+##### **JSON**
+*   **`JSON.stringify(object)`**: JavaScriptオブジェクトをJSON形式の文字列に変換します。
+*   **`JSON.parse(string)`**: JSON形式の文字列をJavaScriptオブジェクトに変換します。
+
+#### 5. DOM (Document Object Model) - HTMLの操作
+
+*   **`document.getElementById(id)`**: 指定したIDを持つ要素を取得します。
+*   **`document.querySelector(selector)`**: 指定したCSSセレクタに一致する最初の要素を取得します。
+*   **`document.querySelectorAll(selector)`**: 指定したCSSセレクタに一致するすべての要素をリストで取得します。
+*   **`element.innerHTML`**: 要素内のHTMLを取得または設定します。
+*   **`element.textContent`**: 要素内のテキストコンテンツを取得または設定します。
+*   **`element.style.property`**: 要素のCSSスタイルを変更します (例: `element.style.color = 'red';`)。
+*   **`element.classList.add('class')` / `.remove('class')` / `.toggle('class')`**: 要素のCSSクラスを追加、削除、または切り替えます。
+*   **`document.createElement(tagName)`**: 新しいHTML要素を作成します。
+*   **`parentNode.appendChild(childNode)`**: 指定した親要素の末尾に子要素を追加します。
+
+#### 6. イベント
+
+*   **`element.addEventListener('event', function)`**: 要素にイベントが発生したときに実行される関数を登録します。
+*   **代表的なイベント**:
+    *   `click`: クリックされたとき。
+    *   `mouseover`: マウスカーソルが要素の上に乗ったとき。
+    *   `keydown`: キーボードのキーが押されたとき。
+    *   `submit`: フォームが送信されたとき。
+    *   `load`: ページ全体の読み込みが完了したとき。
+    *   `DOMContentLoaded`: HTMLの解析が完了したとき（画像などの読み込みより早い）。
+
+#### 7. BOM (Browser Object Model) - ブラウザの操作
+
+*   **`window`**: ブラウザのウィンドウ全体を表すグローバルオブジェクト。
+*   **`alert(message)`**: 警告ダイアログを表示します。
+*   **`confirm(message)`**: 確認ダイアログを表示し、OK/キャンセルの結果を `true`/`false` で返します。
+*   **`console.log(data)`**: 開発者ツールのコンソールに情報を出力します。
+*   **`setTimeout(function, milliseconds)`**: 指定した時間後に一度だけ関数を実行します。
+*   **`setInterval(function, milliseconds)`**: 指定した時間ごとに関数を繰り返し実行します。
+*   **`location.href`**: 現在のページのURLを取得、または新しいURLに移動します。
+
+#### 8. 非同期処理
+
+*   **`Promise`**: 非同期処理の最終的な完了または失敗を表すオブジェクトです。
+*   **`async` / `await`**: Promiseをより同期的なコードのように扱うための構文です。
+*   **`fetch(url)`**: ネットワークリクエストを行い、リソースを取得するためのAPIです。Promiseを返します。
+
+承知いたしました。
+前回の内容に加え、より実践的でモダンなJavaScript (ES2015/ES6以降) の機能を中心に、さらに詳しいリファレンス一覧をまとめました。
+
+---
+
+### JavaScript 詳細リファレンス一覧 (応用編)
+
+#### 8. オブジェクトとクラス (オブジェクト指向)
+
+オブジェクトの作り方や設計図となる「クラス」に関する機能です。
+
+*   **オブジェクトリテラル**: `{}` を使ってオブジェクトを直感的に作成する方法です。
+    *   **説明**: `キー: 値` のペアでプロパティ（データ）やメソッド（処理）を定義します。
+    *   **例**:
+        ```javascript
+        const user = {
+          name: "田中",
+          age: 30,
+          greet: function() {
+            console.log(`こんにちは、${this.name}です。`);
+          }
+        };
+        user.greet(); // "こんにちは、田中です。" と出力
+        ```
+
+*   **`this`**: 関数がどのように呼び出されたかによって決まる、特別なキーワードです。
+    *   **説明**: メソッド内では、そのメソッドが属するオブジェクト自身を指します。グローバルな場所や通常の関数内では `window` オブジェクトを指すことが多いですが、状況により異なります。
+    *   **例**: 上記の `user.greet()` 内の `this.name` は `user.name` と同じ意味になります。
+
+*   **`class`**: オブジェクトの設計図（テンプレート）を定義するための構文です。
+    *   **説明**: 同じ構造を持つオブジェクトを効率的に複数作成できます。
+    *   **例**:
+        ```javascript
+        class Animal {
+          constructor(name) {
+            this.name = name;
+          }
+          speak() {
+            console.log(`${this.name}が鳴いています。`);
+          }
+        }
+        const dog = new Animal("ポチ");
+        dog.speak(); // "ポチが鳴いています。" と出力
+        ```
+
+*   **`constructor`**: `class`でオブジェクトを生成する (`new`) ときに、最初に一度だけ実行される初期化用のメソッドです。
+    *   **説明**: 主にプロパティの初期値を設定するために使います。
+
+*   **`extends`**: あるクラスの機能を継承して、新しいクラスを作成します。
+    *   **説明**: コードの再利用性を高めます。継承元のクラスを「親クラス」、新しいクラスを「子クラス」と呼びます。
+    *   **例**:
+        ```javascript
+        class Cat extends Animal {
+          speak() {
+            console.log(`${this.name}はニャーと鳴きます。`);
+          }
+        }
+        const cat = new Cat("タマ");
+        cat.speak(); // "タマはニャーと鳴きます。" と出力
+        ```
+
+#### 9. モダンJavaScriptの便利な構文 (ES6+)
+
+コードをより簡潔で直感的に書くための構文です。
+
+*   **分割代入**: 配列やオブジェクトから値を取り出して、個別の変数に代入する構文です。
+    *   **説明**: コードの記述量を減らし、可読性を向上させます。
+    *   **例**:
+        ```javascript
+        // 配列の分割代入
+        const [a, b] = [10, 20]; // aは10, bは20
+        
+        // オブジェクトの分割代入
+        const { name, age } = { name: "鈴木", age: 25 }; // nameは"鈴木", ageは25
+        ```
+
+*   **スプレッド構文 (`...`)**: 配列やオブジェクトの要素をその場で展開します。
+    *   **説明**: 配列の結合やオブジェクトのマージ、関数の引数に配列の要素を渡す際などに便利です。
+    *   **例**:
+        ```javascript
+        const arr1 = [1, 2];
+        const arr2 = [...arr1, 3, 4]; // [1, 2, 3, 4] になる
+        
+        const obj1 = { a: 1 };
+        const obj2 = { ...obj1, b: 2 }; // { a: 1, b: 2 } になる
+        ```
+
+*   **レスト構文 (`...`)** (残余引数): 関数の引数などで、残りの要素をまとめて配列として受け取ります。
+    *   **説明**: 見た目はスプレッド構文と同じですが、代入の左辺や関数の引数で使われると、要素を集める役割を果たします。
+    *   **例**:
+        ```javascript
+        function sum(...numbers) {
+          return numbers.reduce((total, num) => total + num, 0);
+        }
+        sum(1, 2, 3, 4); // 10 が返る
+        ```
+
+*   **テンプレートリテラル**: バッククォート (`` ` ``) を使って文字列を定義します。
+    *   **説明**: 文字列内に `${変数名}` の形で簡単に変数を埋め込めます。改行もそのまま反映されます。
+    *   **例**:
+        ```javascript
+        const userName = "佐藤";
+        const message = `ようこそ、${userName}さん。
+        今日も頑張りましょう。`;
+        ```
+
+#### 10. モジュールシステム (ES6 Modules)
+
+JavaScriptのコードをファイル単位に分割し、必要なものだけを読み込んで利用する仕組みです。
+
+*   **`export`**: 変数、関数、クラスなどを他のファイルから読み込めるように公開します。
+    *   **説明**: `export`（名前付きエクスポート）と `export default`（デフォルトエクスポート）の2種類があります。
+    *   **例** (`utils.js` ファイル):
+        ```javascript
+        export const PI = 3.14;
+        export default function greet(name) {
+          return `Hello, ${name}`;
+        }
+        ```
+
+*   **`import`**: `export`された変数や関数などを別のファイルで読み込みます。
+    *   **説明**: コードの依存関係が明確になり、管理しやすくなります。
+    *   **例** (`main.js` ファイル):
+        ```javascript
+        import greet, { PI } from './utils.js';
+        
+        console.log(PI); // 3.14
+        console.log(greet("World")); // "Hello, World"
+        ```
+
+#### 11. 高度な配列メソッド
+
+基本的な `forEach` や `map` に加えて、より複雑なデータ操作を行うためのメソッドです。
+
+*   **`.reduce(callback, initialValue)`**: 配列の各要素を順番に処理し、一つの結果（累積値）を返します。
+    *   **説明**: 合計値の計算、要素の集計、オブジェクトの再構成など、非常に強力で応用範囲が広いです。
+    *   **例** (合計値を計算):
+        ```javascript
+        const numbers =;
+        const total = numbers.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+        // total は 15
+        ```
+
+*   **`.some(callback)`**: 配列の要素のうち、一つでもコールバック関数が `true` を返せば、全体の結果として `true` を返します。
+    *   **例**:
+        ```javascript
+        const hasEvenNumber =.some(num => num % 2 === 0); // true
+        ```
+
+*   **`.every(callback)`**: 配列のすべての要素がコールバック関数で `true` を返した場合にのみ、全体の結果として `true` を返します。
+    *   **例**:
+        ```javascript
+        const allEvenNumbers =.every(num => num % 2 === 0); // true
+        ```
+
+#### 12. Web API (ブラウザ機能の利用)
+
+ブラウザが提供する便利な機能を利用するためのインターフェースです。
+
+*   **`localStorage`**: ユーザーのブラウザにデータを永続的に保存します。
+    *   **説明**: 文字列データのみ保存可能。ブラウザを閉じてもデータは消えません。
+    *   **例**:
+        ```javascript
+        // データを保存
+        localStorage.setItem('username', 'Taro');
+        // データを取得
+        const username = localStorage.getItem('username');
+        // データを削除
+        localStorage.removeItem('username');
+        ```
+
+*   **`sessionStorage`**: `localStorage`と似ていますが、データはブラウザのタブを閉じるまでしか保持されません。
+    *   **説明**: 一時的な情報の保存に利用します。APIは`localStorage`と同じです。
+
+---
+
+### JavaScriptライブラリ一覧 200選 (URL付き)
+
+#### UIフレームワーク／ライブラリ (1-20)
+Webサイトやアプリケーションのユーザーインターフェースを構築するためのものです。
+
+1.  **React**: [react.dev](https://react.dev/)
+2.  **Vue.js**: [vuejs.org](https://vuejs.org/)
+3.  **Angular**: [angular.io](https://angular.io/)
+4.  **Svelte**: [svelte.dev](https://svelte.dev/)
+5.  **Preact**: [preactjs.com](https://preactjs.com/)
+6.  **jQuery**: [jquery.com](https://jquery.com/)
+7.  **Lit**: [lit.dev](https://lit.dev/)
+8.  **SolidJS**: [www.solidjs.com](https://www.solidjs.com/)
+9.  **Alpine.js**: [alpinejs.dev](https://alpinejs.dev/)
+10. **Stimulus**: [stimulus.hotwired.dev](https://stimulus.hotwired.dev/)
+11. **Mithril.js**: [mithril.js.org](https://mithril.js.org/)
+12. **Ember.js**: [emberjs.com](https://emberjs.com/)
+13. **Backbone.js**: [backbonejs.org](https://backbonejs.org/)
+14. **Riot.js**: [riot.js.org](https://riot.js.org/)
+15. **Marko**: [markojs.com](https://markojs.com/)
+16. **Qwik**: [qwik.builder.io](https://qwik.builder.io/)
+17. **Inferno**: [infernojs.org](https://www.infernojs.org/)
+18. **Hyperapp**: [github.com/jorgebucaran/hyperapp](https://github.com/jorgebucaran/hyperapp)
+19. **Stencil**: [stenciljs.com](https://stenciljs.com/)
+20. **Dojo**: [dojo.io](https://dojo.io/)
+
+#### 状態管理 (21-30)
+アプリケーションの「状態」を一貫して管理するためのライブラリです。
+
+21. **Redux**: [redux.js.org](https://redux.js.org/)
+22. **Zustand**: [github.com/pmndrs/zustand](https://github.com/pmndrs/zustand)
+23. **Jotai**: [jotai.org](https://jotai.org/)
+24. **MobX**: [mobx.js.org](https://mobx.js.org/)
+25. **Recoil**: [recoiljs.org](https://recoiljs.org/)
+26. **Pinia**: [pinia.vuejs.org](https://pinia.vuejs.org/)
+27. **Vuex**: [vuex.vuejs.org](https://vuex.vuejs.org/)
+28. **XState**: [xstate.js.org](https://xstate.js.org/)
+29. **Valtio**: [github.com/pmndrs/valtio](https://github.com/pmndrs/valtio)
+30. **Akita**: [opensource.salesforce.com/akita/](https://opensource.salesforce.com/akita/)
+
+#### サーバーサイド／フルスタック (31-45)
+サーバーサイドの処理や、フロントエンドとバックエンドの両方を担うフレームワークです。
+
+31. **Node.js**: [nodejs.org](https://nodejs.org/)
+32. **Express.js**: [expressjs.com](https://expressjs.com/)
+33. **Next.js**: [nextjs.org](https://nextjs.org/)
+34. **Nuxt**: [nuxt.com](https://nuxt.com/)
+35. **SvelteKit**: [kit.svelte.dev](https://kit.svelte.dev/)
+36. **NestJS**: [nestjs.com](https://nestjs.com/)
+37. **Koa**: [koajs.com](https://koajs.com/)
+38. **Fastify**: [fastify.dev](https://fastify.dev/)
+39. **Hono**: [hono.dev](https://hono.dev/)
+40. **Remix**: [remix.run](https://remix.run/)
+41. **Astro**: [astro.build](https://astro.build/)
+42. **Gatsby**: [www.gatsbyjs.com](https://www.gatsbyjs.com/)
+43. **Eleventy (11ty)**: [www.11ty.dev](https://www.11ty.dev/)
+44. **Meteor**: [www.meteor.com](https://www.meteor.com/)
+45. **Sails.js**: [sailsjs.com](https://sailsjs.com/)
+
+#### チャート／データ可視化 (46-60)
+
+46. **D3.js**: [d3js.org](https://d3js.org/)
+47. **Chart.js**: [www.chartjs.org](https://www.chartjs.org/)
+48. **ECharts**: [echarts.apache.org](https://echarts.apache.org/)
+49. **Highcharts**: [www.highcharts.com](https://www.highcharts.com/)
+50. **Recharts**: [recharts.org](https://recharts.org/)
+51. **Victory**: [formidable.com/open-source/victory/](https://formidable.com/open-source/victory/)
+52. **Nivo**: [nivo.rocks](https://nivo.rocks/)
+53. **ApexCharts**: [apexcharts.com](https://apexcharts.com/)
+54. **Plotly.js**: [plotly.com/javascript/](https://plotly.com/javascript/)
+55. **C3.js**: [c3js.org](https://c3js.org/)
+56. **Google Charts**: [developers.google.com/chart](https://developers.google.com/chart)
+57. **TradingView Lightweight Charts**: [www.tradingview.com/lightweight-charts/](https://www.tradingview.com/lightweight-charts/)
+58. **GoJS**: [gojs.net](https://gojs.net/)
+59. **Mermaid**: [mermaid.js.org](https://mermaid.js.org/)
+60. **Vis.js**: [visjs.org](https://visjs.org/)
+
+#### 3D／WebGL (61-70)
+
+61. **Three.js**: [threejs.org](https://threejs.org/)
+62. **Babylon.js**: [www.babylonjs.com](https://www.babylonjs.com/)
+63. **A-Frame**: [aframe.io](https://aframe.io/)
+64. **PlayCanvas**: [playcanvas.com](https://playcanvas.com/)
+65. **React Three Fiber**: [github.com/pmndrs/react-three-fiber](https://github.com/pmndrs/react-three-fiber)
+66. **Paper.js**: [paperjs.org](http://paperjs.org/)
+67. **PixiJS**: [pixijs.com](https://pixijs.com/)
+68. **p5.js**: [p5js.org](https://p5js.org/)
+69. **Fabric.js**: [fabricjs.com](http://fabricjs.com/)
+70. **Konva.js**: [konvajs.org](https://konvajs.org/)
+
+#### アニメーション (71-80)
+
+71. **GSAP (GreenSock)**: [gsap.com](https://gsap.com/)
+72. **Anime.js**: [animejs.com](https://animejs.com/)
+73. **Framer Motion**: [www.framer.com/motion/](https://www.framer.com/motion/)
+74. **Popmotion**: [popmotion.io](https://popmotion.io/)
+75. **Velocity.js**: [velocityjs.org](http://velocityjs.org/)
+76. **Lottie**: [airbnb.io/lottie/](https://airbnb.io/lottie/)
+77. **Mo.js**: [mojs.github.io](https://mojs.github.io/)
+78. **AutoAnimate**: [auto-animate.formkit.com](https://auto-animate.formkit.com/)
+79. **ScrollReveal**: [scrollrevealjs.org](https://scrollrevealjs.org/)
+80. **KUTE.js**: [thednp.github.io/kute.js/](https://thednp.github.io/kute.js/)
+
+#### ユーティリティ (81-100)
+
+81. **Lodash**: [lodash.com](https://lodash.com/)
+82. **Underscore.js**: [underscorejs.org](https://underscorejs.org/)
+83. **Ramda**: [ramdajs.com](https://ramdajs.com/)
+84. **RxJS**: [rxjs.dev](https://rxjs.dev/)
+85. **Immer**: [immerjs.github.io/immer/](https://immerjs.github.io/immer/)
+86. **Yup**: [github.com/jquense/yup](https://github.com/jquense/yup)
+87. **Zod**: [zod.dev](https://zod.dev/)
+88. **Class-validator**: [github.com/typestack/class-validator](https://github.com/typestack/class-validator)
+89. **Ajv**: [ajv.js.org](https://ajv.js.org/)
+90. **Math.js**: [mathjs.org](https://mathjs.org/)
+91. **Faker**: [fakerjs.dev](https://fakerjs.dev/)
+92. **i18next**: [www.i18next.com](https://www.i18next.com/)
+93. **Numeral.js**: [numbrojs.com](http://numbrojs.com/) (後継はNumbro)
+94. **Validator.js**: [github.com/validatorjs/validator.js](https://github.com/validatorjs/validator.js)
+95. **UUID**: [github.com/uuidjs/uuid](https://github.com/uuidjs/uuid)
+96. **Slugify**: [github.com/sindresorhus/slugify](https://github.com/sindresorhus/slugify)
+97. **qs**: [github.com/ljharb/qs](https://github.com/ljharb/qs)
+98. **Cheerio**: [cheerio.js.org](https://cheerio.js.org/)
+99. **Tesseract.js**: [tesseract.projectnaptha.com](https://tesseract.projectnaptha.com/)
+100. **JS-Cookie**: [github.com/js-cookie/js-cookie](https://github.com/js-cookie/js-cookie)
+
+#### 日付／時刻 (101-105)
+
+101. **Day.js**: [day.js.org](https://day.js.org/)
+102. **date-fns**: [date-fns.org](https://date-fns.org/)
+103. **Moment.js**: [momentjs.com](https://momentjs.com/)
+104. **Luxon**: [moment.github.io/luxon/](https://moment.github.io/luxon/)
+105. **FullCalendar**: [fullcalendar.io](https://fullcalendar.io/)
+
+#### テスト (106-120)
+
+106. **Jest**: [jestjs.io](https://jestjs.io/)
+107. **Vitest**: [vitest.dev](https://vitest.dev/)
+108. **Mocha**: [mochajs.org](https://mochajs.org/)
+109. **Jasmine**: [jasmine.github.io](https://jasmine.github.io/)
+110. **Cypress**: [www.cypress.io](https://www.cypress.io/)
+111. **Playwright**: [playwright.dev](https://playwright.dev/)
+112. **Puppeteer**: [pptr.dev](https://pptr.dev/)
+113. **Testing Library**: [testing-library.com](https://testing-library.com/)
+114. **AVA**: [github.com/avajs/ava](https://github.com/avajs/ava)
+115. **Chai**: [www.chaijs.com](https://www.chaijs.com/)
+116. **Sinon.JS**: [sinonjs.org](https://sinonjs.org/)
+117. **Storybook**: [storybook.js.org](https://storybook.js.org/)
+118. **QUnit**: [qunitjs.com](https://qunitjs.com/)
+119. **Karma**: [karma-runner.github.io](https://karma-runner.github.io/)
+120. **Selenium WebDriver**: [www.selenium.dev](https://www.selenium.dev/)
+
+#### ビルドツール／バンドラ (121-130)
+
+121. **Vite**: [vitejs.dev](https://vitejs.dev/)
+122. **Webpack**: [webpack.js.org](https://webpack.js.org/)
+123. **esbuild**: [esbuild.github.io](https://esbuild.github.io/)
+124. **Rollup**: [rollupjs.org](https://rollupjs.org/)
+125. **Parcel**: [parceljs.org](https://parceljs.org/)
+126. **SWC**: [swc.rs](https://swc.rs/)
+127. **Babel**: [babeljs.io](https://babeljs.io/)
+128. **Terser**: [terser.org](https://terser.org/)
+129. **Gulp**: [gulpjs.com](https://gulpjs.com/)
+130. **Grunt**: [gruntjs.com](https://gruntjs.com/)
+
+#### その他 (131-200)
+
+131. **Axios**: [axios-http.com](https://axios-http.com/)
+132. **Prism**: [prismjs.com](https://prismjs.com/)
+133. **Highlight.js**: [highlightjs.org](https://highlightjs.org/)
+134. **Socket.IO**: [socket.io](https://socket.io/)
+135. **PDF.js**: [mozilla.github.io/pdf.js/](https://mozilla.github.io/pdf.js/)
+136. **jsPDF**: [parall.ax/products/jspdf](http://parall.ax/products/jspdf)
+137. **Swiper**: [swiperjs.com](https://swiperjs.com/)
+138. **Hammer.js**: [hammerjs.github.io](https://hammerjs.github.io/)
+139. **SweetAlert2**: [sweetalert2.github.io](https://sweetalert2.github.io/)
+140. **Tippy.js**: [atomiks.github.io/tippyjs/](https://atomiks.github.io/tippyjs/)
+141. **Popper**: [popper.js.org](https://popper.js.org/)
+142. **SortableJS**: [github.com/SortableJS/Sortable](https://github.com/SortableJS/Sortable)
+143. **Dragula**: [bevacqua.github.io/dragula/](https://bevacqua.github.io/dragula/)
+144. **Passport**: [www.passportjs.org](https://www.passportjs.org/)
+145. **Sharp**: [sharp.pixelplumbing.com](https://sharp.pixelplumbing.com/)
+146. **Dotenv**: [github.com/motdotla/dotenv](https://github.com/motdotla/dotenv)
+147. **Marked**: [marked.js.org](https://marked.js.org/)
+148. **DOMPurify**: [github.com/cure53/DOMPurify](https://github.com/cure53/DOMPurify)
+149. **Howler.js**: [howlerjs.com](https://howlerjs.com/)
+150. **Phaser**: [phaser.io](https://phaser.io/)
+151. **<model-viewer>**: [modelviewer.dev](https://modelviewer.dev/) (ThreeD-Viewerよりモダンな代替)
+152. **TensorFlow.js**: [www.tensorflow.org/js](https://www.tensorflow.org/js)
+153. **Brain.js**: [brain.js.org](https://brain.js.org/)
+154. **Formik**: [formik.org](https://formik.org/)
+155. **React Hook Form**: [react-hook-form.com](https://react-hook-form.com/)
+156. **Mustache.js**: [github.com/janl/mustache.js](https://github.com/janl/mustache.js)
+157. **Handlebars**: [handlebarsjs.com](https://handlebarsjs.com/)
+158. **EJS**: [ejs.co](https://ejs.co/)
+159. **Pug**: [pugjs.org](https://pugjs.org/)
+160. **Modernizr**: [modernizr.com](https://modernizr.com/)
+161. **ESLint**: [eslint.org](https://eslint.org/)
+162. **Prettier**: [prettier.io](https://prettier.io/)
+163. **Commander.js**: [github.com/tj/commander.js](https://github.com/tj/commander.js)
+164. **Inquirer.js**: [github.com/SBoudrias/Inquirer.js](https://github.com/SBoudrias/Inquirer.js)
+165. **Chalk**: [github.com/chalk/chalk](https://github.com/chalk/chalk)
+166. **Nodemon**: [nodemon.io](https://nodemon.io/)
+167. **PM2**: [pm2.keymetrics.io](https://pm2.keymetrics.io/)
+168. **Morgan**: [github.com/expressjs/morgan](https://github.com/expressjs/morgan)
+169. **Helmet**: [helmetjs.github.io](https://helmetjs.github.io/)
+170. **CORS**: [github.com/expressjs/cors](https://github.com/expressjs/cors)
+171. **TypeORM**: [typeorm.io](https://typeorm.io/)
+172. **Prisma**: [www.prisma.io](https://www.prisma.io/)
+173. **Mongoose**: [mongoosejs.com](https://mongoosejs.com/)
+174. **Knex.js**: [knexjs.org](https://knexjs.org/)
+175. **JSDoc**: [jsdoc.app](https://jsdoc.app/)
+176. **Typed.js**: [mattboldt.com/demos/typed-js/](https://mattboldt.com/demos/typed-js/)
+177. **Shepherd**: [shepherdjs.dev](https://shepherdjs.dev/)
+178. **WebTorrent**: [webtorrent.io](https://webtorrent.io/)
+179. **PDFKit**: [pdfkit.org](http://pdfkit.org/)
+180. **Nodemailer**: [nodemailer.com](https://nodemailer.com/)
+181. **MediaElement.js**: [www.mediaelementjs.com](https://www.mediaelementjs.com/)
+182. **PhotoSwipe**: [photoswipe.com](https://photoswipe.com/)
+183. **Stripe.js**: [stripe.com/docs/js](https://stripe.com/docs/js)
+184. **Clipboard.js**: [clipboardjs.com](https://clipboardjs.com/)
+185. **Log-Level**: [github.com/pimterry/loglevel](https://github.com/pimterry/loglevel)
+186. **Winston**: [github.com/winstonjs/winston](https://github.com/winstonjs/winston)
+187. **Simple-peer**: [github.com/feross/simple-peer](https://github.com/feross/simple-peer)
+188. **Leaflet**: [leafletjs.com](https://leafletjs.com/)
+189. **OpenLayers**: [openlayers.org](https://openlayers.org/)
+190. **Mapbox GL JS**: [docs.mapbox.com/mapbox-gl-js/](https://docs.mapbox.com/mapbox-gl-js/)
+191. **Polymer**: [www.polymer-project.org](https://www.polymer-project.org/)
+192. **Ionic**: [ionicframework.com](https://ionicframework.com/)
+193. **React Native**: [reactnative.dev](https://reactnative.dev/)
+194. **NativeScript**: [nativescript.org](https://nativescript.org/)
+195. **Electron**: [www.electronjs.org](https://www.electronjs.org/)
+196. **Agenda**: [github.com/agenda/agenda](https://github.com/agenda/agenda)
+197. **Node-cron**: [github.com/node-cron/node-cron](https://github.com/node-cron/node-cron)
+198. **CSV**: [csv.js.org](https://csv.js.org/)
+199. **Imask.js**: [imask.js.org](https://imask.js.org/)
+200. **Cleave.js**: [nosir.github.io/cleave.js/](https://nosir.github.io/cleave.js/)
+
+  </script>
+
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>

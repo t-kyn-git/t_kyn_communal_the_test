@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS 詳細リファレンス</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
+
+# CSS 詳細リファレンス & 主要ライブラリ一覧
+
+## CSS 主要リファレンス
+
+CSSは、HTML文書の見た目（スタイル）を指定するための言語です。セレクタで対象を指定し、プロパティでスタイルを定義します。
+
+### 1. セレクタ (Selectors)
+
+どのHTML要素にスタイルを適用するかを選択するための記述です。
+
+*   **要素セレクタ**: `p` `{ ... }`
+    *   全ての`<p>`要素に適用されます。
+*   **クラスセレクタ**: `.classname` `{ ... }`
+    *   `class="classname"`が指定された全ての要素に適用されます。
+*   **IDセレクタ**: `#idname` `{ ... }`
+    *   `id="idname"`が指定された特定の1つの要素に適用されます。
+*   **属性セレクタ**: `input[type="text"]` `{ ... }`
+    *   特定の属性を持つ要素に適用されます。
+*   **擬似クラス**: `:hover`, `:first-child` など
+    *   要素の特定の状態（マウスが乗っている、最初の子要素など）に対してスタイルを適用します。
+    ```css
+    a:hover {
+      color: red; /* マウスが乗った時のaタグの文字色 */
+    }
+    ```
+
+### 2. ボックスモデル (Box Model)
+
+全てのHTML要素は、長方形のボックスとして描画されます。このボックスは以下の要素で構成されます。
+
+*   **`width` / `height`**: コンテンツ領域の幅と高さ。
+*   **`padding`**: コンテンツとボーダー（枠線）の間の余白。
+*   **`border`**: パディングの外側にある枠線。太さ、種類、色を指定します。（例: `border: 1px solid black;`）
+*   **`margin`**: ボーダーの外側にある、他の要素との間の余白。
+*   **`box-sizing`**: ボックスのサイズ計算方法を指定します。`border-box`にすると、`width`に`padding`と`border`が含まれるようになり、レイアウト計算が直感的になります。
+    ```css
+    * {
+      box-sizing: border-box;
+    }
+    ```
+
+### 3. テキストとフォント (Typography)
+
+*   **`color`**: テキストの色。
+*   **`font-family`**: フォントの種類。（例: `"Helvetica", "Arial", sans-serif`）
+*   **`font-size`**: 文字の大きさ。（例: `16px`, `1.2rem`, `120%`）
+*   **`font-weight`**: 文字の太さ。（例: `normal`, `bold`, `700`）
+*   **`line-height`**: 行の高さ。
+*   **`text-align`**: テキストの水平方向の揃え。（`left`, `center`, `right`）
+*   **`text-decoration`**: テキストの装飾。（`none`, `underline`）
+
+### 4. レイアウト (Layout)
+
+要素をページ上に配置するための重要なプロパティです。
+
+#### **Flexbox**
+1次元（縦一列または横一列）のレイアウトを柔軟に作成するためのモデルです。
+
+*   **`display: flex;`**: フレックスコンテナ（親要素）として定義します。
+*   **`flex-direction`**: アイテム（子要素）の並ぶ方向。（`row` 横並び, `column` 縦並び）
+*   **`justify-content`**: 主軸方向（`flex-direction`で決めた方向）の揃え。（`flex-start`, `center`, `space-between`など）
+*   **`align-items`**: 交差軸方向の揃え。（`flex-start`, `center`, `stretch`など）
+*   **`gap`**: アイテム間の隙間。
+
+#### **Grid**
+2次元（縦横）のグリッドレイアウトを作成するためのモデルです。
+
+*   **`display: grid;`**: グリッドコンテナとして定義します。
+*   **`grid-template-columns`**: 列の幅を定義します。（例: `1fr 1fr 200px`）
+*   **`grid-template-rows`**: 行の高さを定義します。
+*   **`gap`**: グリッドアイテム間の隙間。
+
+#### **Positioning**
+要素の配置方法を指定します。
+
+*   **`position`**:
+    *   `static`: デフォルト値。
+    *   `relative`: 通常の位置を基準に相対的に配置。`top`, `left`などで調整。
+    *   `absolute`: 親要素の中で`position: static`でない一番近い要素を基準に絶対的に配置。
+    *   `fixed`: ブラウザの表示領域を基準に固定配置。スクロールしても動きません。
+    *   `sticky`: スクロールに応じて`relative`と`fixed`が切り替わるように配置。
+*   **`z-index`**: 要素の重なり順を数値で指定します。`position`が`static`以外でないと効きません。
+
+### 5. 背景と色 (Backgrounds & Colors)
+
+*   **`background-color`**: 背景色。
+*   **`background-image`**: 背景画像。（例: `url('image.jpg')`）
+*   **`background-size`**: 背景画像のサイズ。（`cover`, `contain`など）
+*   **`opacity`**: 要素全体の透明度。（`0` (透明) ～ `1` (不透明)）
+
+### 6. アニメーション (Transitions & Animations)
+
+*   **`transition`**: 要素のプロパティが変化する際のアニメーションを指定します。（例: `transition: background-color 0.3s ease;`）
+*   **`animation`**: `@keyframes`で定義した一連の動きを要素に適用します。
+
+### 7. レスポンシブデザイン (Responsive Design)
+
+*   **メディアクエリ (`@media`)**: 画面の幅などに応じて適用するスタイルを切り替えます。
+    ```css
+    /* 画面幅が600px以上の場合に適用 */
+    @media (min-width: 600px) {
+      .container {
+        display: flex;
+      }
+    }
+    ```
+
+---
+
+## CSS 主要ライブラリ／フレームワーク一覧
+
+### UIフレームワーク (コンポーネントベース)
+デザイン済みのUIコンポーネント（ボタン、カード、ナビゲーションバーなど）を提供し、迅速なWeb開発を支援します。
+
+*   **Bootstrap**: [getbootstrap.com](https://getbootstrap.com/)
+    *   最も有名で広く使われているフレームワーク。豊富なコンポーネントと強力なグリッドシステムが特徴。
+*   **Tailwind CSS**: [tailwindcss.com](https://tailwindcss.com/)
+    *   「ユーティリティファースト」を掲げるフレームワーク。`m-4`や`flex`のような小さなクラスをHTMLに直接書き込むことでデザインを構築する。
+*   **Bulma**: [bulma.io](https://bulma.io/)
+    *   Flexboxをベースにしたモダンなフレームワーク。CSSのみで動作し、JavaScriptを必要としないのが特徴。
+*   **Foundation**: [get.foundation](https://get.foundation/)
+    *   プロフェッショナル向けで、高度なカスタマイズが可能なフレームワーク。
+*   **Materialize CSS**: [materializecss.com](https://materializecss.com/)
+    *   Googleのマテリアルデザインを簡単に実装するためのフレームワーク。
+*   **Semantic UI**: [semantic-ui.com](https://semantic-ui.com/)
+    *   人間が読んで理解しやすい、自然言語に近いクラス名が特徴。
+
+### CSSプリプロセッサ
+CSSをより効率的に書くための拡張言語と、それを通常のCSSに変換するツールです。変数、ネスト、Mixin（関数のようなもの）などの機能が使えます。
+
+*   **Sass (SCSS)**: [sass-lang.com](https://sass-lang.com/)
+    *   最も広く使われているプリプロセッサ。安定性と豊富な機能でデファクトスタンダード。
+*   **Less**: [lesscss.org](https://lesscss.org/)
+    *   Sassと同様に人気のあるプリプロセッサ。Bootstrapの旧バージョンで採用されていた。
+*   **Stylus**: [stylus-lang.com](https://stylus-lang.com/)
+    *   括弧やセミコロンを省略できる、柔軟でクリーンな構文が特徴。
+
+### CSS-in-JS
+JavaScriptのコード内でCSSを記述する手法、またはそれを実現するライブラリです。ReactやVueなどのコンポーネントベースのフレームワークで特に人気があります。
+
+*   **Styled-components**: [styled-components.com](https://styled-components.com/)
+    *   コンポーネントに直接スタイルをアタッチする人気のライブラリ。
+*   **Emotion**: [emotion.sh](https://emotion.sh/)
+    *   パフォーマンスと柔軟性に定評があるライブラリ。Styled-componentsと人気を二分する。
+
+### アニメーションライブラリ
+複雑なアニメーションを簡単に実装するためのライブラリです。
+
+*   **Animate.css**: [animate.style](https://animate.style/)
+    *   クラスを追加するだけで、様々なアニメーション効果を簡単に適用できるライブラリ。
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>
