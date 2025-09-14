@@ -27,7 +27,7 @@
             opacity: 0; /* 初期状態は透明 */
             /* 共通のアニメーション設定 */
             animation-name: crossfade;
-            animation-duration: 20s; /* 4画像 x 5秒 = 20秒 */
+            animation-duration: 54s; /* 9画像 x 6秒 = 54秒 */
             animation-iteration-count: infinite;
             animation-timing-function: linear;
         }
@@ -40,20 +40,44 @@
         }
         .bg-slide:nth-child(2) {
             /* 炎: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/266665/pexels-photo-266665.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -15s; /* 20秒サイクルの5秒地点から開始 */
+            background-image: url('https://images.pexels.com/photos/1528641/pexels-photo-1528641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -48s; /* 20秒サイクルの5秒地点から開始 */
         }
         .bg-slide:nth-child(3) {
             /* 水: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/932401/pexels-photo-932401.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -10s; /* 20秒サイクルの10秒地点から開始 */
+            background-image: url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -42s; /* 20秒サイクルの10秒地点から開始 */
         }
         .bg-slide:nth-child(4) {
             /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/158316/sky-grass-meadow-nature-158316.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -5s;  /* 20秒サイクルの15秒地点から開始 */
+            background-image: url('https://images.pexels.com/photos/355288/pexels-photo-355288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -36s;  /* 20秒サイクルの15秒地点から開始 */
         }
-
+        .bg-slide:nth-child(5) {
+            /* 水: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/89930/pexels-photo-89930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -30s; /* 20秒サイクルの10秒地点から開始 */
+        }
+        .bg-slide:nth-child(6) {
+            /* 草: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/3214110/pexels-photo-3214110.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -24s;  /* 20秒サイクルの15秒地点から開始 */
+        }
+        .bg-slide:nth-child(7) {
+            /* 草: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -18s;  /* 20秒サイクルの15秒地点から開始 */
+        }
+        .bg-slide:nth-child(8) {
+            /* 草: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -12s;  /* 20秒サイクルの15秒地点から開始 */
+        }
+        .bg-slide:nth-child(9) {
+            /* 草: 高画質な画像URLに変更 */
+            background-image: url('https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+            animation-delay: -6s;  /* 20秒サイクルの15秒地点から開始 */
+        }
         /*
          * クロスフェードアニメーションの定義
          * 1つの画像が表示される期間（5秒間）をアニメーションの25%として定義
@@ -81,7 +105,7 @@
             max-width: 900px;
             margin: 20px auto;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.9); /* 背景が透けて見えるように少し透明に */
+            background: rgba(255, 255, 255, 0.3); /* 背景が透けて見えるように少し透明に */
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -149,10 +173,10 @@
             word-wrap: break-word;
         }
         th {
-            background-color: #f4f4f4;
+            background-color:rgba(0, 0, 0, 0.1);
         }
         td {
-            background-color: #fff;
+            background-color:rgba(255, 255, 255, 0.5);
         }
         .footer {
             margin-top: 30px;
@@ -194,6 +218,11 @@
 
     <!-- 背景アニメーション用のコンテナ（HTML構造は変更） -->
     <div id="background-container">
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
+        <div class="bg-slide"></div>
         <div class="bg-slide"></div>
         <div class="bg-slide"></div>
         <div class="bg-slide"></div>
@@ -297,25 +326,28 @@
                                 <li>MyFriend(ExpressReactECSite)</li>   
                         </ul>
                     </td>
+                </tr>
+                <tr>
+                    <td><strong>6) Manual Reference</strong></td>
                     <td>
                         <ul>
                             <li>All other documents are below. </li>
                                 <li>We show the document as the public sub name (nickname) in the the world because of security defence.</li>
                                 <li>ALL Documents.</li>
                                 <a href="subdir/development/refermanuals/javascripts_manual.html">
-                                <li>JavaScript 詳細リファレンス</li>
+                                <li>JavaScript</li>
                                 <a href="subdir/development/refermanuals/python_manual.html">
-                                <li>Python 詳細リファレンス</li>
+                                <li>Python</li>
                                 <a href="subdir/development/refermanuals/java_manual.html">
-                                <li>Java 詳細リファレンス</li>
+                                <li>Java</li>
                                 <a href="subdir/development/refermanuals/lua_manual.html">
-                                <li>Lua 詳細リファレンス</li>
+                                <li>Lua</li>
                                 <a href="subdir/development/refermanuals/html_manual.html">
-                                <li>HTML 詳細リファレンス</li>
+                                <li>HTML</li>
                                 <a href="subdir/development/refermanuals/css_manual.html">
-                                <li>CSS 詳細リファレンス</li>
+                                <li>CSS</li>
                                 <a href="subdir/development/refermanuals/sample_manual.html">
-                                <li>sample 詳細リファレンス</li>
+                                <li>sample</li>
                         </ul>
                     </td>
                 </tr>
