@@ -7,4 +7,5 @@
 const db={};
 document.getElementById('go').onclick=()=>{ const t=document.getElementById('txt').value; if(!t) return; const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6); db[id]=t; document.getElementById('out').innerHTML=`コード: ${id}<br>復元: ${db[id]}`; };
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body></html>

@@ -79,11 +79,12 @@
       if (gameArea.contains(kick)) {
         gameArea.removeChild(kick);
       }
-    }, 2000);
+    }, 500);
   }
 
   // 一定間隔で胎動出現
-  setInterval(createKick, 1500);
+  setInterval(createKick, 1000);
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body>
 </html>
