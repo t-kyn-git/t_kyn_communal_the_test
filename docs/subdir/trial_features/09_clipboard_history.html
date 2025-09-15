@@ -14,4 +14,5 @@ document.getElementById('paste').onclick=async()=>{
 };
 function render(){ const ul=document.getElementById('hist'); ul.innerHTML=''; arr.forEach(x=>{ const li=document.createElement('li'); li.textContent=x; ul.appendChild(li); }); }
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body></html>

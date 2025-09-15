@@ -7,4 +7,5 @@
 <script>
 document.getElementById('f').onclick=()=>{ try{ const o=JSON.parse(document.getElementById('j').value); document.getElementById('out').textContent=JSON.stringify(o,null,2);}catch(e){ document.getElementById('out').textContent='JSONエラー: '+e.message; } };
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body></html>

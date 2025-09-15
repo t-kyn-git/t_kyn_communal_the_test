@@ -11,4 +11,6 @@ function save(a){localStorage.setItem(K,JSON.stringify(a)); render();}
 function render(){ const ul=document.getElementById('list'); ul.innerHTML=''; get().forEach((h,i)=>{ const li=document.createElement('li'); li.innerHTML=`${h.name} - ${h.count||0}回 `; const b=document.createElement('button'); b.textContent='記録'; b.onclick=()=>{const a=get(); a[i].count=(a[i].count||0)+1; save(a);} li.appendChild(b); ul.appendChild(li); });}
 document.getElementById('add').onclick=()=>{ const n=document.getElementById('habit').value.trim(); if(!n) return; const a=get(); a.push({name:n,count:0}); save(a); document.getElementById('habit').value=''; };
 render();
-</script></body></html>
+</script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
+</body></html>

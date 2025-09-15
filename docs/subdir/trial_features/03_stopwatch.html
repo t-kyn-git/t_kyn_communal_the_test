@@ -17,4 +17,6 @@ document.getElementById('start').onclick=()=>{
 };
 document.getElementById('lap').onclick=()=>{ const li=document.createElement('li'); li.textContent=document.getElementById('time').textContent; document.getElementById('laps').appendChild(li); };
 document.getElementById('reset').onclick=()=>{ cancelAnimationFrame(raf); raf=null; start=0; elapsed=0; document.getElementById('time').textContent='00:00.0'; document.getElementById('laps').innerHTML=''; document.getElementById('start').textContent='開始'; };
-</script></body></html>
+</script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
+</body></html>

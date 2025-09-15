@@ -1,0 +1,155 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          139.6917,
+          35.6895
+        ]
+      },
+      "properties": {
+        "title": "東京",
+        "memo": "日本の首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -77.0369,
+          38.9072
+        ]
+      },
+      "properties": {
+        "title": "ワシントンD.C.",
+        "memo": "アメリカ合衆国の首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -0.1278,
+          51.5074
+        ]
+      },
+      "properties": {
+        "title": "ロンドン",
+        "memo": "イギリスの首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          2.3522,
+          48.8566
+        ]
+      },
+      "properties": {
+        "title": "パリ",
+        "memo": "フランスの首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          116.4074,
+          39.9042
+        ]
+      },
+      "properties": {
+        "title": "北京",
+        "memo": "中華人民共和国の首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6173,
+          55.7558
+        ]
+      },
+      "properties": {
+        "title": "モスクワ",
+        "memo": "ロシア連邦の首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          149.13,
+          -35.2809
+        ]
+      },
+      "properties": {
+        "title": "キャンベラ",
+        "memo": "オーストラリアの首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -47.8825,
+          -15.7942
+        ]
+      },
+      "properties": {
+        "title": "ブラジリア",
+        "memo": "ブラジルの首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          77.209,
+          28.6139
+        ]
+      },
+      "properties": {
+        "title": "ニューデリー",
+        "memo": "インドの首都",
+        "category": "首都"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -75.6972,
+          45.4215
+        ]
+      },
+      "properties": {
+        "title": "オタワ",
+        "memo": "カナダの首都",
+        "category": "首都"
+      }
+    }
+  ]
+}

@@ -10,4 +10,5 @@ document.getElementById('g').onclick=()=>{ const u=document.getElementById('url'
 function render(){ const db=get(); const ul=document.getElementById('list'); ul.innerHTML=''; for(const k in db){ const li=document.createElement('li'); li.textContent=`${k} -> ${db[k]}`; ul.appendChild(li);} }
 render();
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body></html>

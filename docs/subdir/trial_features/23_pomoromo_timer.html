@@ -10,4 +10,5 @@ document.getElementById('start').onclick=()=>{
   clearInterval(s); s=setInterval(()=>{ rem--; const m=Math.floor(rem/60), sec=rem%60; document.getElementById('t').textContent=`${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`; if(rem<=0){ clearInterval(s); alert('休憩'); } },1000);
 };
 </script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 </body></html>
