@@ -286,9 +286,7 @@ jobs:
           echo "    <h2>Lambda関数一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT lambda list-functions --output text)</pre>"
           echo "    <h2>API Gateway一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT apigateway get-rest-apis --output text)</pre>"
           echo "    <h2>Route53ホストゾーン一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT route53 list-hosted-zones --output text)</pre>"
-
           echo "  </div>"
-          echo "<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>"
           echo "</body>"
           echo "</html>"
         } > $OUTHTMLFILE
