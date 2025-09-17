@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>ログインページ</title>
+  <script>
+    function authCheck() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username === "hogehoge" && password === "mogemoge") {
+        window.location.href = "subdir/toppage.html";
+      } else {
+        alert("ユーザー名またはパスワードが間違っています。");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h2>ログイン</h2>
+  <label for="username">ユーザー名:</label>
+  <input type="text" id="username" name="username"><br><br>
+
+  <label for="password">パスワード:</label>
+  <input type="password" id="password" name="password"><br><br>
+
+  <button onclick="authCheck()">authcheck</button>
+</body>
+</html>
