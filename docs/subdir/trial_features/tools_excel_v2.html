@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>HTML 完結 スプレッドシート（改善版）</title>
+<title>HTML 完結 スプレッドシート（最終改善版）</title>
 <style>
   :root{
     --header-height:48px;
@@ -23,7 +23,7 @@
   }
   .container{display:flex;height:calc(100vh - var(--header-height));overflow:auto}
   .sheet{flex:1;margin:12px;background:#fff;border:1px solid #ddd;overflow:auto;padding:12px;}
-  table{border-collapse:collapse;min-width:600px;user-select:none;} /* user-select:noneでドラッグ中のテキスト選択を防止 */
+  table{border-collapse:collapse;min-width:600px;user-select:none;}
   th, td{border:1px solid #e1e4e8;width:var(--cell-width);height:var(--cell-height);position: relative;}
   th{background:#f3f6f9;font-weight:600;text-align:center;font-size:12px}
   .cell{width:100%;height:100%;display:block;padding:4px;font-size:13px;outline:none;line-height: 1.5;}
@@ -49,7 +49,7 @@
   <div class="container">
     <div class="sheet">
       <table id="grid"></table>
-      <div class="footer-note">セル入力 / =SUM(A1:A3)対応 / オートフィル可 / グラフ&図形描画あり</div>
+      <div class="footer-note">Enterで下方セルへ / 範囲コピペ対応 / SUM関数 / オートフィル / グラフ&図形</div>
     </div>
     <div style="flex:0.6;padding:12px;">
       <canvas id="chartCanvas" width="400" height="200"></canvas>
@@ -58,7 +58,6 @@
     </div>
   </div>
 
-  <!-- ライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -68,12 +67,11 @@ let rows=DEFAULT_ROWS, cols=DEFAULT_COLS;
 let data=Array.from({length:rows},()=>Array(cols).fill(""));
 
 const grid=document.getElementById("grid");
-// ★修正点: 選択範囲を管理する変数
 let selection = {start:{r:0,c:0}, end:{r:0,c:0}};
 let isSelecting = false;
 let isAutofilling = false;
 let startFill = null;
-let myChart = null; // ★修正点: グラフインスタンスを保持
+let myChart = null;
 
 function colLabel(n){let s="";while(n>=0){s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)-1;}return s;}
 
@@ -97,7 +95,6 @@ function evaluateCell(expr, r, c){
   return expr;
 }
 
-// ★修正点: 再描画を伴わない、値の更新のみを行う関数
 function updateCellDisplay() {
     for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -126,10 +123,21 @@ function render(){
       const div=document.createElement("div");
       div.className="cell";div.contentEditable=true;div.dataset.r=r;div.dataset.c=c;
       div.innerText=evaluateCell(data[r][c], r, c);
-      div.addEventListener("input", (e) => {
-        data[r][c] = e.target.innerText;
+      div.addEventListener("input", (e) => { data[r][c] = e.target.innerText; });
+      div.addEventListener('blur', updateCellDisplay);
+      
+      // ★修正点: Enterキーで下のセルに移動
+      div.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault(); // デフォルトの改行動作をキャンセル
+              const nextR = r + 1;
+              if (nextR < rows) {
+                  selection = { start: { r: nextR, c }, end: { r: nextR, c } };
+                  updateSelectionHighlight();
+                  grid.querySelector(`.cell[data-r="${nextR}"][data-c="${c}"]`).focus();
+              }
+          }
       });
-      div.addEventListener('blur', updateCellDisplay); // フォーカスが外れたら再計算
       td.appendChild(div);
       tr.appendChild(td);
     }
@@ -139,9 +147,7 @@ function render(){
   updateSelectionHighlight();
 }
 
-// ★修正点: 範囲選択のハイライト処理
 function updateSelectionHighlight(){
-  // 全てのセルのハイライトを解除
   document.querySelectorAll(".cell.selected").forEach(el=>el.classList.remove("selected"));
   document.querySelectorAll(".fill-handle").forEach(el => el.remove());
 
@@ -157,101 +163,104 @@ function updateSelectionHighlight(){
     }
   }
 
-  // 選択範囲の右下にオートフィルハンドルを追加
   const lastSelectedCell = grid.querySelector(`.cell[data-r="${selection.end.r}"][data-c="${selection.end.c}"]`);
   if(lastSelectedCell){
-      const h = document.createElement("div");
-      h.className = "fill-handle";
+      const h = document.createElement("div"); h.className = "fill-handle";
       h.addEventListener("mousedown", (e) => {
-          isAutofilling = true;
-          startFill = { r: selection.end.r, c: selection.end.c };
-          e.stopPropagation(); // 親のmousedownイベントを発火させない
+          isAutofilling = true; startFill = { r: selection.end.r, c: selection.end.c }; e.stopPropagation();
       });
       lastSelectedCell.parentElement.appendChild(h);
   }
 }
 
-// ★修正点: 範囲選択のためのイベントリスナー
 grid.addEventListener("mousedown", (e) => {
     if (e.target.classList.contains('cell')) {
         isSelecting = true;
-        const r = +e.target.dataset.r;
-        const c = +e.target.dataset.c;
+        const r = +e.target.dataset.r; const c = +e.target.dataset.c;
         selection = { start: { r, c }, end: { r, c } };
         updateSelectionHighlight();
     }
 });
-
 grid.addEventListener("mousemove", (e) => {
     if (isSelecting && e.target.classList.contains('cell')) {
-        const r = +e.target.dataset.r;
-        const c = +e.target.dataset.c;
-        selection.end = { r, c };
-        updateSelectionHighlight();
-    } else if (isAutofilling) {
-        // オートフィル処理
-        if (!e.target.classList.contains('cell')) return;
-        const r_end = +e.target.dataset.r;
-        const c_end = +e.target.dataset.c;
-        const r_start = startFill.r;
-        const c_start = startFill.c;
-        
-        // 縦方向のオートフィル
+        const r = +e.target.dataset.r; const c = +e.target.dataset.c;
+        selection.end = { r, c }; updateSelectionHighlight();
+    } else if (isAutofilling && e.target.classList.contains('cell')) {
+        const r_end = +e.target.dataset.r; const c_end = +e.target.dataset.c;
+        const r_start = startFill.r; const c_start = startFill.c;
         if (c_end === c_start) {
             const val = data[r_start][c_start];
-            for (let r = r_start + 1; r <= r_end; r++) {
-                data[r][c_start] = val;
-            }
+            for (let r = r_start + 1; r <= r_end; r++) { data[r][c_start] = val; }
         }
-        render(); // データ変更を反映
-        selection.end = { r: r_end, c: c_end };
-        updateSelectionHighlight();
+        render(); selection.end = { r: r_end, c: c_end }; updateSelectionHighlight();
     }
 });
+document.addEventListener("mouseup", () => { isSelecting = false; isAutofilling = false; });
 
-document.addEventListener("mouseup", () => {
-    isSelecting = false;
-    isAutofilling = false;
+// ★修正点: コピー＆ペースト機能
+document.addEventListener('copy', (e) => {
+    e.preventDefault();
+    const r_start = Math.min(selection.start.r, selection.end.r);
+    const r_end = Math.max(selection.start.r, selection.end.r);
+    const c_start = Math.min(selection.start.c, selection.end.c);
+    const c_end = Math.max(selection.start.c, selection.end.c);
+    
+    let copyText = "";
+    for(let r = r_start; r <= r_end; r++){
+        let rowText = [];
+        for(let c = c_start; c <= c_end; c++){
+            rowText.push(data[r][c] || "");
+        }
+        copyText += rowText.join("\t") + "\n";
+    }
+    navigator.clipboard.writeText(copyText.trim());
 });
 
+document.addEventListener('paste', async (e) => {
+    e.preventDefault();
+    const pasteText = await navigator.clipboard.readText();
+    const pasteRows = pasteText.split("\n").map(row => row.split("\t"));
+    
+    const start_r = selection.start.r;
+    const start_c = selection.start.c;
 
-// 新規
-btnNew.addEventListener("click",()=>{rows=DEFAULT_ROWS;cols=DEFAULT_COLS;
-  data=Array.from({length:rows},()=>Array(cols).fill(""));render();});
+    pasteRows.forEach((row, r_offset) => {
+        row.forEach((cellValue, c_offset) => {
+            const r = start_r + r_offset;
+            const c = start_c + c_offset;
+            if (r < rows && c < cols) {
+                data[r][c] = cellValue;
+            }
+        });
+    });
+    updateCellDisplay();
+});
 
-// 保存
-function exportXLSX(){
+// 新規・保存ボタン
+btnNew.addEventListener("click",()=>{rows=DEFAULT_ROWS;cols=DEFAULT_COLS; data=Array.from({length:rows},()=>Array(cols).fill(""));render();});
+btnSaveXlsx.addEventListener("click",()=>{
   const evaluatedData = data.map((row, r) => row.map((cell, c) => evaluateCell(cell, r, c)));
   const ws=XLSX.utils.aoa_to_sheet(evaluatedData);const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Sheet1");
-  XLSX.writeFile(wb, "sheet.xlsx");
-}
-btnSaveXlsx.addEventListener("click",exportXLSX);
-
+  XLSX.utils.book_append_sheet(wb,ws,"Sheet1"); XLSX.writeFile(wb, "sheet.xlsx");
+});
 btnSaveCsv.addEventListener("click",()=>{
   const evaluatedData = data.map((row, r) => row.map((cell, c) => evaluateCell(cell, r, c)));
   const csv=evaluatedData.map(r=>r.map(c=>`"${c}"`).join(",")).join("\r\n");
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8,"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);a.download="sheet.csv";a.click();
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);a.download="sheet.csv";a.click();
 });
 
 // グラフ作成
 btnGraph.addEventListener("click",()=>{
-  // ★修正点: 既存のグラフがあれば破棄する
-  if(myChart){
-    myChart.destroy();
-  }
+  if(myChart){ myChart.destroy(); }
   const labels=[],values=[];
   for(let r=0;r<rows;r++){
       if(data[r][0] && !isNaN(evaluateCell(data[r][1],r,1))){
-          labels.push(data[r][0]);
-          values.push(+evaluateCell(data[r][1],r,1));
+          labels.push(data[r][0]); values.push(+evaluateCell(data[r][1],r,1));
       }
   }
   myChart = new Chart(document.getElementById("chartCanvas"),{
-    type:"bar",
-    data:{labels,datasets:[{label:"データ",data:values,backgroundColor:"rgba(54,162,235,0.5)"}]}
+    type:"bar", data:{labels,datasets:[{label:"データ",data:values,backgroundColor:"rgba(54,162,235,0.5)"}]}
   });
 });
 
