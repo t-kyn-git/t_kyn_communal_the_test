@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HTML 完結 スプレッドシート（全部盛り版）</title>
+<style>
+  :root{
+    --header-height:48px;
+    --cell-width:100px;
+    --cell-height:28px;
+    --font-family:"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  body{font-family:var(--font-family);margin:0;background:#f6f7f9;color:#111}
+  .toolbar{
+    height:var(--header-height);
+    display:flex;align-items:center;gap:8px;padding:6px 10px;
+    background:#fff;border-bottom:1px solid #ddd;
+  }
+  .toolbar button, .toolbar select{
+    height:34px;padding:6px 10px;border-radius:6px;border:1px solid #ccc;background:#fff;
+    cursor:pointer;font-size:13px;
+  }
+  .container{display:flex;height:calc(100vh - var(--header-height));overflow:auto}
+  .sheet{flex:1;margin:12px;background:#fff;border:1px solid #ddd;overflow:auto;padding:12px;}
+  table{border-collapse:collapse;min-width:600px;}
+  th, td{border:1px solid #e1e4e8;width:var(--cell-width);height:var(--cell-height);}
+  th{background:#f3f6f9;font-weight:600;text-align:center;font-size:12px}
+  .cell{width:100%;height:100%;display:block;padding:4px;font-size:13px;outline:none}
+  .selected{background:rgba(0,120,215,0.1)}
+  .fill-handle{position:absolute;width:6px;height:6px;background:#0078d7;bottom:0;right:0;cursor:crosshair}
+  .footer-note{padding:6px 12px;font-size:12px;color:#666}
+</style>
+</head>
+<body>
+  <div class="toolbar">
+    <strong>HTML Spreadsheet</strong>
+    <button id="btnNew">New</button>
+    <button id="btnSaveXlsx">Save .xlsx</button>
+    <button id="btnSaveCsv">Save .csv</button>
+    <button id="btnGraph">グラフ作成</button>
+    <select id="drawShape">
+      <option value="">図形</option>
+      <option value="rect">四角形</option>
+      <option value="circle">円</option>
+    </select>
+  </div>
+
+  <div class="container">
+    <div class="sheet">
+      <table id="grid"></table>
+      <div class="footer-note">セル入力 / =SUM(A1:A3)対応 / オートフィル可 / グラフ&図形描画あり</div>
+    </div>
+    <div style="flex:0.6;padding:12px;">
+      <canvas id="chartCanvas" width="400" height="200"></canvas>
+      <hr>
+      <canvas id="shapeCanvas" width="400" height="200" style="border:1px solid #ccc"></canvas>
+    </div>
+  </div>
+
+  <!-- ライブラリ -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const DEFAULT_ROWS=20, DEFAULT_COLS=10;
+let rows=DEFAULT_ROWS, cols=DEFAULT_COLS;
+let data=Array.from({length:rows},()=>Array(cols).fill(""));
+
+const grid=document.getElementById("grid");
+let selected={r:0,c:0};
+let autofillActive=false,startFill=null;
+
+function colLabel(n){let s="";while(n>=0){s=String.fromCharCode(65+n%26)+s;n=Math.floor(n/26)-1;}return s;}
+
+function evaluateCell(expr){
+  if(typeof expr!=="string") return expr;
+  if(expr.startsWith("=")){
+    try{
+      const f=expr.slice(1).toUpperCase();
+      if(f.startsWith("SUM(")){
+        const range=f.match(/SUM\(([^)]+)\)/)[1];
+        const [a,b]=range.split(":");
+        const coord=(addr)=>{const col=addr.match(/[A-Z]+/)[0];const row=parseInt(addr.match(/\d+/)[0])-1;
+          let c=0;for(let i=0;i<col.length;i++){c=c*26+(col.charCodeAt(i)-64);}return{r:row,c:c-1};};
+        const s=coord(a), e=coord(b);
+        let sum=0;
+        for(let r=s.r;r<=e.r;r++)for(let c=s.c;c<=e.c;c++){const v=parseFloat(data[r][c]);if(!isNaN(v))sum+=v;}
+        return sum;
+      }
+    }catch{return"#ERR";}
+  }
+  return expr;
+}
+
+function render(){
+  grid.innerHTML="";
+  const thead=document.createElement("thead");
+  const trh=document.createElement("tr");
+  trh.appendChild(document.createElement("th"));
+  for(let c=0;c<cols;c++){const th=document.createElement("th");th.textContent=colLabel(c);trh.appendChild(th);}
+  thead.appendChild(trh);grid.appendChild(thead);
+
+  const tbody=document.createElement("tbody");
+  for(let r=0;r<rows;r++){
+    const tr=document.createElement("tr");
+    const th=document.createElement("th");th.textContent=r+1;tr.appendChild(th);
+    for(let c=0;c<cols;c++){
+      const td=document.createElement("td");
+      const div=document.createElement("div");
+      div.className="cell";div.contentEditable=true;div.dataset.r=r;div.dataset.c=c;
+      div.innerText=evaluateCell(data[r][c]);
+      div.addEventListener("focus",()=>setSelected(r,c));
+      div.addEventListener("input",()=>{data[r][c]=div.innerText;});
+      td.appendChild(div);
+      // オートフィルハンドル
+      if(r===selected.r && c===selected.c){
+        const h=document.createElement("div");h.className="fill-handle";
+        h.addEventListener("mousedown",(e)=>{autofillActive=true;startFill={r,c};e.preventDefault();});
+        td.style.position="relative";td.appendChild(h);
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  grid.appendChild(tbody);
+  updateSelectionHighlight();
+}
+
+function setSelected(r,c){selected={r,c};render();}
+function updateSelectionHighlight(){
+  document.querySelectorAll(".selected").forEach(el=>el.classList.remove("selected"));
+  const cell=grid.querySelector(`.cell[data-r="${selected.r}"][data-c="${selected.c}"]`);
+  if(cell) cell.classList.add("selected");
+}
+
+// マウス移動でオートフィル
+grid.addEventListener("mousemove",(e)=>{
+  if(!autofillActive)return;
+  const cell=e.target.closest(".cell");if(!cell)return;
+  const rr=+cell.dataset.r, cc=+cell.dataset.c;
+  if(rr!==startFill.r){
+    const val=data[startFill.r][startFill.c];
+    for(let r=startFill.r;r<=rr;r++){data[r][cc]=val;}
+    render();
+  }
+});
+document.addEventListener("mouseup",()=>{autofillActive=false;});
+
+// 新規
+btnNew.addEventListener("click",()=>{rows=DEFAULT_ROWS;cols=DEFAULT_COLS;
+  data=Array.from({length:rows},()=>Array(cols).fill(""));render();});
+
+// 保存
+function exportXLSX(){
+  const ws=XLSX.utils.aoa_to_sheet(data);const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Sheet1");
+  const wbout=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+  const blob=new Blob([wbout],{type:"application/octet-stream"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="sheet.xlsx";a.click();
+}
+btnSaveXlsx.addEventListener("click",exportXLSX);
+
+btnSaveCsv.addEventListener("click",()=>{
+  const csv=data.map(r=>r.map(c=>`"${c}"`).join(",")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv"});const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);a.download="sheet.csv";a.click();
+});
+
+// グラフ作成
+btnGraph.addEventListener("click",()=>{
+  const labels=[],values=[];
+  for(let r=0;r<rows;r++){if(data[r][0]&& !isNaN(data[r][1])){labels.push(data[r][0]);values.push(+data[r][1]);}}
+  new Chart(document.getElementById("chartCanvas"),{
+    type:"bar",
+    data:{labels,datasets:[{label:"データ",data:values,backgroundColor:"rgba(54,162,235,0.5)"}]}
+  });
+});
+
+// 図形描画
+const sctx=document.getElementById("shapeCanvas").getContext("2d");
+document.getElementById("shapeCanvas").addEventListener("click",(e)=>{
+  const type=document.getElementById("drawShape").value;if(!type)return;
+  const rect=e.target.getBoundingClientRect();const x=e.clientX-rect.left,y=e.clientY-rect.top;
+  if(type==="rect"){sctx.fillRect(x-20,y-20,40,40);}
+  if(type==="circle"){sctx.beginPath();sctx.arc(x,y,20,0,Math.PI*2);sctx.fill();}
+});
+
+render();
+</script>
+</body>
+</html>
