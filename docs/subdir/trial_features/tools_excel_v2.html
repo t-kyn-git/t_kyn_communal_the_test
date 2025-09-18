@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>HTML 完結 スプレッドシート（全部盛り版）</title>
+<title>HTML 完結 スプレッドシート（修正版）</title>
 <style>
   :root{
     --header-height:48px;
@@ -24,7 +24,8 @@
   .container{display:flex;height:calc(100vh - var(--header-height));overflow:auto}
   .sheet{flex:1;margin:12px;background:#fff;border:1px solid #ddd;overflow:auto;padding:12px;}
   table{border-collapse:collapse;min-width:600px;}
-  th, td{border:1px solid #e1e4e8;width:var(--cell-width);height:var(--cell-height);}
+  /* th, tdに position: relative; を追加 */
+  th, td{border:1px solid #e1e4e8;width:var(--cell-width);height:var(--cell-height);position: relative;}
   th{background:#f3f6f9;font-weight:600;text-align:center;font-size:12px}
   .cell{width:100%;height:100%;display:block;padding:4px;font-size:13px;outline:none}
   .selected{background:rgba(0,120,215,0.1)}
@@ -117,7 +118,7 @@ function render(){
       if(r===selected.r && c===selected.c){
         const h=document.createElement("div");h.className="fill-handle";
         h.addEventListener("mousedown",(e)=>{autofillActive=true;startFill={r,c};e.preventDefault();});
-        td.style.position="relative";td.appendChild(h);
+        td.appendChild(h);
       }
       tr.appendChild(td);
     }
@@ -125,9 +126,30 @@ function render(){
   }
   grid.appendChild(tbody);
   updateSelectionHighlight();
+
+  // ★修正点: フォーカスを復元する
+  const cellToFocus = grid.querySelector(`.cell[data-r="${selected.r}"][data-c="${selected.c}"]`);
+  // document.activeElementで現在フォーカスされている要素を取得し、それが意図したセルでなければフォーカスを当てる
+  if (cellToFocus && document.activeElement !== cellToFocus) {
+      cellToFocus.focus();
+      // カーソルをテキストの末尾に移動
+      const selection = window.getSelection();
+      const range = document.createRange();
+      selection.removeAllRanges();
+      range.selectNodeContents(cellToFocus);
+      range.collapse(false); // falseで末尾に移動
+      selection.addRange(range);
+  }
 }
 
-function setSelected(r,c){selected={r,c};render();}
+function setSelected(r,c){
+  // ★修正点: 同じセルが選択された場合は再描画しない (無限ループ防止)
+  if (selected.r === r && selected.c === c) {
+    return;
+  }
+  selected={r,c};
+  render();
+}
 function updateSelectionHighlight(){
   document.querySelectorAll(".selected").forEach(el=>el.classList.remove("selected"));
   const cell=grid.querySelector(`.cell[data-r="${selected.r}"][data-c="${selected.c}"]`);
