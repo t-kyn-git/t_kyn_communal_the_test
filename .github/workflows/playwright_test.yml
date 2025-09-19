@@ -10,15 +10,14 @@ on:
       - "scripts/milk_screenshot.py"
       - "scripts/auth_screenshot.py"
       - ".github/workflows/playwright_test.yml"
+      - "!**aws_output_*.txt"
+      - "!**screenshot_auth**"
+      - "!**screenshotsmilk**"
+      - "!docs/subdir/terraform_aws_outputs/aws_output*.html"
+      - "!output_terraform_resourceslogs/aws_output*.txt"
     branches:
       - main
       - "*_communal_the_test"
-    paths-ignore:
-      - "aws_output_*.txt"
-      - "**screenshot_auth**"
-      - "**screenshotsmilk**"
-      - "docs/subdir/terraform_aws_outputs/aws_output*.html"
-      - "output_terraform_resourceslogs/aws_output*.txt"
   pull_request:
     branches:
       - main

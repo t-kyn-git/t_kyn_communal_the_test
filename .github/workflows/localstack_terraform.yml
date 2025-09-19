@@ -12,11 +12,10 @@ on:
       - "lambda/**"
       - "scripts/save_aws_outputs.sh"
       - ".github/workflows/localstack_terraform.yml"
+      - "!**aws_output_*.txt"
     branches:
       - main
       - "*_communal_the_test"
-    paths-ignore:
-      - "aws_output_*.txt"
   pull_request:
     branches:
       - main
