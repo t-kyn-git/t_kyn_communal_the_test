@@ -34,7 +34,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libnss3 libxss1 libasound2 \
+            libnss3 libxss1 \
             fonts-ipafont-gothic fonts-ipafont-mincho
 
       - name: Install Python deps
