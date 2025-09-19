@@ -1,19 +1,50 @@
 # name: Django CI
 
-# 動くきっかけ(暫定対応)
+name: Django App Test
+
 on:
   push:
-    branches: [ "main" ]
+    paths:
+      - "**/content/**"
+      - ".github/workflows/django.yml"
+    branches:
+      - main
+      - "*_communal_the_test"
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
-# 動かす内容
 jobs:
-  sample:
-    name: Hello World Job
-    runs-on: ubuntu-latest # 実行環境
-    steps: # 実行する内容
-      - run: echo "Hello World t_kyn!"
+  test-django:
+    runs-on: ubuntu-latest
+
+    steps:
+      # リポジトリチェックアウト
+      - uses: actions/checkout@v3
+
+      # Python セットアップ
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      # Django インストール
+      - name: Install Django
+        run: pip install django
+
+      # 依存シェルスクリプトでアプリ起動
+      - name: Start Django App
+        run: |
+          chmod +x /content/t_kyn_test_app/all_manage_t_kyn_deploy.sh
+          /content/t_kyn_test_app/all_manage_t_kyn_deploy.sh &
+          echo "Waiting for server to start..."
+          sleep 10  # サーバ起動待機
+
+      # curl でアクセス確認
+      - name: Test MyApp
+        run: |
+          curl -kv http://localhost:8000/myapp
+
 
 # on:
 #   push:
