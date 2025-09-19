@@ -8,3 +8,5 @@ terraform_t_kyn/.terraform.lock.hcl
 terraform_t_kyn/terraform.tfstate
 # For only Github Actions
 docs/subdir/terraform_aws_outputs/aws_output.html
+screenshot_auth
+screenshotsmilk

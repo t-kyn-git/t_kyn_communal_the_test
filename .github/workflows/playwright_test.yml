@@ -1,0 +1,63 @@
+name: TFLocal Workflow
+
+permissions:
+  contents: write
+
+# before ph2 testing
+on:
+  push:
+    branches:
+      - main
+      - "*_communal_the_test"
+    paths-ignore:
+      - "aws_output_*.txt"
+      - "*screenshot_auth*"
+      - "*screenshotsmilk*"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  playwright-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libxss1 libasound2 \
+            fonts-ipafont-gothic fonts-ipafont-mincho
+
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install playwright openpyxl pillow
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium
+
+      - name: Run script 1
+        run: |
+          python scripts/milk_screenshot.py
+
+      - name: Run script 2
+        run: |
+          python scripts/auth_screenshot.py
+
+      - name: Upload Excel artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: excel-results
+          path: |
+            milkbuttonscreenshot_v2.xlsx
+            screenshots.xlsx
