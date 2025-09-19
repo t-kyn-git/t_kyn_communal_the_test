@@ -41,12 +41,15 @@ jobs:
           echo "=====view the app help====="
           python manage_t_kyn.py
           echo "=====run the app server====="
-          nohup python manage_t_kyn.py runserver 127.0.0.1:18000 > /dev/null 2>&1 &
+          nohup python manage_t_kyn.py runserver 127.0.0.1:18000 > django-server.log 2>&1 &
           echo "Waiting for server to start..."
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
           echo "=====sleep 20 seconds====="
           sleep 20
+          echo "===== DUMPING SERVER LOG ====="
+          # ログファイルの中身をCIのログに出力して確認する！
+          cat django-server.log
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
           echo "=====curl test====="
