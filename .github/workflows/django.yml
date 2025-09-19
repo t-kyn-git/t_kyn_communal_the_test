@@ -35,8 +35,13 @@ jobs:
       # 依存シェルスクリプトでアプリ起動
       - name: Start Django App
         run: |
-          chmod +x /content/t_kyn_test_app/all_manage_t_kyn_deploy.sh
-          /content/t_kyn_test_app/all_manage_t_kyn_deploy.sh &
+          cd /content/t_kyn_test_app
+          chmod +x ./all_manage_t_kyn_deploy.sh ./django_preinstall.sh
+          ./django_preinstall.sh
+          echo "=====view the app help====="
+          python manage_t_kyn.py
+          echo "=====run the app server====="
+          nohup python manage_t_kyn.py runserver > /dev/null 2>&1 &
           echo "Waiting for server to start..."
           sleep 10  # サーバ起動待機
 
