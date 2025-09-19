@@ -13,6 +13,8 @@ on:
       - "aws_output_*.txt"
       - "*screenshot_auth*"
       - "*screenshotsmilk*"
+      - "docs/subdir/terraform_aws_outputs/aws_output*.html"
+      - "output_terraform_resourceslogs/aws_output*.txt"
   pull_request:
     branches:
       - main
