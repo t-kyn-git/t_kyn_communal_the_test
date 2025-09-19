@@ -5,7 +5,7 @@ name: Django App Test
 on:
   push:
     paths:
-      - "**/content/**"
+      - "**content/**"
       - ".github/workflows/django.yml"
     branches:
       - main
@@ -45,10 +45,12 @@ jobs:
           echo "Waiting for server to start..."
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
+          netstat -an | grep 8000
+          echo "=====sleep 20 seconds while ====="
           echo "=====curl test====="
           curl -kv http://localhost:8000/myapp
           echo "=====curl admin test====="
-          curl -kv http://localhost:8000/admin
+          curl -kv http://localhost:8000/admin/login/?next=/admin/
           echo "=====sleep 10 seconds====="
           sleep 10  # サーバ起動待機
 
