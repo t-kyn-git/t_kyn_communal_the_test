@@ -34,6 +34,17 @@ jobs:
           pip install django
           pip install Pillow
 
+      # 依存関係をインストール (Playwright と openpyxl を追加)
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install django Pillow
+          pip install playwright openpyxl
+      
+      # Playwrightのブラウザをインストール
+      - name: Install Playwright Browsers
+        run: playwright install --with-deps
+
       # 依存シェルスクリプトでアプリ起動
       - name: Start Django App
         run: |
@@ -66,3 +77,13 @@ jobs:
           curl -kv http://localhost:18000/todolist/
           echo "=====curl location test====="
           curl -kv http://localhost:18000/location/
+          echo "===== Running Playwright Script ====="
+          python playwright_script.py
+
+      # 生成されたExcelファイルをアーティファクトとしてアップロード
+      - name: Upload Excel Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: django-screenshots
+          # スクリプトが生成したExcelファイルのパスを指定
+          path: content/t_kyn_test_app/django_captures.xlsx
