@@ -74,7 +74,7 @@ def create_excel():
 
     outputfile_dir="docs/publicdocs"
     os.makedirs(outputfile_dir, exist_ok=True)
-    excel_path = os.path.join(output_dir, EXCEL_FILE)
+    excel_path = os.path.join(outputfile_dir, EXCEL_FILE)
     # wb.save(EXCEL_FILE)
     wb.save(excel_path)
 
