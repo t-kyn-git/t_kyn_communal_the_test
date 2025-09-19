@@ -73,7 +73,7 @@ def create_excel():
         row += 20
 
     outputfile_dir="docs/publicdocs"
-    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(outputfile_dir, exist_ok=True)
     excel_path = os.path.join(output_dir, EXCEL_FILE)
     # wb.save(EXCEL_FILE)
     wb.save(excel_path)
