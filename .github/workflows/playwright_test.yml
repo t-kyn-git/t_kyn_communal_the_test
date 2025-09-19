@@ -1,0 +1,91 @@
+name: Playwright Test
+
+permissions:
+  contents: write
+
+# before ph2 testing
+on:
+  push:
+    paths:
+      - "scripts/milk_screenshot.py"
+      - "scripts/auth_screenshot.py"
+      - ".github/workflows/playwright_test.yml"
+      - "!**aws_output_*.txt"
+      - "!**screenshot_auth**"
+      - "!**screenshotsmilk**"
+      - "!docs/subdir/terraform_aws_outputs/aws_output*.html"
+      - "!output_terraform_resourceslogs/aws_output*.txt"
+    branches:
+      - main
+      - "*_communal_the_test"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  playwright-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libnss3 libxss1 \
+            fonts-ipafont-gothic fonts-ipafont-mincho
+
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install playwright openpyxl pillow
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install chromium
+
+      - name: Run script 1
+        run: |
+          python scripts/milk_screenshot.py
+
+      - name: Run script 2
+        run: |
+          python scripts/auth_screenshot.py
+
+      # 2025/09/19 Artifacts is not needed because we commit and push the output files to the repo directly.
+      # - name: Upload Excel artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: excel-results
+      #     path: |
+      #       docs/publicdocs/milkbuttonscreenshot_v2.xlsx
+      #       docs/publicdocs/screenshots.xlsx
+
+      - name: Commit & Push AWS CLI output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OUTFILE_1="docs/publicdocs/milkbuttonscreenshot_v2.xlsx"
+          OUTFILE_2="docs/publicdocs/screenshots.xlsx"
+          git config --global user.name "github-actions-t_kyn[bot]"
+          git config --global user.email "github-actions-t_kyn[bot]@users.noreply.github.com"
+          ls -l $OUTFILE_1 $OUTFILE_2
+          git add .
+          git commit -m "Add AWS CLI output ($OUTFILE_1 AND $OUTFILE_2) [skip ci]" || echo "No changes to commit"
+
+          echo "current branches:"
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+          # --- rebase before push ---
+          git fetch origin $BRANCH_NAME
+          git rebase origin/$BRANCH_NAME
+
+          # --- push after rebase ---
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${BRANCH_NAME}
