@@ -51,7 +51,9 @@ async def main():
         else:
             print(f"画像が存在しません: {img_path}")
 
-    excel_path = "milkbuttonscreenshot_v2.xlsx"
+    outputfile_dir="docs/publicdocs"
+    os.makedirs(output_dir, exist_ok=True)
+    excel_path = os.path.join(output_dir, "milkbuttonscreenshot_v2.xlsx")
     wb.save(excel_path)
     print(f"Excel 保存完了: {excel_path}")
 

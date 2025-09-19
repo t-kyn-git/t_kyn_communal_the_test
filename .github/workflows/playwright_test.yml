@@ -59,5 +59,22 @@ jobs:
         with:
           name: excel-results
           path: |
-            milkbuttonscreenshot_v2.xlsx
-            screenshots.xlsx
+            docs/publicdocs/milkbuttonscreenshot_v2.xlsx
+            docs/publicdocs/screenshots.xlsx
+
+      - name: Commit & Push AWS CLI output
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OUTFILE_1="docs/publicdocs/milkbuttonscreenshot_v2.xlsx"
+          OUTFILE_2="docs/publicdocs/screenshots.xlsx"
+          git config --global user.name "github-actions-t_kyn[bot]"
+          git config --global user.email "github-actions-t_kyn[bot]@users.noreply.github.com"
+          ls -l $OUTFILE_1 $OUTFILE_2
+          git add .
+          git commit -m "Add AWS CLI output ($OUTFILE_1 AND $OUTFILE_2) [skip ci]" || echo "No changes to commit"
+
+          echo "current branches:"
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${BRANCH_NAME}

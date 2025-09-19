@@ -72,7 +72,11 @@ def create_excel():
         ws.add_image(img, f"B{row}")
         row += 20
 
-    wb.save(EXCEL_FILE)
+    outputfile_dir="docs/publicdocs"
+    os.makedirs(output_dir, exist_ok=True)
+    excel_path = os.path.join(output_dir, EXCEL_FILE)
+    # wb.save(EXCEL_FILE)
+    wb.save(excel_path)
 
 # Jupyter/Colab用の実行方法
 async def main():
