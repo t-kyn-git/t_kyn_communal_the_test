@@ -45,8 +45,10 @@ jobs:
           echo "Waiting for server to start..."
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
+          echo "=====netstat====="
           netstat -an | grep 8000
-          echo "=====sleep 20 seconds while ====="
+          echo "=====sleep 20 seconds====="
+          sleep 20
           echo "=====curl test====="
           curl -kv http://localhost:8000/myapp
           echo "=====curl admin test====="
