@@ -1,4 +1,4 @@
-name: TFLocal Workflow
+name: Playwright Test
 
 permissions:
   contents: write

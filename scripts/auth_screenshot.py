@@ -81,5 +81,6 @@ async def main():
         await run(playwright)
     create_excel()
 
-# Notebookではこれで実行
-await main()
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())

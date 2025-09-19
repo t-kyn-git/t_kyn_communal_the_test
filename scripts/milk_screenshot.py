@@ -55,4 +55,6 @@ async def main():
     wb.save(excel_path)
     print(f"Excel 保存完了: {excel_path}")
 
-await main()
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(main())
