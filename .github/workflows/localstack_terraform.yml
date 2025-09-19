@@ -310,4 +310,9 @@ jobs:
         echo "current branches:"
         BRANCH_NAME=${GITHUB_REF#refs/heads/}
 
+        # --- rebase before push ---
+        git fetch origin $BRANCH_NAME
+        git rebase origin/$BRANCH_NAME
+
+        # --- push after rebase ---
         git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${BRANCH_NAME}
