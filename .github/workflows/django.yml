@@ -35,7 +35,7 @@ jobs:
       # 依存シェルスクリプトでアプリ起動
       - name: Start Django App
         run: |
-          cd /content/t_kyn_test_app
+          cd content/t_kyn_test_app
           chmod +x ./all_manage_t_kyn_deploy.sh ./django_preinstall.sh
           ./django_preinstall.sh
           echo "=====view the app help====="
