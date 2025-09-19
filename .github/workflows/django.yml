@@ -47,8 +47,8 @@ jobs:
           echo "Waiting for server to start..."
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
-          echo "=====sleep 20 seconds====="
-          sleep 20
+          echo "=====sleep 5 seconds====="
+          sleep 5
           echo "===== DUMPING SERVER LOG ====="
           # ログファイルの中身をCIのログに出力して確認する！
           cat django-server.log
@@ -58,6 +58,16 @@ jobs:
           curl -kv http://127.0.0.1:18000/myapp
           echo "=====curl admin test====="
           curl -kv http://127.0.0.1:18000/admin/login/?next=/admin/
-          echo "=====sleep 10 seconds====="
-          sleep 10  # サーバ起動待機
 
+
+      # 依存シェルスクリプトでアプリ起動
+      - name: curl another test
+        run: |
+          echo "=====curl test====="
+          curl -kv http://127.0.0.1:18000/album/
+          echo "=====curl admin test====="
+          curl -kv http://localhost:8000/chat/
+          echo "=====curl todolist test====="
+          curl -kv http://localhost:8000/todolist/
+          echo "=====curl location test====="
+          curl -kv http://localhost:8000/location/
