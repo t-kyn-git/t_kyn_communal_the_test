@@ -28,9 +28,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      # Django インストール
-      - name: Install Django
-        run: pip install django
+      # Django And Pillowインストール
+      - name: Install Django And Pillow
+        run: |
+          pip install django
+          pip install Pillow
 
       # 依存シェルスクリプトでアプリ起動
       - name: Start Django App
