@@ -6,6 +6,12 @@ permissions:
 # before ph2 testing
 on:
   push:
+    paths:
+      - "terraform_t_kyn/**"
+      - "terraform/**"
+      - "lambda/**"
+      - "scripts/save_aws_outputs.sh"
+      - ".github/workflows/localstack_terraform.yml"
     branches:
       - main
       - "*_communal_the_test"
