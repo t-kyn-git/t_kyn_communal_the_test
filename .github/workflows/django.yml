@@ -41,7 +41,7 @@ jobs:
           echo "=====view the app help====="
           python manage_t_kyn.py
           echo "=====run the app server====="
-          nohup python manage_t_kyn.py runserver > /dev/null 2>&1 &
+          nohup python manage_t_kyn.py runserver 127.0.0.1:8000 > /dev/null 2>&1 &
           echo "Waiting for server to start..."
           echo "=====ps aux====="
           ps aux | grep manage_t_kyn.py
