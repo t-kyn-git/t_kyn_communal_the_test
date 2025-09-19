@@ -54,13 +54,14 @@ jobs:
         run: |
           python scripts/auth_screenshot.py
 
-      - name: Upload Excel artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: excel-results
-          path: |
-            docs/publicdocs/milkbuttonscreenshot_v2.xlsx
-            docs/publicdocs/screenshots.xlsx
+      # 2025/09/19 Artifacts is not needed because we commit and push the output files to the repo directly.
+      # - name: Upload Excel artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: excel-results
+      #     path: |
+      #       docs/publicdocs/milkbuttonscreenshot_v2.xlsx
+      #       docs/publicdocs/screenshots.xlsx
 
       - name: Commit & Push AWS CLI output
         env:
