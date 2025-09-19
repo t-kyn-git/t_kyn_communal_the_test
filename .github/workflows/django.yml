@@ -61,8 +61,8 @@ jobs:
           echo "=====curl test====="
           curl -kv http://127.0.0.1:18000/album/
           echo "=====curl admin test====="
-          curl -kv http://localhost:8000/chat/
+          curl -kv http://localhost:18000/chat/
           echo "=====curl todolist test====="
-          curl -kv http://localhost:8000/todolist/
+          curl -kv http://localhost:18000/todolist/
           echo "=====curl location test====="
-          curl -kv http://localhost:8000/location/
+          curl -kv http://localhost:18000/location/
