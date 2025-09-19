@@ -58,11 +58,6 @@ jobs:
           curl -kv http://127.0.0.1:18000/myapp
           echo "=====curl admin test====="
           curl -kv http://127.0.0.1:18000/admin/login/?next=/admin/
-
-
-      # 依存シェルスクリプトでアプリ起動
-      - name: curl another test
-        run: |
           echo "=====curl test====="
           curl -kv http://127.0.0.1:18000/album/
           echo "=====curl admin test====="
