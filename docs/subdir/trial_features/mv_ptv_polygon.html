@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>Polygon Animation Demo</title>
+<style>
+  body {
+    margin: 0;
+    background: black;
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+resize();
+window.addEventListener("resize", resize);
+
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// 多角形を描画
+function drawPolygon(x, y, radius, sides, rotation, color){
+  ctx.beginPath();
+  for(let i=0;i<sides;i++){
+    const angle = (i/sides)*Math.PI*2 + rotation;
+    const px = x + Math.cos(angle)*radius;
+    const py = y + Math.sin(angle)*radius;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+// アニメーションループ
+let t = 0;
+function animate(){
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  const cx = canvas.width/2;
+  const cy = canvas.height/2;
+
+  for(let i=0;i<12;i++){
+    const sides = 3 + (i%5); // 三角形〜多角形
+    const radius = 100 + i*20 + Math.sin(t*0.02+i)*30;
+    const rotation = t*0.01 + i;
+    const color = `hsl(${(t+i*30)%360}, 80%, 60%)`;
+    drawPolygon(cx, cy, radius, sides, rotation, color);
+  }
+
+  t++;
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</body>
+</html>
