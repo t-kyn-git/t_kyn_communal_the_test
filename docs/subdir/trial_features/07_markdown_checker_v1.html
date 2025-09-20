@@ -1,0 +1,23 @@
+<!doctype html>
+<html><meta charset="utf-8"><title>MD Preview</title><body>
+<h1>Markdown プレビュー</h1>
+<h1>このhtmlは現在、表とか、箇条書きのインデント整形とかはチェックできておりません。</h1>
+<textarea id="md" style="width:48%;height:300px;"></textarea>
+<div id="out" style="width:48%;height:300px;overflow:auto;border:1px solid #ccc;display:inline-block;vertical-align:top;padding:8px;"></div>
+<script>
+function simpleMD(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/^### (.*$)/gm,'<h3>$1</h3>')
+    .replace(/^## (.*$)/gm,'<h2>$1</h2>')
+    .replace(/^# (.*$)/gm,'<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g,'<b>$1</b>')
+    .replace(/\*(.*?)\*/g,'<i>$1</i>')
+    .replace(/\n/g,'<br>');
+}
+const ta=document.getElementById('md'), out=document.getElementById('out');
+ta.oninput=()=>{ out.innerHTML=simpleMD(ta.value); };
+ta.value="# タイトル\n**強調** と *斜体*";
+ta.oninput();
+</script>
+<div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
+</body></html>
