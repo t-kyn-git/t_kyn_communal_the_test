@@ -1,0 +1,214 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>高機能Markdownプレビュー (図の描画対応)</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; color: #333; }
+    h1, h2 { border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+    .container { display: flex; gap: 20px; }
+    textarea, .preview-container { 
+      width: 48%; 
+      height: 70vh; /* 高さを画面サイズに追従するように変更 */
+      box-sizing: border-box; 
+      border: 1px solid #ccc; 
+      font-size: 16px; 
+      padding: 15px; 
+      line-height: 1.6;
+    }
+    textarea { 
+      resize: vertical; 
+      font-family: monospace;
+    }
+    .preview-container { 
+      overflow: auto; 
+      background-color: #fff; 
+    }
+    /* --- プレビュー用のスタイルを追加 --- */
+    .preview-container table { border-collapse: collapse; width: 100%; margin: 1em 0; }
+    .preview-container th, .preview-container td { border: 1px solid #ddd; padding: 8px; }
+    .preview-container th { background-color: #f2f2f2; }
+    .preview-container pre { background-color: #eee; padding: 10px; border-radius: 5px; overflow-x: auto;}
+    .preview-container code { font-family: monospace; }
+    .preview-container blockquote { border-left: 5px solid #ccc; padding-left: 15px; color: #666; margin-left: 0; }
+    .preview-container img { max-width: 100%; height: auto; } /* 画像がコンテナをはみ出さないように */
+  </style>
+</head>
+<body>
+  <h1>高機能 Markdown プレビュー (Mermaid & PlantUML対応)</h1>
+  <p>左側のテキストエリアにMarkdownを記述すると、右側にリアルタイムで図を含むプレビューが表示されます。</p>
+
+  <div class="container">
+    <textarea id="md"></textarea>
+    <div id="out" class="preview-container"></div>
+  </div>
+
+  <!-- 必要なライブラリをCDNから読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+  <script>
+    /**
+     * PlantUMLのテキストをエンコードする関数 (公式ドキュメント準拠)
+     * @param {string} text - PlantUMLのコード
+     * @returns {string} - エンコードされた文字列
+     */
+    function plantuml_encode(text) {
+      // 1. UTF-8にエンコード (JavaScriptの内部処理)
+      // 2. Deflateで圧縮 (pako.jsを利用)
+      const compressed = pako.deflate(text, { to: 'string' });
+      
+      // 3. Base64に似たカスタムエンコーディング
+      const
+      encode6bit = (b) => {
+        if (b < 10) return String.fromCharCode(48 + b);
+        b -= 10;
+        if (b < 26) return String.fromCharCode(65 + b);
+        b -= 26;
+        if (b < 26) return String.fromCharCode(97 + b);
+        b -= 26;
+        if (b === 0) return '-';
+        if (b === 1) return '_';
+        return '?';
+      }
+      
+      const append3bytes = (b1, b2, b3) => {
+        const c1 = b1 >> 2;
+        const c2 = ((b1 & 3) << 4) | (b2 >> 4);
+        const c3 = ((b2 & 15) << 2) | (b3 >> 6);
+        const c4 = b3 & 63;
+        return encode6bit(c1 & 0x3F) + encode6bit(c2 & 0x3F) + encode6bit(c3 & 0x3F) + encode6bit(c4 & 0x3F);
+      };
+
+      let r = "";
+      for (let i = 0; i < compressed.length; i += 3) {
+        if (i + 2 === compressed.length) {
+          r += append3bytes(compressed.charCodeAt(i), compressed.charCodeAt(i + 1), 0);
+        } else if (i + 1 === compressed.length) {
+          r += append3bytes(compressed.charCodeAt(i), 0, 0);
+        } else {
+          r += append3bytes(compressed.charCodeAt(i), compressed.charCodeAt(i + 1), compressed.charCodeAt(i + 2));
+        }
+      }
+      return r;
+    }
+
+    // Marked.jsのレンダラーをカスタマイズして、特定のコードブロックを処理
+    const renderer = new marked.Renderer();
+    renderer.code = (code, language) => {
+      // Mermaid用のコードブロック
+      if (language === 'mermaid') {
+        // ここではただの目印を付けておく。描画は後でMermaid.jsに任せる
+        return `<div class="mermaid">${code}</div>`;
+      }
+      // PlantUML用のコードブロック
+      if (language === 'plantuml') {
+        const encoded = plantuml_encode(code);
+        // 安全なHTTPS接続を使用
+        const plantUmlUrl = `https://www.plantuml.com/plantuml/svg/${encoded}`;
+        return `<img src="${plantUmlUrl}" alt="PlantUML Diagram">`;
+      }
+      // その他のコードブロックはデフォルトの表示
+      return `<pre><code>${code.replace(/</g, "&lt;")}</code></pre>`;
+    };
+
+    marked.setOptions({
+      renderer: renderer,
+      gfm: true,
+      breaks: true,
+      pedantic: false,
+    });
+
+    // Mermaid.jsを初期化
+    mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+    const ta = document.getElementById('md');
+    const out = document.getElementById('out');
+
+    // プレビューを更新するメインの関数
+    const renderPreview = async () => {
+      const markdownText = ta.value;
+      // 1. Marked.jsでMarkdownをHTMLに変換
+      out.innerHTML = marked.parse(markdownText);
+      
+      // 2. 変換後のHTML内にあるMermaid用の要素を探して、図を描画
+      try {
+        await mermaid.run({
+            nodes: out.querySelectorAll('.mermaid')
+        });
+      } catch (e) {
+        console.error("Mermaid rendering error:", e);
+        // エラー時もテキストは表示されるようにする
+        out.querySelectorAll('.mermaid').forEach(el => {
+            el.innerHTML = `<pre>Mermaid Error:\n${el.textContent}</pre>`;
+        });
+      }
+    };
+    
+    // テキストエリアに入力があるたびにプレビューを更新
+    ta.oninput = renderPreview;
+
+    // --- 初期表示用のサンプルテキスト ---
+    ta.value = `# 高機能Markdownプレビュー
+
+これは、**Marked.js**, **Mermaid.js**, **PlantUML** を組み合わせた高機能なMarkdownプレビューです。
+
+## 主な機能
+
+- **Markdown**: GFM(GitHub Flavored Markdown)に準拠
+  - 箇条書き
+  - 番号付きリスト
+- **テーブル**
+- **図の埋め込み**
+  - Mermaid (フローチャートなど)
+  - PlantUML (シーケンス図など)
+
+---
+
+### テーブルの例
+
+| ヘッダー1 | ヘッダー2 | ヘッダー3 |
+| :--- | :---: | ---: |
+| 左寄せ | 中央寄せ | 右寄せ |
+| cell | cell | cell |
+
+### Mermaidの例 (フローチャート)
+
+\`\`\`mermaid
+graph TD;
+    A[プロジェクト開始] --> B{要件定義};
+    B --> C[設計];
+    C --> D[実装];
+    D --> E{テスト};
+    E -->|OK| F[リリース];
+    E -->|NG| D;
+\`\`\`
+
+### PlantUMLの例 (シーケンス図)
+
+\`\`\`plantuml
+@startuml
+actor ユーザー
+participant ブラウザ
+database サーバー
+
+ユーザー -> ブラウザ: ログイン情報入力
+activate ブラウザ
+
+ブラウザ -> サーバー: 認証リクエスト
+activate サーバー
+サーバー --> ブラウザ: 認証OK
+deactivate サーバー
+
+ブラウザ -> ユーザー: ログイン完了画面
+deactivate ブラウザ
+@enduml
+\`\`\`
+`;
+
+    // 起動時に一度プレビューを実行
+    renderPreview();
+  </script>
+</body>
+</html>

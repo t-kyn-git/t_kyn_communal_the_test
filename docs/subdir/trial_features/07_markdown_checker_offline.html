@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>高機能Markdownプレビュー (安定版)</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 20px; background-color: #f6f8fa; color: #24292e; line-height: 1.5; }
+    h1,h2 { border-bottom: 2px solid #eaecef; padding-bottom: 0.3em; }
+    .container { display: flex; gap: 20px; }
+    textarea, .preview-container { 
+      width: 50%; 
+      height: 80vh;
+      box-sizing: border-box; 
+      border: 1px solid #d1d5da; 
+      border-radius: 6px;
+      font-size: 16px; 
+      padding: 15px; 
+      line-height: 1.6;
+    }
+    textarea { 
+      resize: vertical; 
+      font-family: monospace, 'MS Gothic', 'Osaka-mono', monospace;
+      background-color: #fefefe;
+    }
+    .preview-container { 
+      overflow: auto; 
+      background-color: #fff; 
+    }
+    /* --- プレビュー用のスタイル --- */
+    .preview-container table { border-collapse: collapse; width: auto; margin: 1em 0; display: block; overflow: auto; }
+    .preview-container th, .preview-container td { border: 1px solid #dfe2e5; padding: 6px 13px; }
+    .preview-container tr:nth-child(2n) { background-color: #f6f8fa; }
+    .preview-container th { font-weight: 600; background-color: #f6f8fa; }
+    .preview-container pre { background-color: #f6f8fa; padding: 16px; border-radius: 5px; overflow-x: auto;}
+    .preview-container code { font-family: monospace; }
+    .preview-container blockquote { border-left: 0.25em solid #dfe2e5; padding: 0 1em; color: #6a737d; margin: 0; }
+    .preview-container img { max-width: 100%; height: auto; }
+    .preview-container .mermaid { text-align: center; } 
+  </style>
+</head>
+<body>
+  <h1>高機能 Markdown プレビュー (Mermaid & PlantUML対応)</h1>
+
+  <div class="container">
+    <textarea id="md"></textarea>
+    <div id="out" class="preview-container"></div>
+  </div>
+
+  <!-- 必要なライブラリをCDNから読み込み -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+  <script>
+    // DOMが完全に読み込まれてからスクリプトを実行
+    document.addEventListener('DOMContentLoaded', () => {
+      
+      // HTML特殊文字をエスケープする補助関数
+      const escapeHtml = (text) => {
+        return text
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+
+      // PlantUMLのテキストをエンコードする関数
+      const encodePlantUML = (text) => {
+        const compressed = pako.deflate(unescape(encodeURIComponent(text)), { to: 'string' });
+        return btoa(compressed)
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_');
+      };
+
+      // Marked.jsのレンダラーを準備
+      const renderer = new marked.Renderer();
+      // 元のcodeレンダリング関数を保持しておく
+      const originalCodeRenderer = renderer.code.bind(renderer);
+
+      // codeブロックのレンダリングを上書き
+      renderer.code = (code, language, isEscaped) => {
+        if (language === 'mermaid') {
+          // Mermaidは後で一括処理するので、ここでは目印となるdivを返す
+          return `<div class="mermaid">${escapeHtml(code)}</div>`;
+        }
+        if (language === 'plantuml') {
+          // PlantUMLはURLを生成してimgタグを返す
+          const encoded = encodePlantUML(code);
+          const plantUmlUrl = `https://www.plantuml.com/plantuml/svg/${encoded}`;
+          return `<img src="${plantUmlUrl}" alt="PlantUML Diagram">`;
+        }
+        // 上記以外の場合は、markedオリジナルのレンダリング処理を呼び出す
+        return originalCodeRenderer(code, language, isEscaped);
+      };
+
+      // Marked.jsにオプションを設定
+      marked.setOptions({
+        renderer: renderer,
+        gfm: true,
+        breaks: true,
+        pedantic: false,
+      });
+
+      // Mermaid.jsを初期化
+      mermaid.initialize({ startOnLoad: false, theme: 'default' });
+
+      // HTML要素を取得
+      const ta = document.getElementById('md');
+      const out = document.getElementById('out');
+
+      // プレビューを更新するメイン関数
+      const renderPreview = async () => {
+        try {
+          // 1. Marked.jsでMarkdownをHTMLに変換
+          const markdownText = ta.value;
+          out.innerHTML = marked.parse(markdownText);
+          
+          // 2. 変換後のHTML内にあるMermaid用の要素を探して、図を描画
+          // Mermaidの処理は失敗することがあるため、try-catchで囲む
+          try {
+            await mermaid.run({ nodes: out.querySelectorAll('.mermaid') });
+          } catch (e) {
+            console.error("Mermaid rendering error:", e);
+            // Mermaidの描画に失敗した場合、エラーメッセージを表示
+            out.querySelectorAll('.mermaid').forEach(el => {
+              el.innerHTML = `<pre style="color:red;">Mermaid Error:\n${e.message}\n\n${el.textContent}</pre>`;
+            });
+          }
+        } catch (e) {
+          console.error("Preview rendering error:", e);
+          out.innerHTML = `<pre style="color:red;">An error occurred during rendering: ${e.message}</pre>`;
+        }
+      };
+
+      // テキストエリアに入力があるたびにプレビューを更新
+      ta.oninput = renderPreview;
+
+      // --- 初期表示用のサンプルテキスト ---
+      ta.value = `# 高機能Markdownプレビュー
+
+これは、**Marked.js**, **Mermaid.js**, **PlantUML** を組み合わせたMarkdownプレビューです。
+
+## テーブルの例
+
+| ヘッダー1 | ヘッダー2 | ヘッダー3 |
+| :--- | :---: | ---: |
+| 左寄せ | 中央寄せ | 右寄せ |
+| cell1 | cell2 | cell3 |
+
+---
+
+## Mermaidの例 (フローチャート)
+
+\`\`\`mermaid
+graph TD;
+    A[プロジェクト開始] --> B{要件定義};
+    B --> C[設計];
+    C --> D[実装];
+    D --> E{テスト};
+    E -->|OK| F[リリース🎉];
+    E -->|NG| D;
+\`\`\`
+
+---
+
+## PlantUMLの例 (シーケンス図)
+
+\`\`\`plantuml
+@startuml
+actor ユーザー
+participant ブラウザ
+database サーバー
+
+autonumber
+
+ユーザー -> ブラウザ: ログイン情報入力
+activate ブラウザ
+
+ブラウザ -> サーバー: 認証リクエスト
+activate サーバー
+サーバー --> ブラウザ: 認証OK
+deactivate サーバー
+
+ブラウザ -> ユーザー: ログイン完了画面
+deactivate ブラウザ
+@enduml
+\`\`\`
+
+## 通常のコードブロック
+
+\`\`\`javascript
+function hello() {
+  console.log("Hello, Markdown!");
+}
+hello();
+\`\`\`
+`;
+
+      // 起動時に一度プレビューを実行
+      renderPreview();
+    });
+  </script>
+</body>
+</html>
