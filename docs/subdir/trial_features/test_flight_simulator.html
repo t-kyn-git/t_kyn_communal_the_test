@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Flightradar-like — Local Demo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  html,body{height:100%;margin:0;font-family:Arial, Helvetica, sans-serif;}
+  #topbar{
+    position: absolute; z-index: 1000; left:10px; top:10px;
+    background: rgba(0,0,0,0.6); color:#fff; padding:8px 10px; border-radius:6px;
+    display:flex; gap:8px; align-items:center;
+  }
+  #topbar input[type="text"]{padding:6px;border-radius:4px;border: none; width:220px;}
+  #map{width:100%;height:100%;}
+  .plane-icon{
+    width:28px;height:28px;display:flex;align-items:center;justify-content:center;
+    transform-origin:center center;
+    pointer-events:auto;
+  }
+  .plane-svg{width:22px;height:22px;display:block;}
+  .info-box{
+    position:absolute; right:10px; top:10px; z-index:1000;
+    background: rgba(255,255,255,0.95); padding:8px; border-radius:6px; width:260px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25); font-size:13px;
+  }
+  .credits{position:absolute; left:10px; bottom:10px; z-index:1000; color:#333;
+    background: rgba(255,255,255,0.9); padding:6px;border-radius:5px;font-size:12px;}
+  .btn{background:#1976d2;color:#fff;padding:6px 8px;border-radius:4px;border:none;cursor:pointer;}
+</style>
+</head>
+<body>
+<div id="topbar">
+  <strong>Flightradar-like</strong>
+  <input id="locInput" placeholder="例: 50.68,-1.09/8 または 50.68,-1.09">
+  <button id="goBtn" class="btn">移動</button>
+  <button id="copyUrl" class="btn">URL更新コピー</button>
+</div>
+<div id="map"></div>
+<div class="info-box" id="infoBox">
+  <div><b>選択中の機体情報</b></div>
+  <div id="selInfo">— まだ選択されていません —</div>
+  <hr>
+  <div><small>動作: 擬似ライブ（ローカル） / 実データは API 連携要</small></div>
+</div>
+<div class="credits">Tiles © OpenStreetMap contributors</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+/* ----- ヘルパ: URL から center/zoom を解析 ----- */
+function parsePathCenter() {
+  // 期待形式: /lat,lon/zoom もしくは #lat,lon/zoom
+  const path = (location.pathname && location.pathname !== "/") ? location.pathname.slice(1) : (location.hash ? location.hash.slice(1) : "");
+  if (!path) return null;
+  // path 例 "50.68,-1.09/8" or "50.68,-1.09"
+  const parts = path.split('/');
+  const latlon = parts[0].split(',');
+  if (latlon.length < 2) return null;
+  const lat = parseFloat(latlon[0]); const lon = parseFloat(latlon[1]);
+  const zoom = parts[1] ? parseInt(parts[1],10) : 6;
+  if (Number.isFinite(lat) && Number.isFinite(lon)) return {lat,lon,zoom};
+  return null;
+}
+
+/* ----- 地図初期化 ----- */
+const initial = parsePathCenter() || {lat: 50.68, lon: -1.09, zoom: 8};
+const map = L.map('map', {center:[initial.lat, initial.lon], zoom: initial.zoom, preferCanvas:true});
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19, attribution: '&copy; OpenStreetMap contributors'
+}).addTo(map);
+
+/* ----- URL を地図移動に合わせて更新（パス形式） ----- */
+let urlUpdateTimeout = null;
+function updateUrlToMap() {
+  const c = map.getCenter();
+  const z = map.getZoom();
+  const newPath = `/${c.lat.toFixed(5)},${c.lng.toFixed(5)}/${z}`;
+  // replaceState で履歴を汚さないようにする
+  history.replaceState(null, '', newPath);
+}
+map.on('moveend', ()=> {
+  if (urlUpdateTimeout) clearTimeout(urlUpdateTimeout);
+  urlUpdateTimeout = setTimeout(updateUrlToMap, 250);
+});
+
+/* ----- サンプル機体データ（擬似） ----- */
+const flights = [];
+const callsigns = ['BAW123','JAL456','ANA789','UAE22','DLH77','SIA88','AFR9'];
+const center = map.getCenter();
+for (let i=0;i<12;i++){
+  const dd = (Math.random()-0.5)*2.5; // degrees offset
+  const dd2 = (Math.random()-0.5)*2.5;
+  flights.push({
+    id: callsigns[i % callsigns.length] + (100+i),
+    lat: center.lat + dd,
+    lon: center.lng + dd2,
+    hdg: Math.floor(Math.random()*360),
+    speed: 400 + Math.random()*200, // knots
+    alt: 20000 + Math.floor(Math.random()*20000), // feet
+    marker: null
+  });
+}
+
+/* ----- 機体アイコン（SVG）を含む DivIcon を作る ----- */
+function makePlaneDivIcon(hdg) {
+  const svg = encodeURIComponent(`
+    <svg viewBox="0 0 24 24" class="plane-svg" xmlns="http://www.w3.org/2000/svg">
+      <path d="M2 13l6 1 1 6 2-4 2 4 1-6 6-1-5-4 5-4-6-1-1-6-2 4-2-4-1 6-6 1 5 4z" fill="#FF4500"/>
+    </svg>
+  `);
+  // Div に回転用 wrapper を用意し、style で回転（CSS transform）を与えられる
+  const html = `<div class="plane-icon" style="transform: rotate(${hdg}deg);">
+                  <img src="data:image/svg+xml;utf8,${svg}" style="width:24px;height:24px;"/>
+                </div>`;
+  return L.divIcon({html: html, className: '', iconSize: [28,28], iconAnchor:[14,14]});
+}
+
+/* ----- 機体を地図に配置 ----- */
+const flightLayer = L.layerGroup().addTo(map);
+
+function createOrUpdateMarkers() {
+  flightLayer.clearLayers();
+  flights.forEach(f=>{
+    const icon = makePlaneDivIcon(f.hdg);
+    const m = L.marker([f.lat, f.lon], {icon: icon});
+    m.on('click', ()=> {
+      document.getElementById('selInfo').innerHTML =
+        `<b>${f.id}</b><br>HDG: ${f.hdg.toFixed(0)}° / SPD: ${f.speed.toFixed(0)} kt<br>ALT: ${f.alt} ft<br>(${f.lat.toFixed(4)}, ${f.lon.toFixed(4)})`;
+      m.bindPopup(`<b>${f.id}</b><br>${f.alt} ft / ${f.speed.toFixed(0)} kt`).openPopup();
+    });
+    m.addTo(flightLayer);
+    f.marker = m;
+  });
+}
+createOrUpdateMarkers();
+
+/* ----- 移動計算: 小距離の destination point 計算（ベルスンの式） ----- */
+function destinationPoint(lat, lon, bearingDeg, distanceM) {
+  const R = 6371000; // m
+  const δ = distanceM / R;
+  const θ = bearingDeg * Math.PI / 180;
+  const φ1 = lat * Math.PI / 180;
+  const λ1 = lon * Math.PI / 180;
+  const sinφ1 = Math.sin(φ1), cosφ1 = Math.cos(φ1);
+  const sinδ = Math.sin(δ), cosδ = Math.cos(δ);
+  const sinφ2 = sinφ1*cosδ + cosφ1*sinδ*Math.cos(θ);
+  const φ2 = Math.asin(sinφ2);
+  const y = Math.sin(θ)*sinδ*cosφ1;
+  const x = cosδ - sinφ1*sinφ2;
+  const λ2 = λ1 + Math.atan2(y,x);
+  return {lat: φ2*180/Math.PI, lon: λ2*180/Math.PI};
+}
+
+/* ----- 更新ループ（1秒毎） ----- */
+const intervalMs = 1000;
+setInterval(()=>{
+  flights.forEach(f=>{
+    // speed (knots) -> m/s
+    const mps = f.speed * 0.514444;
+    const distanceM = mps * (intervalMs/1000);
+    const next = destinationPoint(f.lat, f.lon, f.hdg, distanceM);
+    f.lat = next.lat;
+    f.lon = next.lon;
+    // 少しずつコースを変化させる（自然感）
+    f.hdg = (f.hdg + (Math.random()-0.5)*6) % 360;
+    // 更新マーカー位置/回転
+    if (f.marker) {
+      f.marker.setLatLng([f.lat, f.lon]);
+      const el = f.marker.getElement();
+      if (el) {
+        const iconDiv = el.querySelector('.plane-icon');
+        if (iconDiv) iconDiv.style.transform = `rotate(${f.hdg}deg)`;
+      }
+    }
+  });
+}, intervalMs);
+
+/* ----- UI: 入力から移動（例: "50.68,-1.09/8"） ----- */
+document.getElementById('goBtn').addEventListener('click', ()=>{
+  const v = document.getElementById('locInput').value.trim();
+  if (!v) return alert('座標を入力してください（例: 50.68,-1.09/8）');
+  const parts = v.split('/');
+  const latlon = parts[0].split(',');
+  if (latlon.length < 2) return alert('正しい形式で入力してください（例: 50.68,-1.09/8）');
+  const lat = parseFloat(latlon[0]); const lon = parseFloat(latlon[1]);
+  const zoom = parts[1] ? parseInt(parts[1],10) : map.getZoom();
+  map.setView([lat,lon], zoom);
+});
+
+/* ----- URL コピー（クリップボードに現在の URL を入れる） ----- */
+document.getElementById('copyUrl').addEventListener('click', async ()=>{
+  updateUrlToMap();
+  try {
+    await navigator.clipboard.writeText(location.href);
+    alert('現在の URL をコピーしました:\n' + location.href);
+  } catch(e){
+    prompt('URL を手動でコピーしてください:', location.href);
+  }
+});
+
+/* ----- 実データを使う場合のヒント（コメント） ----- */
+/*
+  実データに差し替えるには：
+  - OpenSky Network（https://opensky-network.org/）や ADS-B Exchange の API を使う方法があります。
+  - ただし多くは API キーや CORS 設定、商用制限があります。サーバサイドで中継（proxy）を作るのが一般的です。
+  - 例（擬似）:
+      fetch('/api/adsb') -> JSON の機体配列を flights に入れ、createOrUpdateMarkers() を呼ぶ
+*/
+
+/* ----- 最初に URL パスがあれば入力欄に反映 ----- */
+(function fillInputFromUrl(){
+  if (location.pathname && location.pathname !== "/") {
+    const p = location.pathname.slice(1);
+    document.getElementById('locInput').value = p;
+  } else if (location.hash) {
+    document.getElementById('locInput').value = location.hash.slice(1);
+  } else {
+    document.getElementById('locInput').value = `${map.getCenter().lat.toFixed(5)},${map.getCenter().lng.toFixed(5)}/${map.getZoom()}`;
+  }
+})();
+</script>
+</body>
+</html>

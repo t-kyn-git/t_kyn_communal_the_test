@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>3PAR Simulator Dashboard</title>
+<style>
+body { font-family: monospace; background:#1e1e1e; color:#dcdcdc; padding:1em; }
+#output { background:#2e2e2e; padding:1em; height:200px; overflow-y:auto; margin-bottom:1em; }
+#vv-table, #raid-table { border-collapse: collapse; margin-bottom:1em; width:100%; }
+#vv-table td,#vv-table th,#raid-table td,#raid-table th { border:1px solid #555; padding:0.5em; }
+input { width:100%; padding:0.5em; font-family: monospace; background:#1e1e1e; color:#dcdcdc; border:1px solid #555; }
+.bar { height:16px; background:#4caf50; display:inline-block; }
+</style>
+</head>
+<body>
+
+<h2>3PAR Simulator Dashboard</h2>
+
+<div id="output"></div>
+
+<table id="vv-table">
+<thead><tr><th>VV Name</th><th>Size(GB)</th><th>Type</th><th>Mapped Hosts</th><th>Usage</th></tr></thead>
+<tbody></tbody>
+</table>
+
+<table id="raid-table">
+<thead><tr><th>RAID Name</th><th>Type</th><th>Disks</th><th>Used GB</th><th>Capacity GB</th></tr></thead>
+<tbody></tbody>
+</table>
+
+<input id="cmd" placeholder="Enter command (login, createvv, showvv, shutdown, etc.)">
+
+<script>
+let config = JSON.parse(localStorage.getItem("3par_sim")) || {
+    system: {state:"online", users:{admin:{password:"admin123",logged_in:false}}, current_user:null},
+    vvs:{}, hosts:{}, raids:{RAID1:{type:"RAID5",disks:5,used:50,capacity:100}}, logs:[]
+};
+
+function save(){ localStorage.setItem("3par_sim", JSON.stringify(config)); }
+function log(msg){ 
+    let ts = new Date().toISOString(); 
+    let u = config.system.current_user||"guest";
+    config.logs.push(`${ts} [${u}] ${msg}`);
+    if(config.logs.length>100) config.logs.shift(); 
+    save();
+}
+function appendOutput(msg){ let out=document.getElementById("output"); out.innerHTML+=msg+"<br>"; out.scrollTop=out.scrollHeight; }
+
+function requireLogin(fn){ return function(...args){ 
+    if(config.system.state!=="online"){ appendOutput("System is shutdown"); return; }
+    if(!config.system.current_user){ appendOutput("Please login first"); return; }
+    fn(...args);
+}}
+
+function renderVV(){
+    let tbody=document.querySelector("#vv-table tbody"); tbody.innerHTML="";
+    for(let name in config.vvs){
+        let v=config.vvs[name];
+        let usage=Math.min(100,(v.used||0)/v.size*100);
+        let bar=`<div class="bar" style="width:${usage}%;"></div> ${v.used||0}GB`;
+        let hosts = v.mapped_hosts.join(",");
+        tbody.innerHTML+=`<tr><td>${name}</td><td>${v.size}</td><td>${v.type}</td><td>${hosts}</td><td>${bar}</td></tr>`;
+    }
+}
+function renderRAID(){
+    let tbody=document.querySelector("#raid-table tbody"); tbody.innerHTML="";
+    for(let name in config.raids){
+        let r=config.raids[name];
+        tbody.innerHTML+=`<tr><td>${name}</td><td>${r.type}</td><td>${r.disks}</td><td>${r.used}</td><td>${r.capacity}</td></tr>`;
+    }
+}
+
+// ---- Commands ----
+function login(user){ 
+    if(!config.system.users[user]){ appendOutput("Unknown user"); return; }
+    let pwd=prompt("Password:"); 
+    if(pwd===config.system.users[user].password){ 
+        config.system.users[user].logged_in=true; 
+        config.system.current_user=user; 
+        appendOutput(`${user} logged in`); 
+        log("login"); save(); 
+    } else appendOutput("Incorrect password"); 
+}
+function logout(){ let u=config.system.current_user; if(!u){ appendOutput("No user logged in"); return; }
+config.system.users[u].logged_in=false; config.system.current_user=null; appendOutput(`${u} logged out`); log("logout"); save();}
+function shutdown(){ config.system.state="shutdown"; appendOutput("System shutdown"); log("shutdown"); save();}
+function startup(){ config.system.state="online"; appendOutput("System started"); log("startup"); save();}
+
+const showvv=requireLogin(()=>{ appendOutput("VVs:"); renderVV(); log("showvv"); });
+const createvv=requireLogin((name,size,type)=>{
+    if(config.vvs[name]){ appendOutput(`VV ${name} exists`); return; }
+    config.vvs[name]={size:parseInt(size),type:type,mapped_hosts:[],used:0}; appendOutput(`VV ${name} created (${type}, ${size}GB)`); log(`createvv ${name} ${size} ${type}`); save(); renderVV();
+});
+const removevv=requireLogin((name)=>{ 
+    if(!config.vvs[name]){ appendOutput(`VV ${name} does not exist`); return; }
+    for(let h of config.vvs[name].mapped_hosts){ config.hosts[h].mapped_vvs=config.hosts[h].mapped_vvs.filter(v=>v!==name);}
+    delete config.vvs[name]; appendOutput(`VV ${name} removed`); log(`removevv ${name}`); save(); renderVV();
+});
+const mapvv=requireLogin((vv,host)=>{ 
+    if(!config.vvs[vv]){ appendOutput(`VV ${vv} does not exist`); return; }
+    if(!config.hosts[host]){ config.hosts[host]={wwn:"WWN"+host,mapped_vvs:[]}; }
+    if(!config.vvs[vv].mapped_hosts.includes(host)){
+        config.vvs[vv].mapped_hosts.push(host); config.hosts[host].mapped_vvs.push(vv);
+        appendOutput(`VV ${vv} mapped to host ${host}`); log(`mapvv ${vv} ${host}`); save(); renderVV();
+    }
+});
+const unmapvv=requireLogin((vv,host)=>{ 
+    if(config.vvs[vv] && config.vvs[vv].mapped_hosts.includes(host)){
+        config.vvs[vv].mapped_hosts=config.vvs[vv].mapped_hosts.filter(h=>h!==host);
+        config.hosts[host].mapped_vvs=config.hosts[host].mapped_vvs.filter(v=>v!==vv);
+        appendOutput(`VV ${vv} unmapped from host ${host}`); log(`unmapvv ${vv} ${host}`); save(); renderVV();
+    } else appendOutput("Mapping not found");
+});
+const showhost=requireLogin((name)=>{
+    if(name){ if(!config.hosts[name]){ appendOutput(`Host ${name} not found`); return; } 
+        let h=config.hosts[name]; appendOutput(`${name} (WWN:${h.wwn}) mapped VVs: ${h.mapped_vvs.join(",")}`); }
+    else { appendOutput("Hosts:"); for(let hn in config.hosts){ let h=config.hosts[hn]; appendOutput(`${hn} (WWN:${h.wwn}) mapped VVs:${h.mapped_vvs.join(",")}`); }}
+    log(`showhost ${name||""}`);
+});
+const showlogs=requireLogin(()=>{ config.logs.slice(-20).forEach(l=>appendOutput(l)); log("showlogs"); });
+const showconfig=requireLogin(()=>{ appendOutput(JSON.stringify(config,null,2).replace(/\n/g,"<br>").replace(/ /g,"&nbsp;")); log("showconfig"); renderVV(); renderRAID(); });
+
+document.getElementById("cmd").addEventListener("keypress",(e)=>{
+    if(e.key==="Enter"){
+        let input=e.target.value.trim(); e.target.value="";
+        if(!input) return;
+        appendOutput(`3par(${config.system.current_user||"guest"})> ${input}`);
+        let args=input.split(" "); let cmd=args[0]; args=args.slice(1);
+        switch(cmd){
+            case "login": login(args[0]); break;
+            case "logout": logout(); break;
+            case "shutdown": shutdown(); break;
+            case "startup": startup(); break;
+            case "showvv": showvv(); break;
+            case "createvv": createvv(...args); break;
+            case "removevv": removevv(...args); break;
+            case "mapvv": mapvv(...args); break;
+            case "unmapvv": unmapvv(...args); break;
+            case "showhost": showhost(...args); break;
+            case "showlogs": showlogs(); break;
+            case "showconfig": showconfig(); break;
+            default: appendOutput("Unknown command"); break;
+        }
+    }
+});
+
+// 初期レンダリング
+renderVV(); renderRAID();
+</script>
+
+</body>
+</html>
