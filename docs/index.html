@@ -1,20 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test Documentation</title>
+    <title>Test Documentation with Collapsible Sidebar</title>
     <style>
-        /* --- ここから修正後の背景アニメーション用CSS --- */
+        /* --- 背景アニメーション用CSS --- */
         #background-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* コンテンツの背面に配置 */
+            z-index: -1;
         }
-
         .bg-slide {
             position: absolute;
             top: 0;
@@ -24,367 +23,338 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0; /* 初期状態は透明 */
-            /* 共通のアニメーション設定 */
+            opacity: 0;
             animation-name: crossfade;
-            animation-duration: 54s; /* 9画像 x 6秒 = 54秒 */
+            animation-duration: 54s;
             animation-iteration-count: infinite;
             animation-timing-function: linear;
         }
-
-        /* 4つの画像にそれぞれ異なる開始タイミングを設定 */
-        .bg-slide:nth-child(1) {
-            /* 雷: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/1118869/pexels-photo-1118869.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: 0s;
-        }
-        .bg-slide:nth-child(2) {
-            /* 炎: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/1528641/pexels-photo-1528641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -48s; /* 20秒サイクルの5秒地点から開始 */
-        }
-        .bg-slide:nth-child(3) {
-            /* 水: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -42s; /* 20秒サイクルの10秒地点から開始 */
-        }
-        .bg-slide:nth-child(4) {
-            /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/355288/pexels-photo-355288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -36s;  /* 20秒サイクルの15秒地点から開始 */
-        }
-        .bg-slide:nth-child(5) {
-            /* 水: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/89930/pexels-photo-89930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -30s; /* 20秒サイクルの10秒地点から開始 */
-        }
-        .bg-slide:nth-child(6) {
-            /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/3214110/pexels-photo-3214110.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -24s;  /* 20秒サイクルの15秒地点から開始 */
-        }
-        .bg-slide:nth-child(7) {
-            /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -18s;  /* 20秒サイクルの15秒地点から開始 */
-        }
-        .bg-slide:nth-child(8) {
-            /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -12s;  /* 20秒サイクルの15秒地点から開始 */
-        }
-        .bg-slide:nth-child(9) {
-            /* 草: 高画質な画像URLに変更 */
-            background-image: url('https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-            animation-delay: -6s;  /* 20秒サイクルの15秒地点から開始 */
-        }
-        /*
-         * クロスフェードアニメーションの定義
-         * 1つの画像が表示される期間（5秒間）をアニメーションの25%として定義
-         * フェードイン(1秒) -> 表示(3秒) -> フェードアウト(1秒)
-        */
+        .bg-slide:nth-child(1) { background-image: url('https://images.pexels.com/photos/1118869/pexels-photo-1118869.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: 0s; }
+        .bg-slide:nth-child(2) { background-image: url('https://images.pexels.com/photos/1528641/pexels-photo-1528641.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -48s; }
+        .bg-slide:nth-child(3) { background-image: url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -42s; }
+        .bg-slide:nth-child(4) { background-image: url('https://images.pexels.com/photos/355288/pexels-photo-355288.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -36s; }
+        .bg-slide:nth-child(5) { background-image: url('https://images.pexels.com/photos/89930/pexels-photo-89930.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -30s; }
+        .bg-slide:nth-child(6) { background-image: url('https://images.pexels.com/photos/3214110/pexels-photo-3214110.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -24s; }
+        .bg-slide:nth-child(7) { background-image: url('https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -18s; }
+        .bg-slide:nth-child(8) { background-image: url('https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -12s; }
+        .bg-slide:nth-child(9) { background-image: url('https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'); animation-delay: -6s; }
         @keyframes crossfade {
             0%   { opacity: 0; }
-            5%   { opacity: 1; } /* 1秒かけてフェードイン */
-            20%  { opacity: 1; } /* 3秒間表示を維持 */
-            25%  { opacity: 0; } /* 1秒かけてフェードアウト */
+            5%   { opacity: 1; }
+            20%  { opacity: 1; }
+            25%  { opacity: 0; }
             100% { opacity: 0; }
         }
-        /* --- ここまで背景アニメーション用CSS --- */
 
-
+        /* --- 基本レイアウトとサイドバー --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.8;
             margin: 0;
             padding: 0;
         }
-        .container {
-            position: relative; /* 背景の上にコンテンツが乗るように */
+
+        #sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: rgba(248, 249, 250, 0.85);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 100;
+            transform: translateX(0); /* 初期状態は表示 */
+            transition: transform 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+        #sidebar h3 { margin-top: 0; border-bottom: 1px solid #ccc; padding-bottom: 10px; }
+        #sidebar ul { list-style: none; padding: 0; }
+        #sidebar li a { text-decoration: none; color: #0056b3; font-weight: bold; }
+
+        /* --- メインコンテンツ --- */
+        #main-content-wrapper {
+            position: relative;
             z-index: 1;
+            padding-left: 280px; /* サイドバーの幅 + 余白 */
+            transition: padding-left 0.3s ease-in-out;
+        }
+        .container {
             max-width: 900px;
             margin: 20px auto;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.3); /* 背景が透けて見えるように少し透明に */
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        h1, h2, h3 {
-            color: #333;
-            margin-top: 0;
+
+        /* --- サイドバーが折りたたまれた時のスタイル --- */
+        body.sidebar-collapsed #sidebar {
+            transform: translateX(-100%); /* サイドバーを左へ隠す */
         }
-        h1 {
-            font-size: 1.8em;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 10px;
+        body.sidebar-collapsed #main-content-wrapper {
+            padding-left: 40px; /* 少し余白を残す */
         }
-        h2 {
-            font-size: 1.4em;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-            margin-top: 20px;
-        }
-        h3 {
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        h4 {
-            font-size: 0.9em;
-            margin-top: 15px;
-        }
-        ul {
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 10px;
-        }
-        code {
-            background: #f4f4f4;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.75em;
-        }
-        pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
-            font-size: 0.75em;
-        }
-        a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            table-layout: fixed;
-            font-size: 0.9em;
-        }
-        th, td {
+
+        /* --- 開閉ボタン --- */
+        #sidebar-toggle {
+            position: fixed;
+            top: 15px;
+            left: 290px; /* 240px(幅) + 40px(padding) + 10px */
+            z-index: 101;
+            background: rgba(255, 255, 255, 0.5);
             border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            word-wrap: break-word;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: left 0.3s ease-in-out;
         }
-        th {
-            background-color:rgba(0, 0, 0, 0.1);
+        body.sidebar-collapsed #sidebar-toggle {
+            left: 15px;
         }
-        td {
-            background-color:rgba(255, 255, 255, 0.5);
+        #sidebar-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: #333;
+            margin: 2px 0;
+            position: relative;
+            transition: transform 0.3s, opacity 0.3s;
         }
-        .footer {
-            margin-top: 30px;
-            padding-top: 10px;
-            border-top: 1px solid #ddd;
-            text-align: center;
-            font-size: 0.85em;
-            color: #666;
-        }
+        /* ボタンをXにするアニメーション */
+        body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(2) { opacity: 0; }
+        body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
-        /* Fade-in effect */
-        .fade-in {
-            opacity: 0;
-            transition: opacity 1s ease-in;
-        }
-        .fade-in.visible {
-            opacity: 1;
-        }
-        /* Group fade-in container */
-        .fade-in-group {
-            opacity: 0;
-            transition: opacity 1.5s ease-in;
-        }
-        .fade-in-group.visible {
-            opacity: 1;
-        }
 
-        /* Mobile Styles */
-        @media (max-width: 600px) {
-            h1 { font-size: 1.3em; }
-            h2 { font-size: 1.1em; }
-            h3 { font-size: 0.9em; }
-            table { font-size: 0.75em; }
-            th, td { padding: 8px; }
+        /* --- その他のスタイル --- */
+        h1 { font-size: 1.8em; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        h2 { font-size: 1.4em; border-bottom: 1px solid #ddd; padding-bottom: 5px; margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        .footer { text-align: center; margin-top: 30px; padding-top: 10px; border-top: 1px solid #ddd; }
+        .fade-in-group { opacity: 0; transition: opacity 1.5s ease-in; }
+        .fade-in-group.visible { opacity: 1; }
+
+        /* --- モバイル表示のスタイル --- */
+        @media (max-width: 768px) {
+            #main-content-wrapper {
+                padding-left: 20px; /* デフォルトのpaddingを小さく */
+            }
+            #sidebar {
+                transform: translateX(-100%); /* モバイルではデフォルトで隠す */
+            }
+            body:not(.sidebar-collapsed) #sidebar {
+                transform: translateX(0); /* 開いたときだけ表示 */
+            }
+            #sidebar-toggle {
+                left: 15px; /* 常に左に固定 */
+            }
+            /* 開いているときはメインコンテンツを操作不可にするオーバーレイ */
+            body:not(.sidebar-collapsed)::after {
+                content: '';
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.4);
+                z-index: 99;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 背景アニメーション用のコンテナ（HTML構造は変更） -->
     <div id="background-container">
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
-        <div class="bg-slide"></div>
+        <!-- .bg-slide divs -->
+        <div class="bg-slide"></div><div class="bg-slide"></div><div class="bg-slide"></div>
+        <div class="bg-slide"></div><div class="bg-slide"></div><div class="bg-slide"></div>
+        <div class="bg-slide"></div><div class="bg-slide"></div><div class="bg-slide"></div>
     </div>
 
-    <div class="container">
-        <h1 id="dynamic-text"></h1>
+    <!-- サイドバー -->
+    <nav id="sidebar">
+        <h3>Navigation</h3>
+        <ul>
+            <li><a href="#objectives">Objectives</a></li>
+            <li><a href="#preconditions">Preconditions</a></li>
+            <li><a href="#development-content">Content Being Developed</a></li>
+                <li><a href="#django-application-development">　Django Application</a></li>
+                <li><a href="#web-hosting-development">　Web Hosting</a></li>
+                <li><a href="#test-github-actions">　Github Actions</a></li>
+                <li><a href="#notice-list">　Notes</a></li>
+                <li><a href="#further-more">　Further more</a></li>
+                <li><a href="#manual-reference">　Manual Reference</a></li>
+            <li><a href="#after-about-this">ABOUT THIS</a></li>
+            <li><a href="#after-back-button">BACK</a></li>
+            <div style="text-align:center; margin-top: 20px;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;"><h8 id="after-back-button">BACK</h8></button></div>
+                
+        </ul>
+    </nav>
 
-        <!-- Fade-in group container -->
-        <div class="fade-in-group">
-            <h2>Objectives</h2>
-            <ul>
-                <li>In recent years, businesses have been required to undergo transformation.</li>
-                <li>One aspect of this is the increasing number of companies pushing for DX (Digital Transformation) strategies.</li>
-                <li>Alongside personal skill development in areas of expertise, there is a need to relearn new knowledge.</li>
-                <li>Speed up the trial-and-error process of system development.</li>
-            </ul>
+    <!-- 開閉ボタン -->
+    <button id="sidebar-toggle" aria-label="Toggle Sidebar">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
 
-            <h2>Preconditions</h2>
-            <ul>
-                <li>Personal information is prohibited from being uploaded.</li>
-                <li>Data will be either open data or generated using Faker.</li>
-                <li>The goal is to rapidly create systems as ideas come up.</li>
-                <li>If not using Github Actions:</li>
-                <li>There may be some inappropriate language.</li>
-            </ul>
+    <!-- メインコンテンツのラッパー -->
+    <div id="main-content-wrapper">
+        <div class="container">
+            <h1 id="dynamic-text"></h1>
+            <div class="fade-in-group">
+                <h2 id="objectives">Objectives</h2>
+                <ul>
+                    <li>In recent years, businesses have been required to undergo transformation.</li>
+                    <li>One aspect of this is the increasing number of companies pushing for DX (Digital Transformation) strategies.</li>
+                    <li>Alongside personal skill development in areas of expertise, there is a need to relearn new knowledge.</li>
+                    <li>Speed up the trial-and-error process of system development.</li>
+                </ul>
 
-            <h2>Content Being Developed</h2>
-            <table>
-                <tr>
-                    <th>Development Area</th>
-                    <th>Description</th>
-                </tr>
-                <tr>
-                    <td><strong>1) Django Application Development</strong></td>
-                    <td>
-                        <ul>
-                            <li>Develop Django applications using Visual Studio Code.</li>
-                            <li>Commit and upload to a Github repository.</li>
-                            <li>Perform functionality checks on Google Colaboratory.</li>
-                            <li>The flow for rapid development will be: Visual Studio Code → Github → Google Colaboratory.</li>
-                            <li>Specific file used on Google Colaboratory: <code>django_hogehogehogeeeeeeeeee.ipynb</code></li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>2) Web Hosting Development</strong></td>
-                    <td>
-                        <ul>
-                            <li>Functionality checks for HTML, CSS, and JavaScript.</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>3) Testing New Features in Github Actions</strong></td>
-                    <td>
-                        <ul>
-                            <li>Trial development of features that may incur costs in private repositories.</li>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>4) Notes</strong></td>
-                    <td>
-                        <ul>
-                            <li>There are many possibilities:</li>
+                <h2 id="preconditions">Preconditions</h2>
+                <ul>
+                    <li>Personal information is prohibited from being uploaded.</li>
+                    <li>Data will be either open data or generated using Faker.</li>
+                    <li>The goal is to rapidly create systems as ideas come up.</li>
+                    <li>If not using Github Actions:</li>
+                    <li>There may be some inappropriate language.</li>
+                </ul>
+
+                <h2 id="development-content">Content Being Developed</h2>
+                <table>
+                    <!-- テーブル内容は省略 -->
+                    <tr><th>Development Area</th><th>Description</th></tr>
+                    <tr>
+                        <td><strong><h4 id="django-application-development">1) Django Application Development</h4></strong></td>
+                        <td>
                             <ul>
-                                <li>Running LocalStack with Github Actions.
-                                    <a href="https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a" target="_blank">https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a</a>
-                                </li>
-                                <li>Running LocalStack with Github Actions + Terraform.
-                                    <a href="https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2" target="_blank">https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2</a>
-                                </li>
+                                <li>Develop Django applications using Visual Studio Code.</li>
+                                <li>Commit and upload to a Github repository.</li>
+                                <li>Perform functionality checks on Google Colaboratory.</li>
+                                <li>The flow for rapid development will be: Visual Studio Code → Github → Google Colaboratory.</li>
+                                <li>Specific file used on Google Colaboratory: <code>django_hogehogehogeeeeeeeeee.ipynb</code></li>
                             </ul>
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>5) Further more</strong></td>
-                    <td>
-                        <ul>
-                            <li>All other repositories are below. </li>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong><h4 id="web-hosting-development">2) Web Hosting Development</h4></strong></td>
+                        <td><ul><li>Functionality checks for HTML, CSS, and JavaScript.</li></ul></td>
+                    </tr>
+                    <tr>
+                        <td><strong><h4 id="test-github-actions">3) Testing New Features in Github Actions</h4></strong></td>
+                        <td><ul><li>Trial development of features that may incur costs in private repositories.</li></ul></td>
+                    </tr>
+                    <tr>
+                        <td><strong><h4 id="notice-list">4) Notes</h4></strong></td>
+                        <td>
+                            <ul>
+                                <li>There are many possibilities:</li>
+                                <ul>
+                                    <li>Running LocalStack with Github Actions.
+                                        <a href="https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a" target="_blank">https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a</a>
+                                    </li>
+                                    <li>Running LocalStack with Github Actions + Terraform.
+                                        <a href="https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2" target="_blank">https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2</a>
+                                    </li>
+                                </ul>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong><h4 id="further-more">5) Further more</h4></strong></td>
+                        <td>
+                            <ul>
+                                <li>All other repositories are below. </li>
                                 <li>We show the repository as the public sub name (nickname) in the the world because of security defence.</li>
                                 <li>ALL Repositries.</li>
-                                <a href="subdir/toppage.html">
-                                <li>UNKO page.</li>
-                                <a href="subdir/repositry_public_info/hello.html">
-                                <li>HELLO(public)</li>
-                                <a href="subdir/repositry_public_info/automatic.html">
-                                <li>Automatic(privateOCR)</li>
-                                <a href="subdir/repositry_public_info/rustynail.html">
-                                <li>RustyNail(Games)</li>
-                                <a href="subdir/repositry_public_info/tomorrowneverknows.html">
-                                <li>TomorrowNeverKnows(managementBI)</li>
-                                <a href="subdir/repositry_public_info/eversince.html">
-                                <li>everSince(djangoAlbum)</li>
-                                <a href="subdir/repositry_public_info/ultrasoul.html">
-                                <li>ultrasoul(NetworkPKTGoogleAI)</li>
-                                <a href="subdir/repositry_public_info/myfriend.html">
-                                <li>MyFriend(ExpressReactECSite)</li>   
-                        </ul>
-                    </td>
-                </tr>
-                <tr>
-                    <td><strong>6) Manual Reference</strong></td>
-                    <td>
-                        <ul>
-                            <li>All other documents are below. </li>
+                                <a href="subdir/toppage.html"><li>UNKO page.</li></a>
+                                <a href="subdir/repositry_public_info/hello.html"><li>HELLO(public)</li></a>
+                                <a href="subdir/repositry_public_info/automatic.html"><li>Automatic(privateOCR)</li></a>
+                                <a href="subdir/repositry_public_info/rustynail.html"><li>RustyNail(Games)</li></a>
+                                <a href="subdir/repositry_public_info/tomorrowneverknows.html"><li>TomorrowNeverKnows(managementBI)</li></a>
+                                <a href="subdir/repositry_public_info/eversince.html"><li>everSince(djangoAlbum)</li></a>
+                                <a href="subdir/repositry_public_info/ultrasoul.html"><li>ultrasoul(NetworkPKTGoogleAI)</li></a>
+                                <a href="subdir/repositry_public_info/myfriend.html"><li>MyFriend(ExpressReactECSite)</li></a>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong><h4 id="manual-reference">6) Manual Reference</h4></strong></td>
+                        <td>
+                            <ul>
+                                <li>All other documents are below. </li>
                                 <li>We show the document as the public sub name (nickname) in the the world because of security defence.</li>
                                 <li>ALL Documents.</li>
-                                <a href="subdir/development/refermanuals/javascripts_manual.html">
-                                <li>JavaScript</li>
-                                <a href="subdir/development/refermanuals/python_manual.html">
-                                <li>Python</li>
-                                <a href="subdir/development/refermanuals/java_manual.html">
-                                <li>Java</li>
-                                <a href="subdir/development/refermanuals/lua_manual.html">
-                                <li>Lua</li>
-                                <a href="subdir/development/refermanuals/html_manual.html">
-                                <li>HTML</li>
-                                <a href="subdir/development/refermanuals/css_manual.html">
-                                <li>CSS</li>
-                                <a href="subdir/development/refermanuals/sample_manual.html">
-                                <li>sample</li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+                                <a href="subdir/development/refermanuals/javascripts_manual.html"><li>JavaScript</li></a>
+                                <a href="subdir/development/refermanuals/python_manual.html"><li>Python</li></a>
+                                <a href="subdir/development/refermanuals/java_manual.html"><li>Java</li></a>
+                                <a href="subdir/development/refermanuals/lua_manual.html"><li>Lua</li></a>
+                                <a href="subdir/development/refermanuals/html_manual.html"><li>HTML</li></a>
+                                <a href="subdir/development/refermanuals/css_manual.html"><li>CSS</li></a>
+                                <a href="subdir/development/refermanuals/sample_manual.html"><li>sample</li></a>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+                <h2 id="after-about-this">ABOUT THIS</h2>
+                <ul>
+                    <li>This page is owned by t_kyn development team.</li>
+                    <li>We are eager to develop new technology and share it with the world.</li>
+                    <li>We welcome any feedback or contributions to help us improve.</li>
+                    <li>Feel free to reach out to us through our contact page or social media channels.</li>
+                    <li>Thank you for visiting our documentation page!</li>
+                </ul>
+            
+            <div style="text-align:center; margin-top: 20px;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;"><h6 id="after-back-button">BACK</h6></button></div>
+
+            <div class="footer">
+                <p>this page is owned by t_kyn development team.</p>
+            </div>
         </div>
     </div>
 
-    <div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">戻る</button></div>
-
-    <div class="footer">
-        <p>Document created for testing and development purposes.</p>
-    </div>
-
     <script>
-        // Display "t_kyn_communal_the_test" one character at a time every 0.2 seconds
+        // タイプライターエフェクト
         const text = "t_kyn_communal_the_test";
-        const container = document.getElementById("dynamic-text");
-
+        const dynamicTextContainer = document.getElementById("dynamic-text");
         text.split("").forEach((char, index) => {
             setTimeout(() => {
-                container.textContent += char;
+                dynamicTextContainer.textContent += char;
             }, index * 200);
         });
 
-        // Fade-in effect for the group container
+        // フェードインエフェクト
         const fadeInGroup = document.querySelector('.fade-in-group');
-
-        const observer = new IntersectionObserver((entries, observer) => {
+        const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    fadeInGroup.classList.add('visible');
-                    observer.unobserve(entry.target); // Stop observing once the element is visible
+                    entry.target.classList.add('visible');
                 }
             });
         });
-
         observer.observe(fadeInGroup);
+
+        // --- サイドバー開閉機能 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('sidebar-toggle');
+
+            // 初期表示時にモバイルサイズならサイドバーを閉じる
+            if (window.innerWidth <= 768) {
+                document.body.classList.add('sidebar-collapsed');
+            }
+
+            toggleButton.addEventListener('click', () => {
+                document.body.classList.toggle('sidebar-collapsed');
+            });
+        });
     </script>
 </body>
 </html>
