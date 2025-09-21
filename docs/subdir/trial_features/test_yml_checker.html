@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Dockerfile/Ansible/Kubernetes Config Checker</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 960px;
+            margin: 20px auto;
+            padding: 0 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .tab-container {
+            display: flex;
+            border-bottom: 2px solid #ccc;
+            margin-bottom: 20px;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background-color: #e9e9e9;
+            font-size: 16px;
+        }
+        .tab.active {
+            background-color: #fff;
+            border-color: #ccc;
+            border-bottom: 2px solid #fff;
+            margin-bottom: -2px;
+            border-radius: 5px 5px 0 0;
+        }
+        .content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            background-color: #fff;
+            border-radius: 0 0 5px 5px;
+        }
+        .content.active {
+            display: block;
+        }
+        textarea {
+            width: 100%;
+            height: 400px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        button.check-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button.check-btn:hover {
+            background-color: #2980b9;
+        }
+        pre {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 50px;
+        }
+        .result-title {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .result-ok { color: #2ecc71; }
+        .result-error { color: #e74c3c; }
+        .result-warn { color: #f39c12; }
+    </style>
+    <!-- js-yamlライブラリをCDNから読み込み -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+</head>
+<body>
+
+    <h1>Dockerfile/Ansible/Kubernetes Config Checker</h1>
+
+    <div class="tab-container">
+        <div class="tab active" onclick="openTab(event, 'docker')">Dockerfile</div>
+        <div class="tab" onclick="openTab(event, 'ansible')">Ansible (YAML)</div>
+        <div class="tab" onclick="openTab(event, 'kubernetes')">Kubernetes (YAML)</div>
+    </div>
+
+    <!-- Dockerfile Tab -->
+    <div id="docker" class="content active">
+        <h2>Dockerfile</h2>
+        <textarea id="dockerfile-input" placeholder="ここにDockerfileの内容を貼り付け"></textarea>
+        <button class="check-btn" onclick="checkDockerfile()">Dockerfileをチェック</button>
+        <p class="result-title">結果:</p>
+        <pre id="dockerfile-result"></pre>
+    </div>
+
+    <!-- Ansible Tab -->
+    <div id="ansible" class="content">
+        <h2>Ansible (YAML)</h2>
+        <textarea id="ansible-input" placeholder="ここにAnsible PlaybookのYAMLを貼り付け"></textarea>
+        <button class="check-btn" onclick="checkAnsible()">Ansible YAMLをチェック</button>
+        <p class="result-title">結果:</p>
+        <pre id="ansible-result"></pre>
+    </div>
+
+    <!-- Kubernetes Tab -->
+    <div id="kubernetes" class="content">
+        <h2>Kubernetes (YAML)</h2>
+        <textarea id="kubernetes-input" placeholder="ここにKubernetes ManifestのYAMLを貼り付け (---での複数ドキュメントに対応)"></textarea>
+        <button class="check-btn" onclick="checkKubernetes()">Kubernetes YAMLをチェック</button>
+        <p class="result-title">結果:</p>
+        <pre id="kubernetes-result"></pre>
+    </div>
+
+<script>
+    // --- Tab Handling ---
+    function openTab(evt, tabName) {
+        const contents = document.getElementsByClassName("content");
+        for (let i = 0; i < contents.length; i++) {
+            contents[i].style.display = "none";
+        }
+        const tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) {
+            tabs[i].className = tabs[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+    // --- Result Renderer ---
+    function renderResult(elementId, results) {
+        const resultEl = document.getElementById(elementId);
+        if (results.length === 0) {
+            resultEl.innerHTML = '<span class="result-ok">[OK] 問題は見つかりませんでした。</span>';
+            return;
+        }
+        
+        let html = '';
+        results.forEach(r => {
+            html += `<span class="${r.type === 'error' ? 'result-error' : (r.type === 'warn' ? 'result-warn' : 'result-ok')}">[${r.type.toUpperCase()}]</span> ${r.message}\n`;
+        });
+        resultEl.innerHTML = html;
+    }
+
+    // --- Dockerfile Checker ---
+    function checkDockerfile() {
+        const content = document.getElementById('dockerfile-input').value;
+        const results = [];
+        if (!content.trim()) {
+            renderResult('dockerfile-result', [{type: 'warn', message: '入力が空です。'}]);
+            return;
+        }
+        const lines = content.split('\n');
+
+        // Rule 1: Must start with FROM
+        if (!lines.find(line => line.trim().toUpperCase().startsWith('FROM '))) {
+            results.push({ type: 'error', message: 'Dockerfileは `FROM` 命令で始まる必要があります。' });
+        }
+
+        // Rule 2: apt-get update and install should be in one RUN
+        lines.forEach((line, index) => {
+            if (line.trim().toUpperCase().startsWith('RUN') && line.includes('apt-get update')) {
+                const nextLine = lines[index + 1];
+                if (nextLine && nextLine.trim().toUpperCase().startsWith('RUN') && nextLine.includes('apt-get install')) {
+                    results.push({ type: 'warn', message: `Line ${index + 1}: パフォーマンスとキャッシュの観点から、'apt-get update' と 'apt-get install' は1つのRUN命令にまとめることを推奨します。(例: RUN apt-get update && apt-get install -y ...)` });
+                }
+            }
+        });
+        
+        // Rule 3: Use COPY instead of ADD for local files
+        lines.forEach((line, index) => {
+             if (line.trim().toUpperCase().startsWith('ADD ') && !line.includes('http://') && !line.includes('https://')) {
+                 const parts = line.trim().split(/\s+/);
+                 // ADD <src> <dest> - check if src looks like a URL
+                 if (parts.length > 1 && !parts[1].startsWith('http')) {
+                    results.push({ type: 'warn', message: `Line ${index + 1}: ローカルのファイルやディレクトリをコピーする場合、'ADD' よりも意図が明確な 'COPY' の使用が推奨されます。` });
+                 }
+             }
+        });
+
+        // Rule 4: Ensure CMD/ENTRYPOINT is present
+        if (!lines.find(line => line.trim().toUpperCase().startsWith('CMD ') || line.trim().toUpperCase().startsWith('ENTRYPOINT '))) {
+            results.push({ type: 'warn', message: 'コンテナの実行コマンドを定義する `CMD` または `ENTRYPOINT` が見つかりません。' });
+        }
+
+        renderResult('dockerfile-result', results);
+    }
+
+    // --- Ansible YAML Checker ---
+    function checkAnsible() {
+        const content = document.getElementById('ansible-input').value;
+        const results = [];
+        if (!content.trim()) {
+            renderResult('ansible-result', [{type: 'warn', message: '入力が空です。'}]);
+            return;
+        }
+
+        try {
+            const docs = jsyaml.loadAll(content);
+            results.push({ type: 'ok', message: 'YAMLの構文は正常です。' });
+            
+            docs.forEach((doc, index) => {
+                if(doc === null) return; // 空のドキュメントはスキップ
+                
+                if(!Array.isArray(doc)) {
+                     results.push({ type: 'warn', message: `ドキュメント ${index + 1}: Playbookは通常、リスト形式 (例: '- hosts: ...') で記述されます。` });
+                     return;
+                }
+                
+                doc.forEach((play, playIndex) => {
+                    if (!play.hosts) {
+                         results.push({ type: 'error', message: `ドキュメント ${index + 1}, Play ${playIndex + 1}: 必須キー 'hosts' が見つかりません。` });
+                    }
+                    if (!play.tasks && !play.roles) {
+                         results.push({ type: 'warn', message: `ドキュメント ${index + 1}, Play ${playIndex + 1}: 'tasks' または 'roles' が見つかりません。` });
+                    }
+                });
+            });
+            
+        } catch (e) {
+            results.push({ type: 'error', message: `YAMLのパースに失敗しました: ${e.message}` });
+        }
+        
+        renderResult('ansible-result', results);
+    }
+
+    // --- Kubernetes YAML Checker ---
+    function checkKubernetes() {
+        const content = document.getElementById('kubernetes-input').value;
+        const results = [];
+        if (!content.trim()) {
+            renderResult('kubernetes-result', [{type: 'warn', message: '入力が空です。'}]);
+            return;
+        }
+
+        try {
+            const docs = jsyaml.loadAll(content);
+            results.push({ type: 'ok', message: `YAMLの構文は正常です。${docs.filter(d => d).length}個のドキュメントが見つかりました。` });
+
+            docs.forEach((doc, index) => {
+                if (doc === null) return; // 空のドキュメント(---だけの行など)はスキップ
+
+                const docNum = `ドキュメント ${index + 1}:`;
+
+                if (typeof doc !== 'object') {
+                    results.push({ type: 'error', message: `${docNum} YAMLがオブジェクト形式ではありません。`});
+                    return;
+                }
+
+                if (!doc.apiVersion) {
+                    results.push({ type: 'error', message: `${docNum} 必須キー 'apiVersion' が見つかりません。` });
+                }
+                if (!doc.kind) {
+                    results.push({ type: 'error', message: `${docNum} 必須キー 'kind' が見つかりません。` });
+                }
+                if (!doc.metadata) {
+                    results.push({ type: 'error', message: `${docNum} 必須キー 'metadata' が見つかりません。` });
+                } else {
+                    if (!doc.metadata.name) {
+                        results.push({ type: 'warn', message: `${docNum} 'metadata.name' が見つかりません。` });
+                    }
+                }
+                if (doc.kind === 'Pod' || doc.kind === 'Deployment' || doc.kind === 'StatefulSet' || doc.kind === 'DaemonSet' || doc.kind === 'Job') {
+                    if(!doc.spec) {
+                        results.push({ type: 'error', message: `${docNum} '${doc.kind}' には 'spec' が必須です。`});
+                    }
+                }
+            });
+
+        } catch (e) {
+            results.push({ type: 'error', message: `YAMLのパースに失敗しました: ${e.message}` });
+        }
+        
+        renderResult('kubernetes-result', results);
+    }
+
+</script>
+</body>
+</html>
