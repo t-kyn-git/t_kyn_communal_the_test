@@ -70,7 +70,7 @@
         .payment-button {
             grid-column: span 3;
             background-color: #ff5722;
-            color: white;
+            color: rgb(206, 208, 72);
             font-size: 24px;
             font-weight: bold;
             border: none;
@@ -114,7 +114,13 @@
         #complete-screen .back-button:active {
             background-color: rgba(255, 255, 255, 0.2);
         }
-
+        footer {
+            text-align: center; /* この一行がテキストを中央揃えにします */
+            background: #f0f0f0;
+            padding: 1rem;
+            font-size: .5rem;
+            margin-top: 2rem;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +146,10 @@
                 <button class="payment-button" onclick="processPayment()">おしはらい</button>
             </div>
         </div>
-
+        <footer>
+        This is the t_kyn systems of shered contents<br>
+        これは、てすとようです。じっさいのおかねのしはらいではありません。<br>
+        </footer>
         <!-- 支払い完了画面 -->
         <div id="complete-screen">
             <h2>おしはらい かんりょう！</h2>

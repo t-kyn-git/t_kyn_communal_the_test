@@ -3,55 +3,188 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>出産立会い・育休で夫がやること</title>
+<title>【チェックリスト版】出産立会い・育休で夫がやること</title>
 <style>
-  body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 0; }
+  body { font-family: sans-serif; line-height: 1.6; margin: 0; padding: 0; color: #333; }
   header { background: #4CAF50; color: #fff; padding: 1rem; text-align: center; }
-  section { padding: 1rem; }
-  h2 { border-left: 5px solid #4CAF50; padding-left: .5rem; margin-top: 1.5rem; }
-  ul { padding-left: 1.2rem; }
-  li { margin: .4rem 0; }
-  footer { background: #f0f0f0; text-align: center; padding: 1rem; font-size: .9rem; }
-  .important { background: #fff3cd; border-left: 4px solid #ff9800; padding: .5rem; margin: .5rem 0; }
+  section { padding: 1rem 1.5rem; max-width: 800px; margin: 0 auto; }
+  h2 { border-left: 5px solid #4CAF50; padding-left: .5rem; margin-top: 2rem; }
+  h3 { border-bottom: 2px solid #4CAF50; padding-bottom: .3rem; margin-top: 2rem; }
+  .task-item { display: flex; align-items: center; margin: .8rem 0; font-size: 1rem; }
+  .task-item input[type="checkbox"] { width: 1.3em; height: 1.3em; margin-right: .6em; cursor: pointer; }
+  .task-item label { flex: 1; }
+  footer { background: #f0f0f0; text-align: center; padding: 1rem; font-size: .9rem; margin-top: 2rem; }
+  .important { background: #fff3cd; border-left: 4px solid #ff9800; padding: 1rem; margin: 1.5rem 0; border-radius: 4px; }
+  .button-container { display: flex; gap: 1rem; margin-top: 1rem; }
+  button { background-color: #008CBA; color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px; transition: background-color 0.3s; }
+  button:hover { background-color: #005f7a; }
+  #importBtn { background-color: #f44336; }
+  #importBtn:hover { background-color: #d32f2f; }
 </style>
 </head>
 <body>
 <header>
-  <h1>出産立会い・育休で夫がやること</h1>
+  <h1>【チェックリスト版】出産立会い・育休で夫がやること</h1>
 </header>
 
 <section>
-  <h2>出産立会いで夫がやること</h2>
-  <ul>
-    <li>事前に病院へのルート・連絡先を確認</li>
-    <li>母子手帳、保険証、入院バッグの準備を確認</li>
-    <li>陣痛が始まったらタイミングを記録・サポート</li>
-    <li>妻の希望（声かけの仕方、触れて良いか等）を事前に確認</li>
-    <li>陣痛時の呼吸サポート、腰のさすり、飲み物を渡す</li>
-    <li>医師・助産師とのやり取りを記録し、妻を守る役割を意識</li>
-    <li>生まれた瞬間の写真・動画（病院許可範囲内）を撮影</li>
-  </ul>
-  <div class="important">💡 ポイント：妻が安心して出産に集中できるよう、安心感を与える存在になること。</div>
+  <h2>出産立会い準備（妊娠中〜陣痛開始まで）</h2>
+  <div class="important">💡 ポイント：妻が安心して出産に集中できるよう、段取りと知識の準備を万全に。</div>
+
+  <h3>情報収集・連絡先の確認</h3>
+  <div class="task-item"><input type="checkbox" id="preg_task_01"><label for="preg_task_01">病院の電話番号、夜間・休日の連絡先をスマホに登録</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_02"><label for="preg_task_02">病院までの交通手段（車、タクシー）とルートを昼・夜共に確認</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_03"><label for="preg_task_03">タクシーを使う場合、複数の会社の電話番号を登録（陣痛タクシーも検討）</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_04"><label for="preg_task_04">上司や同僚に出産予定日を伝え、緊急連絡の可能性を共有</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_05"><label for="preg_task_05">両親・親族への連絡方法とタイミングを決めておく</label></div>
+
+  <h3>持ち物の確認</h3>
+  <div class="task-item"><input type="checkbox" id="preg_task_06"><label for="preg_task_06">入院バッグの置き場所を夫婦で共有</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_07"><label for="preg_task_07">母子手帳、保険証、診察券、印鑑を専用ポーチにまとめる</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_08"><label for="preg_task_08">夫用の軽食、飲み物、充電器などを準備</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_09"><label for="preg_task_09">テニスボールやマッサージグッズなど、陣痛緩和グッズを準備</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_10"><label for="preg_task_10">ビデオカメラやスマホの充電、空き容量を確認</label></div>
+  
+  <h3>妻とのコミュニケーション</h3>
+  <div class="task-item"><input type="checkbox" id="preg_task_11"><label for="preg_task_11">妻が望む立会いのスタイル（どうしてほしいか）を具体的に聞く</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_12"><label for="preg_task_12">陣痛中、どこを触ってほしいか、またはほしくないかを確認</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_13"><label for="preg_task_13">かけてほしい言葉、逆に言われたくない言葉を聞いておく</label></div>
+  <div class="task-item"><input type="checkbox" id="preg_task_14"><label for="preg_task_14">写真や動画撮影の希望（タイミング、範囲）を確認</label></div>
 </section>
 
 <section>
-  <h2>育休で夫がやること</h2>
-  <ul>
-    <li>授乳・ミルク準備の補助（哺乳瓶消毒・調乳）</li>
-    <li>おむつ替え・沐浴・寝かしつけに積極参加</li>
-    <li>家事（料理・洗濯・掃除）の主担当を引き受ける</li>
-    <li>妻の睡眠時間を確保（夜の見守りなど）</li>
-    <li>行政手続き（児童手当・医療証・保育園申請など）</li>
-    <li>買い物や生活インフラ（公共料金・ネット・銀行など）の管理</li>
-    <li>日々の出来事や赤ちゃんの成長を記録</li>
-    <li>復職後を見据えた家事・育児の分担ルールを整える</li>
-  </ul>
-  <div class="important">💡 ポイント：母親の「身体の回復」と「メンタルサポート」を最優先にすること。</div>
+  <h2>出産本番（陣痛開始〜出産）</h2>
+  <h3>サポート・行動</h3>
+  <div class="task-item"><input type="checkbox" id="birth_task_01"><label for="birth_task_01">陣痛の間隔をアプリや時計で正確に計測する</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_02"><label for="birth_task_02">計測した間隔を元に、病院へ連絡する</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_03"><label for="birth_task_03">妻の呼吸が乱れたら、一緒に「吸ってー、吐いてー」とリードする</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_04"><label for="birth_task_04">希望された場所（腰、背中など）をさする、押す</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_05"><label for="birth_task_05">ストロー付きの飲み物をこまめに渡す</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_06"><label for="birth_task_06">汗を拭いたり、うちわで扇いだりする</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_07"><label for="birth_task_07">医師や助産師からの説明を一緒に聞き、メモを取る</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_08"><label for="birth_task_08">妻の代わりに質問したり、希望を伝えたりする</label></div>
+  <div class="task-item"><input type="checkbox" id="birth_task_09"><label for="birth_task_09">病院の許可範囲内で、感動の瞬間を写真・動画に収める</label></div>
 </section>
 
+<section>
+  <h2>育休で夫がやること（産後〜）</h2>
+  <div class="important">💡 ポイント：母親の「身体の回復」と「メンタルサポート」を最優先に。「自分が主役」の意識で動く。</div>
+
+  <h3>赤ちゃんのお世話</h3>
+  <div class="task-item"><input type="checkbox" id="childcare_task_01"><label for="childcare_task_01">ミルクの作り方をマスターする（調乳）</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_02"><label for="childcare_task_02">哺乳瓶の洗浄・消毒を担当する</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_03"><label for="childcare_task_03">おむつ替えをマスターし、率先して行う</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_04"><label for="childcare_task_04">沐浴（お風呂）の手順を覚え、主担当になる</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_05"><label for="childcare_task_05">ゲップのさせ方を覚える</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_06"><label for="childcare_task_06">寝かしつけのパターンを夫婦で共有・実践する</label></div>
+  <div class="task-item"><input type="checkbox" id="childcare_task_07"><label for="childcare_task_07">赤ちゃんの爪切り、鼻水吸引など、日々のケアを行う</label></div>
+
+  <h3>家事</h3>
+  <div class="task-item"><input type="checkbox" id="housework_task_01"><label for="housework_task_01">1週間の献立作成と買い物を担当する（ネットスーパー活用）</label></div>
+  <div class="task-item"><input type="checkbox" id="housework_task_02"><label for="housework_task_02">料理の主担当になる（簡単なものでOK）</label></div>
+  <div class="task-item"><input type="checkbox" id="housework_task_03"><label for="housework_task_03">洗濯（回す、干す、畳む）を一通り担当する</label></div>
+  <div class="task-item"><input type="checkbox" id="housework_task_04"><label for="housework_task_04">掃除機がけ、水回りの掃除など、日常の清掃を行う</label></div>
+  <div class="task-item"><input type="checkbox" id="housework_task_05"><label for="housework_task_05">ゴミ出しの日を把握し、担当する</label></div>
+
+  <h3>妻のサポート</h3>
+  <div class="task-item"><input type="checkbox" id="support_task_01"><label for="support_task_01">妻が一人でゆっくり休める時間を作る（最低1〜2時間/日）</label></div>
+  <div class="task-item"><input type="checkbox" id="support_task_02"><label for="support_task_02">夜泣き対応を交代し、妻の睡眠時間を確保する</label></div>
+  <div class="task-item"><input type="checkbox" id="support_task_03"><label for="support_task_03">「ありがとう」「助かるよ」など感謝の言葉を伝える</label></div>
+  <div class="task-item"><input type="checkbox" id="support_task_04"><label for="support_task_04">妻の話を遮らずに聞く時間を作る（今日の体調、赤ちゃんの様子など）</label></div>
+  <div class="task-item"><input type="checkbox" id="support_task_05"><label for="support_task_05">来客対応や電話の一次対応を引き受ける</label></div>
+
+  <h3>手続き・その他</h3>
+  <div class="task-item"><input type="checkbox" id="proc_task_01"><label for="proc_task_01">出生届を役所に提出する（14日以内）</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_02"><label for="proc_task_02">児童手当の申請手続きを行う</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_03"><label for="proc_task_03">子どもの健康保険証の加入手続きを行う</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_04"><label for="proc_task_04">乳幼児医療費助成の申請を行う</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_05"><label for="proc_task_05">出産育児一時金の申請手続きを行う（会社経由など）</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_06"><label for="proc_task_06">必要であれば保育園の見学や申請準備を始める</label></div>
+  <div class="task-item"><input type="checkbox" id="proc_task_07"><label for="proc_task_07">復職後を見据えた家事・育児の分担ルールを夫婦で話し合う</label></div>
+</section>
+
+<section>
+  <h2>データ管理</h2>
+  <p>チェックリストの現在の状態をファイルとして保存（エクスポート）したり、保存したファイルを読み込んで状態を復元（インポート）したりできます。</p>
+  <div class="button-container">
+    <button id="exportBtn">チェック状態をエクスポート (保存)</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;">
+    <button id="importBtn">チェック状態をインポート (読込)</button>
+  </div>
+</section>
+
+
 <footer>
+  This is the t_kyn systems of shered contents<br>
   出産立会いと育休は、家族のスタートを支える大切な時間です。<br>
   夫の主体的な行動が家庭の安心につながります。
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const exportBtn = document.getElementById('exportBtn');
+  const importBtn = document.getElementById('importBtn');
+  const importFile = document.getElementById('importFile');
+
+  // エクスポート機能
+  exportBtn.addEventListener('click', () => {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const dataToSave = {};
+    checkboxes.forEach(checkbox => {
+      dataToSave[checkbox.id] = checkbox.checked;
+    });
+
+    const dataStr = JSON.stringify(dataToSave, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'checklist_data.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('チェックリストの状態を checklist_data.json として保存しました。');
+  });
+
+  // インポートボタンがクリックされたら、ファイル選択ダイアログを開く
+  importBtn.addEventListener('click', () => {
+    importFile.click();
+  });
+
+  // インポート機能
+  importFile.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importedData = JSON.parse(e.target.result);
+        let count = 0;
+        for (const id in importedData) {
+          const checkbox = document.getElementById(id);
+          if (checkbox) {
+            checkbox.checked = importedData[id];
+            count++;
+          }
+        }
+        alert(`${count}個のタスクの状態を読み込みました。`);
+      } catch (error) {
+        alert('ファイルの読み込みに失敗しました。有効なJSONファイルを選択してください。');
+        console.error('JSON Parse Error:', error);
+      }
+    };
+    reader.readAsText(file);
+    // 同じファイルを再度選択できるように値をリセット
+    event.target.value = ''; 
+  });
+});
+</script>
+
 </body>
 </html>
