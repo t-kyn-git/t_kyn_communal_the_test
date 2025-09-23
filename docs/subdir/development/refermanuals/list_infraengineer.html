@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インフラエンジニアが知っておくべきサイト集</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 25px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        h1, h2 {
+            border-bottom: 2px solid #28a745;
+            padding-bottom: 10px;
+            color: #343a40;
+        }
+        h1 {
+            font-size: 2em;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-top: 40px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 4px solid #28a745;
+            background-color: #f1f3f5;
+        }
+        a {
+            font-weight: bold;
+            color: #0056b3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        p {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>インフラエンジニアが知っておくべきサイトまとめ（詳細版）</h1>
+        <p>システムの基盤を支えるインフラエンジニアには、OS、ネットワーク、データベースといった要素技術に対する深い理解が不可欠です。ここでは、各分野の仕様理解や問題解決に役立つ専門的なサイトを中心にまとめました。</p>
+
+        <h2>OSの細かい仕様</h2>
+        <p>OSの挙動を正確に理解するための、一次情報に近いサイトです。</p>
+        <ul>
+            <li><a href="https://learn.microsoft.com/ja-jp/" target="_blank" rel="noopener noreferrer">Microsoft Learn (旧: Microsoft Docs)</a>: Windows ServerやAzureに関する公式ドキュメント。機能の仕様、設定方法、PowerShellのコマンドレットまで、あらゆる情報が網羅されています。</li>
+            <li><a href="https://www.kernel.org/" target="_blank" rel="noopener noreferrer">The Linux Kernel Archives</a>: Linuxカーネルの公式サイト。カーネルのソースコードや最新バージョンのリリースノートなど、Linuxの最も深い部分の情報源です。</li>
+            <li><a href="https://wiki.archlinux.jp/" target="_blank" rel="noopener noreferrer">ArchWiki</a>: 特定のLinuxディストリビューションに偏らない、非常に詳細で網羅的な情報がまとまっています。トラブルシューティングの際に特に役立ちます。</li>
+            <li><a href="http://man7.org/linux/man-pages/index.html" target="_blank" rel="noopener noreferrer">man7.org, online linux manual pages</a>: Linuxのmanコマンドで表示されるマニュアルのオンライン版。システムコールやライブラリ関数の詳細な仕様を確認する際に必須です。</li>
+            <li><a href="https://access.redhat.com/ja" target="_blank" rel="noopener noreferrer">Red Hat Customer Portal</a>: Red Hat Enterprise Linuxに関する公式ナレッジベースやドキュメントが豊富です。エンタープライズ環境での運用ノウハウが多く含まれます。</li>
+        </ul>
+
+        <h2>ネットワーク</h2>
+        <p>プロトコルの仕様から実践的な設計まで、ネットワーク技術を深く学ぶためのサイトです。</p>
+        <ul>
+            <li><a href="https://www.ietf.org/" target="_blank" rel="noopener noreferrer">IETF (Internet Engineering Task Force)</a>: インターネット技術の標準仕様であるRFC (Request for Comments) を策定している団体。TCP/IPなど各種プロトコルの正確な仕様を確認する際の最終的な情報源です。</li>
+            <li><a href="https://atmarkit.itmedia.co.jp/ait/subtop/features/kihon/masterofip_index.html" target="_blank" rel="noopener noreferrer">@IT > Master of IP Network</a>: ネットワーク技術の基礎から応用までを体系的に解説した長期連載。ネットワークの教科書として非常に価値が高いです。</li>
+            <li><a href="https://www.interop.jp/shownet/" target="_blank" rel="noopener noreferrer">ShowNet (Interop Tokyo)</a>: 国内最大級のICTイベントで構築される巨大ネットワークの設計情報や構築・運用ログが公開されています。最先端の技術を組み合わせた実践的な構成を学べます。</li>
+            <li><a href="https://www.jpnic.ad.jp/" target="_blank" rel="noopener noreferrer">JPNIC (日本ネットワークインフォメーションセンター)</a>: 日本のIPアドレスやドメイン名を管理する組織。インターネットの基盤技術に関する解説や統計情報が掲載されています。</li>
+            <li><a href="https://blogs.cisco.com/jp" target="_blank" rel="noopener noreferrer">Cisco Blogs</a>: ネットワーク機器最大手であるシスコの公式ブログ。最新のネットワークトレンドやセキュリティに関する深い洞察が得られます。</li>
+        </ul>
+
+        <h2>データベース</h2>
+        <p>データベースのアーキテクチャやパフォーマンスチューニングに関する情報源です。</p>
+        <ul>
+            <li><a href="https://www.postgresql.jp/document/" target="_blank" rel="noopener noreferrer">PostgreSQL Documentation</a>: PostgreSQLの公式ドキュメント。非常に詳細かつ分かりやすいと定評があり、データベースの内部構造を理解するためにも役立ちます。</li>
+            <li><a href="https://mysqlserverteam.com/" target="_blank" rel="noopener noreferrer">MySQL Server Blog</a>: MySQL開発チームによる公式ブログ。新機能の解説や内部アーキテクチャに関する深い情報が得られます。</li>
+            <li><a href="https://db-engines.com/en/" target="_blank" rel="noopener noreferrer">DB-Engines</a>: 様々なデータベース管理システムの人気ランキングやトレンドを比較できるサイト。技術選定の際に参考になります。</li>
+            <li><a href="https://gihyo.jp/dev/serial/01/db-academy" target="_blank" rel="noopener noreferrer">gihyo.jp > データベース</a>: 技術評論社のWebサイト。データベースの基礎から応用まで、多くの優れた連載記事が掲載されています。</li>
+            <li><a href="https://www.oracle.com/jp/technical-resources/" target="_blank" rel="noopener noreferrer">Oracle Technology Network (Japan)</a>: Oracle Databaseに関する技術資料やマニュアルが豊富に揃っています。</li>
+        </ul>
+
+        <h2>クラウド・コンテナ技術</h2>
+        <p>現代のインフラに必須のクラウドとコンテナに関する公式サイトです。</p>
+        <ul>
+            <li><a href="https://aws.amazon.com/jp/aws-jp-introduction/" target="_blank" rel="noopener noreferrer">AWS Black Belt Online Seminar</a>: AWSの各サービスについて、日本のソリューションアーキテクトが詳細に解説する資料と動画。非常に分かりやすく実践的です。</li>
+            <li><a href="https://kubernetes.io/docs/home/" target="_blank" rel="noopener noreferrer">Kubernetes Documentation</a>: コンテナオーケストレーションの標準であるKubernetesの公式ドキュメント。コンセプトから運用方法まで網羅されています。</li>
+            <li><a href="https://docs.docker.com/" target="_blank" rel="noopener noreferrer">Docker Documentation</a>: コンテナ技術の基本であるDockerの公式ドキュメント。</li>
+            <li><a href="https://developer.hashicorp.com/" target="_blank" rel="noopener noreferrer">HashiCorp Developer</a>: TerraformやVaultなど、IaC (Infrastructure as Code) ツールを提供するHashiCorp社の開発者向けサイト。チュートリアルが充実しています。</li>
+        </ul>
+    </div>
+</body>
+</html>
