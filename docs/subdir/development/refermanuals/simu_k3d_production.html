@@ -1,4 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>t_kyn grafana system 本番環境利用した場合の想定を記載してみた</title>
+  
+  <!-- マークダウンをHTMLに変換するライブラリ (Marked.js) を読み込む -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  
+  <!-- 見た目を整えるためのCSSスタイル -->
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.6;
+      color: #333;
+      background-color: #f6f8fa;
+      margin: 0;
+      padding: 30px;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 20px 40px;
+    }
+    h1, h2, h3, h4 {
+      border-bottom: 1px solid #eaecef;
+      padding-bottom: .3em;
+      margin-top: 24px;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 2em; }
+    h2 { font-size: 1.5em; }
+    h3 { font-size: 1.25em; }
+    code {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      background-color: rgba(27,31,35,.05);
+      padding: .2em .4em;
+      margin: 0;
+      font-size: 85%;
+      border-radius: 3px;
+    }
+    pre {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 16px;
+      overflow: auto;
+    }
+    pre code {
+      background-color: transparent;
+      padding: 0;
+      font-size: 100%;
+    }
+    ul {
+      padding-left: 2em;
+    }
+    li {
+      margin-bottom: 0.5em;
+    }
+  </style>
+</head>
+<body>
 
+  <!-- ここに変換されたHTMLが表示されます -->
+  <div id="content"></div>
+
+  <!-- ここに表示したいマークダウンの内容を記述します -->
+  <script id="markdown-source" type="text/markdown">
 
 ### EKSで利用できる共有ボリュームの選定
 
@@ -179,4 +249,24 @@ EKSの複数Podから同時に読み書きできる共有ボリューム (ReadWr
 *   **自動化への投資:** 初期構築でIaCやCI/CDを徹底することが、長期的な運用コストを抑制します。
 
 ---
+
+
+
+  </script>
+  <script>
+    // ページが読み込まれたときに実行
+    document.addEventListener('DOMContentLoaded', function() {
+      // id="markdown-source" の中身（マークダウンテキスト）を取得
+      const markdownText = document.getElementById('markdown-source').textContent;
+      
+      // Marked.js を使ってマークダウンをHTMLに変換
+      const html = marked.parse(markdownText);
+      
+      // id="content" の要素に、変換したHTMLを挿入
+      document.getElementById('content').innerHTML = html;
+    });
+  </script>
+
+</body>
+</html>
 
