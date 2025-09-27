@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>高機能版・自動車運転シミュレーション</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #333;
+            color: white;
+            overflow: hidden; /* スクロールバーを非表示 */
+        }
+        #game-container {
+            position: relative;
+            width: 90vmin;
+            max-width: 500px;
+        }
+        canvas {
+            background-color: #555;
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        #info-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 1.2em;
+        }
+        #game-over-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 0, 0, 0.7);
+            padding: 20px 40px;
+            border-radius: 10px;
+            text-align: center;
+            display: none; /* 初期状態では非表示 */
+            cursor: pointer;
+        }
+        #game-over-panel h2 {
+            margin: 0;
+            font-size: 2em;
+        }
+        #game-over-panel p {
+            margin: 10px 0 0;
+        }
+
+        /* スマホ用コントローラー */
+        #controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 10px;
+            width: 200px;
+            opacity: 0.7;
+            /* PCでは非表示 */
+            display: none; 
+        }
+        /* タッチデバイスでのみ表示 */
+        @media (hover: none) and (pointer: coarse) {
+            #controls {
+                display: grid;
+            }
+        }
+
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            font-size: 2em;
+            color: #333;
+            user-select: none; /* テキスト選択を無効化 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #up { grid-column: 2; grid-row: 1; }
+        #down { grid-column: 2; grid-row: 2; }
+        #left { grid-column: 1; grid-row: 2; }
+        #right { grid-column: 3; grid-row: 2; }
+
+    </style>
+</head>
+<body>
+
+    <h1>自動車運転シミュレーション</h1>
+    <div id="game-container">
+        <canvas id="gameCanvas" width="500" height="700"></canvas>
+        <div id="info-panel">
+            <span>スコア: <span id="score">0</span></span>
+        </div>
+        <div id="game-over-panel">
+            <h2>GAME OVER</h2>
+            <p>クリックしてリスタート</p>
+        </div>
+    </div>
+     <div id="controls">
+        <div id="up" class="control-btn">▲</div>
+        <div id="left" class="control-btn">◀</div>
+        <div id="down" class="control-btn">▼</div>
+        <div id="right" class="control-btn">▶</div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const gameOverPanel = document.getElementById('gameOverPanel');
+
+        let playerCar;
+        let road;
+        let traffic = [];
+        let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        let score = 0;
+        let animationFrameId;
+        let roadOffset = 0; // 道路のスクロールオフセット
+
+        class Car {
+            constructor(x, y, width, height, color = 'blue', maxSpeed = 3) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.speed = 0;
+                this.acceleration = 0.2;
+                this.maxSpeed = maxSpeed;
+                this.friction = 0.05;
+                this.angle = 0;
+                this.damaged = false;
+                this.color = color;
+                this.polygon = [];
+            }
+            
+            update(roadBorders) {
+                if(this.damaged) return;
+
+                // Move the car
+                if (keys.ArrowUp) this.speed += this.acceleration;
+                if (keys.ArrowDown) this.speed -= this.acceleration;
+                if (this.speed > this.maxSpeed) this.speed = this.maxSpeed;
+                if (this.speed < -this.maxSpeed / 2) this.speed = -this.maxSpeed / 2;
+                if (this.speed > 0) this.speed -= this.friction;
+                if (this.speed < 0) this.speed += this.friction;
+                if (Math.abs(this.speed) < this.friction) this.speed = 0;
+
+                if (this.speed !== 0) {
+                    const flip = this.speed > 0 ? 1 : -1;
+                    if (keys.ArrowLeft) this.angle -= 0.03 * flip;
+                    if (keys.ArrowRight) this.angle += 0.03 * flip;
+                }
+                
+                this.x -= Math.sin(this.angle) * this.speed;
+                this.y -= Math.cos(this.angle) * this.speed;
+
+                // Create polygon for collision detection
+                this.polygon = this.#createPolygon();
+                this.damaged = this.#assessDamage(roadBorders);
+            }
+
+            #assessDamage(roadBorders){
+                // Check collision with road borders
+                for(let i=0; i<roadBorders.length; i++){
+                    if(polysIntersect(this.polygon, roadBorders[i])){
+                        return true;
+                    }
+                }
+                // Check collision with traffic
+                 for(let i=0; i<traffic.length; i++){
+                    if(polysIntersect(this.polygon, traffic[i].polygon)){
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            #createPolygon(){
+                const points=[];
+                const rad=Math.hypot(this.width,this.height)/2;
+                const alpha=Math.atan2(this.width,this.height);
+                points.push({
+                    x:this.x-Math.sin(this.angle-alpha)*rad,
+                    y:this.y-Math.cos(this.angle-alpha)*rad
+                });
+                points.push({
+                    x:this.x-Math.sin(this.angle+alpha)*rad,
+                    y:this.y-Math.cos(this.angle+alpha)*rad
+                });
+                points.push({
+                    x:this.x-Math.sin(Math.PI+this.angle-alpha)*rad,
+                    y:this.y-Math.cos(Math.PI+this.angle-alpha)*rad
+                });
+                points.push({
+                    x:this.x-Math.sin(Math.PI+this.angle+alpha)*rad,
+                    y:this.y-Math.cos(Math.PI+this.angle+alpha)*rad
+                });
+                return points;
+            }
+
+            draw(ctx) {
+                if(this.damaged){
+                    ctx.fillStyle="gray";
+                }else{
+                    ctx.fillStyle=this.color;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
+                for(let i=1; i<this.polygon.length; i++){
+                    ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+                }
+                ctx.fill();
+
+                // ちょっと詳細なデザインを追加
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(-this.angle);
+                
+                // フロントガラス
+                ctx.fillStyle = 'rgba(200, 230, 255, 0.7)';
+                ctx.fillRect(-this.width/2 + 5, -this.height/2 + 5, this.width - 10, 15);
+                
+                // ルーフ
+                ctx.fillStyle = this.damaged ? "gray" : this.color;
+                ctx.globalAlpha = 0.7;
+                ctx.fillRect(-this.width/2 + 5, -this.height/2 + 25, this.width - 10, 10);
+                ctx.globalAlpha = 1;
+
+                ctx.restore();
+            }
+        }
+
+        class Road{
+            constructor(x, width, laneCount=3){
+                this.x = x;
+                this.width = width;
+                this.laneCount = laneCount;
+                this.left = x - width/2;
+                this.right = x + width/2;
+                
+                const infinity = 1000000;
+                this.top = -infinity;
+                this.bottom = infinity;
+
+                const topLeft={x:this.left, y:this.top};
+                const topRight={x:this.right, y:this.top};
+                const bottomLeft={x:this.left, y:this.bottom};
+                const bottomRight={x:this.right, y:this.bottom};
+                this.borders = [
+                    [topLeft, bottomLeft],
+                    [topRight, bottomRight]
+                ];
+            }
+
+            getLaneCenter(laneIndex){
+                const laneWidth = this.width / this.laneCount;
+                return this.left + laneWidth/2 + Math.min(laneIndex, this.laneCount-1)*laneWidth;
+            }
+
+            draw(ctx){
+                ctx.lineWidth = 5;
+                ctx.strokeStyle="white";
+
+                // 車線
+                for(let i=1; i<=this.laneCount-1; i++){
+                    const x = lerp(this.left, this.right, i/this.laneCount);
+                    ctx.setLineDash([20,20]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, this.top);
+                    ctx.lineTo(x, this.bottom);
+                    ctx.stroke();
+                }
+
+                ctx.setLineDash([]);
+                // 境界線
+                this.borders.forEach(border => {
+                    ctx.beginPath();
+                    ctx.moveTo(border[0].x, border[0].y);
+                    ctx.lineTo(border[1].x, border[1].y);
+                    ctx.stroke();
+                });
+            }
+        }
+        
+        function lerp(A,B,t){
+            return A+(B-A)*t;
+        }
+
+        function polysIntersect(poly1, poly2) {
+            for (let i = 0; i < poly1.length; i++) {
+                for (let j = 0; j < poly2.length; j++) {
+                    const touch = getIntersection(
+                        poly1[i],
+                        poly1[(i + 1) % poly1.length],
+                        poly2[j],
+                        poly2[(j + 1) % poly2.length]
+                    );
+                    if (touch) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function getIntersection(A, B, C, D) {
+            const tTop = (D.x - C.x) * (A.y - C.y) - (D.y - C.y) * (A.x - C.x);
+            const uTop = (C.y - A.y) * (A.x - B.x) - (C.x - A.x) * (A.y - B.y);
+            const bottom = (D.y - C.y) * (B.x - A.x) - (D.y - C.y) * (A.x - B.x);
+
+            if (bottom !== 0) {
+                const t = tTop / bottom;
+                const u = uTop / bottom;
+                if (t >= 0 && t <= 1 && u >= 0 && u <= 1) {
+                    return {
+                        x: lerp(A.x, B.x, t),
+                        y: lerp(A.y, B.y, t),
+                        offset: t,
+                    };
+                }
+            }
+            return null;
+        }
+        
+        function init() {
+            road = new Road(canvas.width / 2, canvas.width * 0.9);
+            playerCar = new Car(road.getLaneCenter(1), canvas.height * 0.7, 30, 50, 'hsl(200, 100%, 50%)', 5);
+            traffic = [
+                new Car(road.getLaneCenter(0), 200, 30, 50, "hsl(30, 100%, 50%)", 2),
+                new Car(road.getLaneCenter(2), 100, 30, 50, "hsl(120, 100%, 50%)", 2.2),
+                new Car(road.getLaneCenter(1), -100, 30, 50, "hsl(280, 100%, 50%)", 2.5),
+                new Car(road.getLaneCenter(0), -250, 30, 50, "hsl(50, 100%, 50%)", 2.1)
+            ];
+            score = 0;
+            gameOverPanel.style.display = 'none';
+        }
+
+        function gameOver() {
+            cancelAnimationFrame(animationFrameId);
+            gameOverPanel.style.display = 'block';
+        }
+
+        function animate() {
+            // Update traffic cars
+            traffic.forEach(car => {
+                car.y += car.maxSpeed; // NPCは一定速度で下に移動
+                car.polygon = car.#createPolygon();
+                if(car.y > canvas.height + car.height){ // 画面外に出たら再配置
+                    car.y = -200 - Math.random() * 500;
+                    car.x = road.getLaneCenter(Math.floor(Math.random()*road.laneCount));
+                }
+            });
+
+            playerCar.update(road.borders, traffic);
+            
+            if(playerCar.damaged){
+                gameOver();
+                return;
+            }
+
+            // スコアを加算
+            score += Math.floor(playerCar.speed);
+            scoreElement.innerText = score;
+            
+            // 視点を車に追従させる
+            canvas.height = window.innerHeight * 0.8;
+            ctx.save();
+            ctx.translate(0, -playerCar.y + canvas.height * 0.7);
+
+            road.draw(ctx);
+            traffic.forEach(car => car.draw(ctx));
+            playerCar.draw(ctx);
+            
+            ctx.restore();
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        function setupControls(){
+             // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (e.key in keys) keys[e.key] = true;
+            });
+            document.addEventListener('keyup', (e) => {
+                if (e.key in keys) keys[e.key] = false;
+            });
+            
+            // Touch controls
+            const controlMap = {
+                up: 'ArrowUp',
+                down: 'ArrowDown',
+                left: 'ArrowLeft',
+                right: 'ArrowRight'
+            };
+            for(const id in controlMap){
+                const element = document.getElementById(id);
+                element.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    keys[controlMap[id]] = true;
+                });
+                element.addEventListener('touchend', (e) => {
+                    e.preventDefault();
+                    keys[controlMap[id]] = false;
+                });
+            }
+        }
+        
+        // --- Main Execution ---
+        init();
+        setupControls();
+        animate();
+
+        // Restart listener
+        gameOverPanel.addEventListener('click', () => {
+            init();
+            animate();
+        });
+
+    </script>
+</body>
+</html>
