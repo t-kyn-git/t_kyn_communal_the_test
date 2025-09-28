@@ -345,15 +345,36 @@
         // --- サイドバー開閉機能 ---
         document.addEventListener('DOMContentLoaded', () => {
             const toggleButton = document.getElementById('sidebar-toggle');
+            // add sidebar and mainwrapper
+            const sidebar = document.getElementById('sidebar');                 // ★修正: サイドバー参照
+            const mainWrapper = document.getElementById('main-content-wrapper'); // ★修正: メインコンテンツ参照
 
             // 初期表示時にモバイルサイズならサイドバーを閉じる
             if (window.innerWidth <= 768) {
                 document.body.classList.add('sidebar-collapsed');
             }
 
-            toggleButton.addEventListener('click', () => {
+            // ボタンクリックでサイドバー開閉
+            toggleButton.addEventListener('click', (e) => {
+                e.stopPropagation(); // ★修正: クリックがbodyに伝播しないように
                 document.body.classList.toggle('sidebar-collapsed');
             });
+
+            // メイン領域クリックでサイドバーを閉じる
+            mainWrapper.addEventListener('click', () => { // ★修正: メインクリックで閉じる
+                if (!document.body.classList.contains('sidebar-collapsed')) {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            });
+
+            // サイドバー内クリックは閉じない
+            sidebar.addEventListener('click', (e) => { // ★修正: サイドバー内は閉じない
+                e.stopPropagation();
+            });
+
+            // toggleButton.addEventListener('click', () => {
+            //     document.body.classList.toggle('sidebar-collapsed');
+            // });
         });
     </script>
 </body>
