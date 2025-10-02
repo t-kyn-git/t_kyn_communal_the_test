@@ -5,49 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Test Documentation</title>
 <style>
-    /* --- 背景アニメーション --- */
-    #background-container { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
-    .bg-slide { position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; background-repeat:no-repeat; opacity:0; animation-name:crossfade; animation-duration:54s; animation-iteration-count:infinite; animation-timing-function:linear; }
-    .bg-slide:nth-child(1) { background-image:url('https://images.pexels.com/photos/1118869/pexels-photo-1118869.jpeg'); animation-delay:0s; }
-    .bg-slide:nth-child(2) { background-image:url('https://images.pexels.com/photos/1528641/pexels-photo-1528641.jpeg'); animation-delay:-48s; }
-    .bg-slide:nth-child(3) { background-image:url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg'); animation-delay:-42s; }
-    .bg-slide:nth-child(4) { background-image:url('https://images.pexels.com/photos/355288/pexels-photo-355288.jpeg'); animation-delay:-36s; }
-    .bg-slide:nth-child(5) { background-image:url('https://images.pexels.com/photos/89930/pexels-photo-89930.jpeg'); animation-delay:-30s; }
-    .bg-slide:nth-child(6) { background-image:url('https://images.pexels.com/photos/3214110/pexels-photo-3214110.jpeg'); animation-delay:-24s; }
-    .bg-slide:nth-child(7) { background-image:url('https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg'); animation-delay:-18s; }
-    .bg-slide:nth-child(8) { background-image:url('https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg'); animation-delay:-12s; }
-    .bg-slide:nth-child(9) { background-image:url('https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg'); animation-delay:-6s; }
-    @keyframes crossfade { 0%{opacity:0;} 5%{opacity:1;} 20%{opacity:1;} 25%{opacity:0;} 100%{opacity:0;} }
+/* --- 背景アニメーション --- */
+#background-container { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; }
+.bg-slide { position:absolute; top:0; left:0; width:100%; height:100%; background-size:cover; background-position:center; background-repeat:no-repeat; opacity:0; animation-name:crossfade; animation-duration:54s; animation-iteration-count:infinite; animation-timing-function:linear; }
+.bg-slide:nth-child(1) { background-image:url('https://images.pexels.com/photos/1118869/pexels-photo-1118869.jpeg'); animation-delay:0s; }
+.bg-slide:nth-child(2) { background-image:url('https://images.pexels.com/photos/1528641/pexels-photo-1528641.jpeg'); animation-delay:-48s; }
+.bg-slide:nth-child(3) { background-image:url('https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg'); animation-delay:-42s; }
+.bg-slide:nth-child(4) { background-image:url('https://images.pexels.com/photos/355288/pexels-photo-355288.jpeg'); animation-delay:-36s; }
+.bg-slide:nth-child(5) { background-image:url('https://images.pexels.com/photos/89930/pexels-photo-89930.jpeg'); animation-delay:-30s; }
+.bg-slide:nth-child(6) { background-image:url('https://images.pexels.com/photos/3214110/pexels-photo-3214110.jpeg'); animation-delay:-24s; }
+.bg-slide:nth-child(7) { background-image:url('https://images.pexels.com/photos/459225/pexels-photo-459225.jpeg'); animation-delay:-18s; }
+.bg-slide:nth-child(8) { background-image:url('https://images.pexels.com/photos/1032650/pexels-photo-1032650.jpeg'); animation-delay:-12s; }
+.bg-slide:nth-child(9) { background-image:url('https://images.pexels.com/photos/1618606/pexels-photo-1618606.jpeg'); animation-delay:-6s; }
+@keyframes crossfade { 0%{opacity:0;} 5%{opacity:1;} 20%{opacity:1;} 25%{opacity:0;} 100%{opacity:0;} }
 
-    /* --- 基本レイアウト --- */
-    body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; line-height:1.8; margin:0; padding:0; }
-    #sidebar { position:fixed; top:0; left:0; width:240px; height:100vh; background:rgba(248,249,250,0.85); padding:20px; box-shadow:2px 0 5px rgba(0,0,0,0.1); z-index:100; transform:translateX(0); transition:transform 0.3s ease-in-out; overflow-y:auto; }
-    #sidebar h3{margin-top:0; border-bottom:1px solid #ccc; padding-bottom:10px;}
-    #sidebar ul{list-style:none;padding:0;}
-    #sidebar li a{text-decoration:none;color:#0056b3;font-weight:bold;}
+/* --- 基本レイアウト --- */
+body { font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif; line-height:1.8; margin:0; padding:0; }
+#sidebar { position:fixed; top:0; left:0; width:240px; height:100vh; background:rgba(248,249,250,0.85); padding:20px; box-shadow:2px 0 5px rgba(0,0,0,0.1); z-index:100; transform:translateX(0); transition:transform 0.3s ease-in-out; overflow-y:auto; }
+#sidebar h3{margin-top:0; border-bottom:1px solid #ccc; padding-bottom:10px;}
+#sidebar ul{list-style:none;padding:0;}
+#sidebar li a{text-decoration:none;color:#0056b3;font-weight:bold;}
+#main-content-wrapper{position:relative; z-index:1; padding-left:280px; transition:padding-left 0.3s ease-in-out;}
+.container{max-width:900px;margin:20px auto;padding:20px;background:rgba(255,255,255,0.3);border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
+body.sidebar-collapsed #sidebar{transform:translateX(-100%);}
+body.sidebar-collapsed #main-content-wrapper{padding-left:40px;}
+#sidebar-toggle{position:fixed; top:15px; left:290px; z-index:101; background:rgba(255,255,255,0.5); border:1px solid #ddd; width:40px; height:40px; cursor:pointer; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:left 0.3s ease-in-out;}
+body.sidebar-collapsed #sidebar-toggle{left:15px;}
+#sidebar-toggle span{display:block;width:20px;height:2px;background:#333;margin:2px 0;position:relative; transition:transform 0.3s, opacity 0.3s;}
+body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(2){opacity:0;}
+body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+h1{font-size:1.8em;border-bottom:2px solid #007bff;padding-bottom:10px;}
+h2{font-size:1.4em;border-bottom:1px solid #ddd;padding-bottom:5px;margin-top:20px;}
+.footer{text-align:center;margin-top:30px;padding-top:10px;border-top:1px solid #ddd;}
+.fade-in-group{opacity:0;transition:opacity 1.5s ease-in;}
+.fade-in-group.visible{opacity:1;}
 
-    #main-content-wrapper{position:relative; z-index:1; padding-left:280px; transition:padding-left 0.3s ease-in-out;}
-    .container{max-width:900px;margin:20px auto;padding:20px;background:rgba(255,255,255,0.3);border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1);}
-    body.sidebar-collapsed #sidebar{transform:translateX(-100%);}
-    body.sidebar-collapsed #main-content-wrapper{padding-left:40px;}
-    #sidebar-toggle{position:fixed; top:15px; left:290px; z-index:101; background:rgba(255,255,255,0.5); border:1px solid #ddd; width:40px; height:40px; cursor:pointer; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:left 0.3s ease-in-out;}
-    body.sidebar-collapsed #sidebar-toggle{left:15px;}
-    #sidebar-toggle span{display:block;width:20px;height:2px;background:#333;margin:2px 0;position:relative; transition:transform 0.3s, opacity 0.3s;}
-    body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(1){transform:translateY(6px) rotate(45deg);}
-    body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(2){opacity:0;}
-    body:not(.sidebar-collapsed) #sidebar-toggle span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
-    h1{font-size:1.8em;border-bottom:2px solid #007bff;padding-bottom:10px;}
-    h2{font-size:1.4em;border-bottom:1px solid #ddd;padding-bottom:5px;margin-top:20px;}
-    .footer{text-align:center;margin-top:30px;padding-top:10px;border-top:1px solid #ddd;}
-    .fade-in-group{opacity:0;transition:opacity 1.5s ease-in;}
-    .fade-in-group.visible{opacity:1;}
-
-    /* --- アコーディオン --- */
-    .dev-section h4{cursor:pointer; user-select:none; position:relative; padding-right:20px;}
-    .dev-section h4::after{content:'\25B6'; position:absolute; right:0; transition:transform 0.3s ease;}
-    .dev-section.open h4::after{transform:rotate(90deg);}
-    .dev-section ul{max-height:0; overflow:hidden; transition:max-height 0.5s ease;}
-    .dev-section.open ul{max-height:1000px;}
+/* --- アコーディオン --- */
+.dev-section h4{cursor:pointer; user-select:none; position:relative; padding-right:20px;}
+.dev-section h4::after{content:'\25B6'; position:absolute; right:0; transition:transform 0.3s ease;}
+.dev-section.open h4::after{transform:rotate(90deg);}
+.dev-section ul{max-height:0; overflow:hidden; transition:max-height 0.5s ease, padding 0.3s ease; padding:0;}
+.dev-section.open ul{max-height:5000px; padding:5px 0;}
 </style>
 </head>
 <body>
@@ -66,7 +65,7 @@
 <li><a href="#preconditions">Preconditions</a></li>
 <li><a href="#development-content">Content Being Developed</a></li>
 <li><a href="#after-about-this">ABOUT THIS</a></li>
-<div style="text-align:center; margin-top:20px;"><button onclick="history.back()" style="font-size:18px;padding:10px 20px;">BACK</button></div>
+<li style="text-align:center; margin-top:20px;"><button onclick="history.back()" style="font-size:18px;padding:10px 20px;">BACK</button></li>
 </ul>
 </nav>
 
@@ -95,8 +94,8 @@
 
 <h2 id="development-content">Content Being Developed</h2>
 
-<div class="dev-section" id="django-application-development">
-<h4>1) Django Application Development</h4>
+<div class="dev-section">
+<h4>Django Application Development</h4>
 <ul>
 <li>Develop Django applications using Visual Studio Code.</li>
 <li>Commit and upload to a Github repository.</li>
@@ -106,101 +105,101 @@
 </ul>
 </div>
 
-<div class="dev-section" id="web-hosting-development">
-<h4>2) Web Hosting Development</h4>
+<div class="dev-section">
+<h4>Web Hosting Development</h4>
 <ul>
 <li>Functionality checks for HTML, CSS, and JavaScript.</li>
 </ul>
 </div>
 
-<div class="dev-section" id="test-github-actions">
-<h4>3) Testing New Features in Github Actions</h4>
+<div class="dev-section">
+<h4>Testing New Features in Github Actions</h4>
 <ul>
 <li>Trial development of features that may incur costs in private repositories.</li>
 </ul>
 </div>
 
-<div class="dev-section" id="notice-list">
-<h4>4) Notes</h4>
+<div class="dev-section">
+<h4>Notes</h4>
 <ul>
-<li>Many possibilities:
-  <ul>
-    <li>Running LocalStack with Github Actions. <a href="https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a" target="_blank">Qiita</a></li>
-    <li>Running LocalStack with Github Actions + Terraform. <a href="https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2" target="_blank">Medium</a></li>
-  </ul>
-</li>
+<li>Running LocalStack with Github Actions
+<a href="https://qiita.com/damepo9696/items/fcf2af605b45bdf07b1a" target="_blank">Link</a></li>
+<li>Running LocalStack + Github Actions + Terraform
+<a href="https://medium.com/@robbiedouglas/using-localstack-and-github-actions-to-test-terraform-aws-deployments-0a119dcff7c2" target="_blank">Link</a></li>
 </ul>
 </div>
 
-<div class="dev-section" id="further-more">
-<h4>5) Further more</h4>
+<div class="dev-section">
+<h4>Further more</h4>
 <ul>
-<li>Other repositories:</li>
-<a href="subdir/toppage.html"><li>UNKO page</li></a>
-<a href="subdir/repositry_public_info/hello.html"><li>HELLO(public)</li></a>
-<a href="subdir/repositry_public_info/automatic.html"><li>Automatic(privateOCR)</li></a>
-<a href="subdir/repositry_public_info/rustynail.html"><li>RustyNail(Games)</li></a>
-<a href="subdir/repositry_public_info/tomorrowneverknows.html"><li>TomorrowNeverKnows(managementBI)</li></a>
-<a href="subdir/repositry_public_info/eversince.html"><li>everSince(djangoAlbum)</li></a>
-<a href="subdir/repositry_public_info/ultrasoul.html"><li>ultrasoul(NetworkPKTGoogleAI)</li></a>
-<a href="subdir/repositry_public_info/myfriend.html"><li>MyFriend(ExpressReactECSite)</li></a>
+<li>All other repositories are below:</li>
+<li><a href="subdir/toppage.html">UNKO page</a></li>
+<li><a href="subdir/repositry_public_info/hello.html">HELLO(public)</a></li>
+<li><a href="subdir/repositry_public_info/automatic.html">Automatic(privateOCR)</a></li>
+<li><a href="subdir/repositry_public_info/rustynail.html">RustyNail(Games)</a></li>
+<li><a href="subdir/repositry_public_info/tomorrowneverknows.html">TomorrowNeverKnows(managementBI)</a></li>
+<li><a href="subdir/repositry_public_info/eversince.html">everSince(djangoAlbum)</a></li>
+<li><a href="subdir/repositry_public_info/ultrasoul.html">ultrasoul(NetworkPKTGoogleAI)</a></li>
+<li><a href="subdir/repositry_public_info/myfriend.html">MyFriend(ExpressReactECSite)</a></li>
 </ul>
 </div>
 
-<div class="dev-section" id="manual-reference">
-<h4>6) Manual Reference</h4>
+<div class="dev-section">
+<h4>Manual Reference</h4>
 <ul>
-<li>All documents:</li>
-<a href="subdir/development/refermanuals/javascripts_manual.html"><li>JavaScript</li></a>
-<a href="subdir/development/refermanuals/python_manual.html"><li>Python</li></a>
-<a href="subdir/development/refermanuals/java_manual.html"><li>Java</li></a>
-<a href="subdir/development/refermanuals/lua_manual.html"><li>Lua</li></a>
-<a href="subdir/development/refermanuals/html_manual.html"><li>HTML</li></a>
-<a href="subdir/development/refermanuals/css_manual.html"><li>CSS</li></a>
-<a href="subdir/development/refermanuals/sample_manual.html"><li>sample</li></a>
+<li><a href="subdir/development/refermanuals/javascripts_manual.html">JavaScript</a></li>
+<li><a href="subdir/development/refermanuals/python_manual.html">Python</a></li>
+<li><a href="subdir/development/refermanuals/java_manual.html">Java</a></li>
+<li><a href="subdir/development/refermanuals/lua_manual.html">Lua</a></li>
+<li><a href="subdir/development/refermanuals/html_manual.html">HTML</a></li>
+<li><a href="subdir/development/refermanuals/css_manual.html">CSS</a></li>
+<li><a href="subdir/development/refermanuals/sample_manual.html">sample</a></li>
 </ul>
 </div>
 
 <h2 id="after-about-this">ABOUT THIS</h2>
 <ul>
 <li>This page is owned by t_kyn development team.</li>
-<li>Eager to develop new technology and share it with the world.</li>
+<li>Eager to develop new technology and share it.</li>
 <li>Welcome any feedback or contributions.</li>
 <li>Reach out via contact page or social media.</li>
 <li>Thank you for visiting!</li>
 </ul>
 
-<div style="text-align:center; margin-top:20px;"><button onclick="history.back()" style="font-size:18px;padding:10px 20px;">BACK</button></div>
-<div class="footer"><p>this page is owned by t_kyn development team.</p></div>
+<div style="text-align:center; margin-top:20px;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
 
+<div class="footer"><p>this page is owned by t_kyn development team.</p></div>
+</div>
 </div>
 </div>
 
 <script>
 // タイプライター
 const text="t_kyn_communal_the_test";
-const dynamicTextContainer=document.getElementById("dynamic-text");
-text.split("").forEach((char,index)=>{setTimeout(()=>{dynamicTextContainer.textContent+=char;}, index*200);});
+const container=document.getElementById("dynamic-text");
+text.split("").forEach((c,i)=>{setTimeout(()=>{container.textContent+=c;},i*200);});
 
 // フェードイン
 const fadeInGroup=document.querySelector('.fade-in-group');
-const observer=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');}});});
+const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});});
 observer.observe(fadeInGroup);
 
 // サイドバー開閉
 document.addEventListener('DOMContentLoaded',()=>{
-    const toggleButton=document.getElementById('sidebar-toggle');
-    const sidebar=document.getElementById('sidebar');
-    const mainWrapper=document.getElementById('main-content-wrapper');
-    if(window.innerWidth<=768){document.body.classList.add('sidebar-collapsed');}
-    toggleButton.addEventListener('click',e=>{e.stopPropagation(); document.body.classList.toggle('sidebar-collapsed');});
-    mainWrapper.addEventListener('click',()=>{if(!document.body.classList.contains('sidebar-collapsed')){document.body.classList.add('sidebar-collapsed');}});
-    sidebar.addEventListener('click',e=>{e.stopPropagation();});
-});
+const toggle=document.getElementById('sidebar-toggle');
+const sidebar=document.getElementById('sidebar');
+const main=document.getElementById('main-content-wrapper');
 
-// アコーディオン
-document.querySelectorAll('.dev-section h4').forEach(h4=>{
-    h4.addEventListener('click',()=>{h4.parentElement.classList.toggle('open');});
+if(window.innerWidth<=768) document.body.classList.add('sidebar-collapsed');
+
+toggle.addEventListener('click',e=>{e.stopPropagation();document.body.classList.toggle('sidebar-collapsed');});
+main.addEventListener('click',()=>{if(!document.body.classList.contains('sidebar-collapsed'))document.body.classList.add('sidebar-collapsed');});
+sidebar.addEventListener('click',e=>{e.stopPropagation();});
+
+// アコーディオン開閉
+document.querySelectorAll('.dev-section h4').forEach(h=>{
+h.addEventListener('click',()=>{h.parentElement.classList.toggle('open');});
+});
 });
 </script>
 
