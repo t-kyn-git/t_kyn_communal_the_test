@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>オオスズメバチ行動軌跡シミュレーション</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+<div id="plot" style="width:100%;height:100vh;"></div>
+
+<script>
+/**
+ * 🐝 軽量3D軌跡アニメーション
+ *  - 壁反射・Mesh3D建物
+ *  - Rainbowカラーマップ
+ *  - Play/Pause対応
+ *  - Python版と同じ挙動をJSのみで再現
+ */
+
+// ====== パラメータ設定 ======
+const temp = 28;       // ℃
+const humidity = 60;   // %
+const food = true;
+const human = true;
+const stimulus = false;
+
+// 餌位置
+const foodPos = {x: 100, y: 0, z: 1};
+
+// 建物（最大3軒まで追加可能）
+const buildings = [
+  {xmin: 10, xmax: 25, ymin: 10, ymax: 25, zmin: 0, zmax: 15},
+  {xmin: 40, xmax: 55, ymin: 40, ymax: 55, zmin: 0, zmax: 20}
+];
+
+// ステップ数（控えめにして軽量化）
+const steps = 600;
+
+// ====== 内部変数 ======
+let x = [0], y = [0], z = [1.5];
+let vx = 0, vy = 0, vz = 0;
+const baseSpeed = 0.4;
+const activity = (temp/30)*(1-humidity/100);
+const velocity = baseSpeed * activity * ((food?0.6:1)+(human?1.4:1))/2;
+const baseTheta = 0.1 * (human?1.4:1);
+const basePhi = 0.05 * (food?0.6:1);
+const rainbow = Plotly.d3.scaleSequential(Plotly.d3.interpolateRainbow).domain([0,steps]);
+
+// ====== 建物Mesh生成 ======
+function makeMesh(b) {
+  return {
+    type: 'mesh3d',
+    x: [b.xmin,b.xmax,b.xmax,b.xmin,b.xmin,b.xmax,b.xmax,b.xmin],
+    y: [b.ymin,b.ymin,b.ymax,b.ymax,b.ymin,b.ymin,b.ymax,b.ymax],
+    z: [b.zmin,b.zmin,b.zmin,b.zmin,b.zmax,b.zmax,b.zmax,b.zmax],
+    color: 'gray', opacity: 0.3, name: 'Building'
+  };
+}
+
+// ====== 座標計算 ======
+for (let t=1;t<steps;t++){
+  let theta = baseTheta * t * (1+0.2*(Math.random()-0.5));
+  let phi = basePhi * t * (1+0.2*(Math.random()-0.5));
+  let noiseZ = stimulus ? Math.sin(t*0.3)*0.5*1.3 : 0;
+
+  const dx = foodPos.x - x[x.length-1];
+  const dy = foodPos.y - y[y.length-1];
+  const dz = foodPos.z - z[z.length-1];
+  const dist = Math.sqrt(dx*dx+dy*dy+dz*dz)+1e-9;
+  const attract = food ? 0.3 : 0;
+  const ax = dx/dist * attract;
+  const ay = dy/dist * attract;
+  const az = dz/dist * attract / 2;
+
+  vx = velocity * Math.cos(theta)*Math.sin(phi) + ax;
+  vy = velocity * Math.sin(theta)*Math.sin(phi) + ay;
+  vz = velocity * Math.cos(phi) + noiseZ + az;
+
+  let nx = x[x.length-1] + vx;
+  let ny = y[y.length-1] + vy;
+  let nz = Math.max(0, z[z.length-1] + vz);
+
+  // 建物衝突
+  for (const b of buildings){
+    if (nx>=b.xmin && nx<=b.xmax && ny>=b.ymin && ny<=b.ymax && nz<=b.zmax){
+      vx *= -0.8; vy *= -0.8; vz *= -0.5;
+      nx = x[x.length-1] + vx;
+      ny = y[y.length-1] + vy;
+      nz = Math.max(0, z[z.length-1] + vz);
+    }
+  }
+  x.push(nx); y.push(ny); z.push(nz);
+}
+
+// ====== 初期プロット ======
+const trace = {
+  x:[x[0]], y:[y[0]], z:[z[0]],
+  mode:'lines',
+  type:'scatter3d',
+  line:{width:4, color: rainbow(0)},
+  name:'軌跡'
+};
+
+const foodMarker = {
+  x:[foodPos.x], y:[foodPos.y], z:[foodPos.z],
+  mode:'markers', type:'scatter3d',
+  marker:{size:8, color:'red', symbol:'diamond'}, name:'餌'
+};
+
+const startMarker = {
+  x:[0], y:[0], z:[1.5],
+  mode:'markers', type:'scatter3d',
+  marker:{size:6, color:'green'}, name:'開始位置'
+};
+
+const layout = {
+  title:`オオスズメバチ行動軌跡シミュレーション<br>Temp=${temp}℃, Humidity=${humidity}%`,
+  scene:{xaxis:{range:[-10,110]},yaxis:{range:[-10,110]},zaxis:{range:[0,30]}},
+  updatemenus:[{
+    type:'buttons', showactive:false,
+    buttons:[
+      {label:'▶ Play', method:'animate', args:[null,{fromcurrent:true,frame:{duration:40,redraw:true}}]},
+      {label:'⏸ Pause', method:'animate', args:[[null],{frame:{duration:0,redraw:false}}]}
+    ]
+  }]
+};
+
+// ====== アニメーションフレーム生成（軽量） ======
+const frameStep = 5; // フレーム間隔を広げて軽量化
+const frames = [];
+for (let i=1;i<x.length;i+=frameStep){
+  frames.push({
+    name:`frame${i}`,
+    data:[{
+      x:x.slice(0,i),
+      y:y.slice(0,i),
+      z:z.slice(0,i),
+      line:{color: rainbow(i)}
+    }]
+  });
+}
+
+Plotly.newPlot('plot', [trace, foodMarker, startMarker, ...buildings.map(makeMesh)], layout)
+  .then(()=>{
+    Plotly.addFrames('plot', frames);
+  });
+</script>
+</body>
+</html>
