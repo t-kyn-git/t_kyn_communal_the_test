@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>オオスズメバチ行動軌跡シミュレーション（HTML版＋建物＋色変化）</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+body { font-family: sans-serif; margin: 20px; background: #f8f9fa; }
+input, button { margin: 5px; padding: 4px; }
+#plot { width: 100%; height: 90vh; }
+fieldset { margin: 10px 0; border: 1px solid #ccc; padding: 10px; }
+legend { font-weight: bold; }
+</style>
+</head>
+<body>
+
+<h2>🐝 オオスズメバチ行動軌跡シミュレーション（HTML版）</h2>
+
+<fieldset>
+  <legend>条件設定</legend>
+  気温(℃): <input type="number" id="temp" value="28" step="0.1">
+  湿度(%): <input type="number" id="humidity" value="60" step="0.1"><br>
+  エサあり: <input type="checkbox" id="food" checked>
+  人間あり: <input type="checkbox" id="human">
+  刺激あり: <input type="checkbox" id="stim"><br>
+  餌位置(x y z): <input id="foodpos" value="100 0 1" size="15">
+</fieldset>
+
+<fieldset>
+  <legend>建物（最大3棟）</legend>
+  建物1: <input id="b1" value="20 40 -10 10 0 20" size="20"><br>
+  建物2: <input id="b2" value="-30 -10 -10 10 0 15" size="20"><br>
+  建物3: <input id="b3" value="" size="20">（空欄で無効）
+</fieldset>
+
+<button onclick="simulate()">▶ シミュレーション実行</button>
+
+<div id="plot"></div>
+
+<script>
+function simulate() {
+  const temp = parseFloat(document.getElementById('temp').value);
+  const humidity = parseFloat(document.getElementById('humidity').value);
+  const foodPresence = document.getElementById('food').checked;
+  const humanPresence = document.getElementById('human').checked;
+  const stimPresence = document.getElementById('stim').checked;
+  const [fx, fy, fz] = document.getElementById('foodpos').value.split(' ').map(Number);
+  const steps = 800;
+
+  // --- 建物入力 ---
+  const buildings = [];
+  [b1.value, b2.value, b3.value].forEach(v => {
+    if (v.trim() !== "") {
+      const vals = v.split(' ').map(Number);
+      if (vals.length === 6) buildings.push(vals);
+    }
+  });
+
+  // --- パラメータ設定 ---
+  let base_speed = 0.4;
+  let activity = (temp / 30.0) * (1 - humidity / 100.0);
+  let food_factor = foodPresence ? 0.6 : 1.0;
+  let human_factor = humanPresence ? 1.4 : 1.0;
+  let velocity = base_speed * activity * (food_factor + human_factor) / 2;
+  let base_theta = 0.1 * human_factor;
+  let base_phi = 0.05 * food_factor;
+
+  let x = [0.0], y = [0.0], z = [1.5];
+  let vx = 0.0, vy = 0.0, vz = 0.0;
+
+  for (let t = 1; t < steps; t++) {
+    let theta = base_theta * t * (1 + 0.2 * (Math.random() * 2 - 1));
+    let phi = base_phi * t * (1 + 0.2 * (Math.random() * 2 - 1));
+    let noise_z = stimPresence ? Math.sin(t * 0.3) * 0.5 * 1.3 : 0;
+
+    let dx_food = fx - x[x.length - 1];
+    let dy_food = fy - y[y.length - 1];
+    let dz_food = fz - z[z.length - 1];
+    let dist_food = Math.sqrt(dx_food ** 2 + dy_food ** 2 + dz_food ** 2) + 1e-9;
+    let attraction_scale = foodPresence ? 0.3 : 0.0;
+
+    let attract_x = dx_food / dist_food * attraction_scale;
+    let attract_y = dy_food / dist_food * attraction_scale;
+    let attract_z = dz_food / dist_food * (attraction_scale / 2);
+
+    vx = velocity * Math.cos(theta) * Math.sin(phi) + attract_x;
+    vy = velocity * Math.sin(theta) * Math.sin(phi) + attract_y;
+    vz = velocity * Math.cos(phi) + noise_z + attract_z;
+
+    let next_x = x[x.length - 1] + vx;
+    let next_y = y[y.length - 1] + vy;
+    let next_z = Math.max(0, z[z.length - 1] + vz);
+
+    // --- 建物との衝突反射 ---
+    for (const b of buildings) {
+      const [xmin, xmax, ymin, ymax, zmin, zmax] = b;
+      if (xmin <= next_x && next_x <= xmax &&
+          ymin <= next_y && next_y <= ymax &&
+          zmin <= next_z && next_z <= zmax) {
+        vx *= -0.8;
+        vy *= -0.8;
+        vz *= -0.5;
+        next_x = x[x.length - 1] + vx;
+        next_y = y[y.length - 1] + vy;
+        next_z = Math.max(0, z[x.length - 1] + vz);
+      }
+    }
+
+    x.push(next_x); y.push(next_y); z.push(next_z);
+  }
+
+  let t_arr = Array.from({length: x.length}, (_, i) => i);
+
+  // --- 色設定 ---
+  let colorScale;
+  if (stimPresence) colorScale = 'Rainbow';
+  else if (humanPresence) colorScale = [[0, 'red'], [1, 'orange']];
+  else if (foodPresence) colorScale = [[0, 'green'], [1, 'lime']];
+  else colorScale = [[0, 'gold'], [1, 'orange']];
+
+  // --- 軌跡アニメーションフレーム ---
+  const frames = t_arr.map(k => ({
+    data: [{
+      x: x.slice(0, k),
+      y: y.slice(0, k),
+      z: z.slice(0, k),
+      mode: 'lines',
+      line: {width: 4, color: t_arr.slice(0, k), colorscale: colorScale}
+    }],
+    name: String(k)
+  }));
+
+  // --- 建物Mesh3d ---
+  const buildingTraces = buildings.map((b, i) => {
+    const [xmin, xmax, ymin, ymax, zmin, zmax] = b;
+    return {
+      type: 'mesh3d',
+      x: [xmin,xmax,xmax,xmin,xmin,xmax,xmax,xmin],
+      y: [ymin,ymin,ymax,ymax,ymin,ymin,ymax,ymax],
+      z: [zmin,zmin,zmin,zmin,zmax,zmax,zmax,zmax],
+      color: 'gray',
+      opacity: 0.4,
+      name: `Building ${i+1}`
+    };
+  });
+
+  // --- 描画 ---
+  const fig = {
+    data: [
+      {x: [x[0]], y: [y[0]], z: [z[0]], mode: 'markers', marker:{size:6,color:'green'}, name:'start'},
+      {x: [fx], y: [fy], z: [fz], mode: 'markers', marker:{size:9,color:'red',symbol:'diamond'}, name:'food'},
+      {x, y, z, mode:'lines', line:{width:2,color:'orange'}, opacity:0.3, name:'trail'},
+      ...buildingTraces
+    ],
+    layout: {
+      title: `オオスズメバチ行動軌跡シミュレーション<br>Temp=${temp}℃, Humidity=${humidity}%`,
+      scene:{xaxis:{title:'X'}, yaxis:{title:'Y'}, zaxis:{title:'Z'}},
+      updatemenus: [{
+        type:'buttons',
+        buttons:[
+          {label:'Play', method:'animate', args:[null,{frame:{duration:30, redraw:true}, fromcurrent:true}]},
+          {label:'Pause', method:'animate', args:[[null],{frame:{duration:0}}]}
+        ]
+      }]
+    },
+    frames: frames
+  };
+
+  Plotly.newPlot('plot', fig);
+}
+</script>
+
+</body>
+</html>
