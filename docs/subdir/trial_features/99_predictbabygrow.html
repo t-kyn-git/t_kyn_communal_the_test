@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>育児シミュレーション</title>
+    <!-- Plotly.jsの読み込み -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        .controls { margin-bottom: 20px; }
+        .graph-container { margin-bottom: 30px; border: 1px solid #ddd; padding: 15px; }
+        button { padding: 10px 15px; margin-right: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>育児シミュレーション</h1>
+
+    <div class="controls">
+        <p>アクションを選択してください:</p>
+        <button id="feedButton">授乳</button>
+        <button id="diaperButton">おむつ替え</button>
+        <button id="sleepButton">寝かしつけ</button>
+        <button id="playButton">遊び</button>
+    </div>
+
+    <div class="status">
+        <h2>現在の赤ちゃん状態</h2>
+        <p>機嫌: <span id="moodDisplay"></span></p>
+        <p>空腹度: <span id="hungerDisplay"></span></p>
+        <p>睡眠状況: <span id="sleepDisplay"></span></p>
+    </div>
+
+    <div class="graph-container">
+        <h2>機嫌の推移</h2>
+        <div id="moodChart" style="width:100%;height:300px;"></div>
+    </div>
+
+    <div class="graph-container">
+        <h2>睡眠サイクル</h2>
+        <div id="sleepCycleChart" style="width:100%;height:300px;"></div>
+    </div>
+
+    <script>
+        // シミュレーションの状態を保持するオブジェクト
+        let babyState = {
+            time: 0, // 経過時間（分）
+            mood: 70, // 機嫌 (0-100)
+            hunger: 50, // 空腹度 (0-100, 0が満腹)
+            sleepiness: 30, // 眠気 (0-100, 100が非常に眠い)
+            isSleeping: false,
+            moodHistory: [{ time: 0, mood: 70 }],
+            sleepHistory: [] // { start: time, end: time }
+        };
+
+        // Plotlyのデータとレイアウト
+        let moodTrace = {
+            x: babyState.moodHistory.map(d => d.time),
+            y: babyState.moodHistory.map(d => d.mood),
+            mode: 'lines+markers',
+            name: '機嫌'
+        };
+
+        let sleepTrace = {
+            x: [], // 睡眠開始時刻
+            y: [], // 睡眠期間 (棒の高さ)
+            type: 'bar',
+            name: '睡眠',
+            marker: { color: 'blue' }
+        };
+
+        let moodLayout = {
+            title: '機嫌の推移',
+            xaxis: { title: '経過時間（分）' },
+            yaxis: { title: '機嫌 (0-100)', range: [0, 100] }
+        };
+
+        let sleepLayout = {
+            title: '睡眠サイクル',
+            xaxis: { title: '経過時間（分）' },
+            yaxis: { title: '睡眠時間', range: [0, 1] }, // 睡眠中かどうかの表示用
+            barmode: 'stack'
+        };
+
+
+        // Plotlyグラフの初期描画
+        Plotly.newPlot('moodChart', [moodTrace], moodLayout);
+        Plotly.newPlot('sleepCycleChart', [sleepTrace], sleepLayout);
+
+
+        // UI表示を更新する関数
+        function updateUI() {
+            document.getElementById('moodDisplay').textContent = babyState.mood.toFixed(0);
+            document.getElementById('hungerDisplay').textContent = babyState.hunger.toFixed(0);
+            document.getElementById('sleepDisplay').textContent = babyState.isSleeping ? "寝ている" : "起きている";
+        }
+
+        // グラフを更新する関数
+        function updateCharts() {
+            moodTrace.x = babyState.moodHistory.map(d => d.time);
+            moodTrace.y = babyState.moodHistory.map(d => d.mood);
+
+            // 睡眠履歴をバーグラフ用に変換
+            sleepTrace.x = [];
+            sleepTrace.y = [];
+            let currentSleepBars = []; // 積み上げ棒グラフのためのデータ構造
+            babyState.sleepHistory.forEach(s => {
+                // startとendの間に"1"の値をプロットすることで、睡眠中の期間を表現
+                sleepTrace.x.push(s.start);
+                sleepTrace.y.push(1); // 睡眠中
+                sleepTrace.x.push(s.end);
+                sleepTrace.y.push(0); // 起きている
+            });
+
+
+            Plotly.redraw('moodChart');
+            // 睡眠グラフはより複雑なので、newPlotで再描画するか、適切なtrace更新ロジックを実装
+            // 簡単にするため、ここでは一度新しいデータで置き換え
+            Plotly.react('sleepCycleChart', [{
+                x: babyState.sleepHistory.flatMap(s => [s.start, s.end]),
+                y: babyState.sleepHistory.flatMap(s => [1, 0]), // 1を睡眠、0を非睡眠とする
+                mode: 'lines', // バーではなくラインで睡眠期間を表示
+                fill: 'tozeroy', // 睡眠期間を塗りつぶす
+                name: '睡眠状況',
+                line: { shape: 'hv' },
+                marker: { color: 'lightblue' }
+            }], sleepLayout);
+        }
+
+        // 時間経過による自動的な状態変化
+        function passTime(minutes) {
+            babyState.time += minutes;
+            babyState.hunger = Math.min(100, babyState.hunger + minutes * 0.5); // 時間とともに空腹に
+            babyState.sleepiness = Math.min(100, babyState.sleepiness + minutes * 0.7); // 時間とともに眠く
+            babyState.mood = Math.max(0, babyState.mood - minutes * 0.2); // 時間とともに機嫌が悪くなる
+
+            // 眠気が高いと機嫌が悪くなる
+            babyState.mood = Math.max(0, babyState.mood - babyState.sleepiness * 0.1);
+            // 空腹だと機嫌が悪くなる
+            babyState.mood = Math.max(0, babyState.mood - babyState.hunger * 0.1);
+
+            babyState.moodHistory.push({ time: babyState.time, mood: babyState.mood });
+
+            updateUI();
+            updateCharts();
+        }
+
+        // イベントリスナー
+        document.getElementById('feedButton').addEventListener('click', () => {
+            if (!babyState.isSleeping) {
+                babyState.hunger = Math.max(0, babyState.hunger - 60); // 空腹度減少
+                babyState.mood = Math.min(100, babyState.mood + 20); // 機嫌アップ
+                passTime(30); // 授乳に30分経過
+            }
+        });
+
+        document.getElementById('diaperButton').addEventListener('click', () => {
+            if (!babyState.isSleeping) {
+                babyState.mood = Math.min(100, babyState.mood + 10); // 機嫌アップ
+                passTime(10); // おむつ替えに10分経過
+            }
+        });
+
+        document.getElementById('sleepButton').addEventListener('click', () => {
+            if (!babyState.isSleeping) {
+                babyState.isSleeping = true;
+                babyState.sleepHistory.push({ start: babyState.time, end: babyState.time }); // 睡眠開始を記録
+                babyState.mood = Math.min(100, babyState.mood + 30); // 寝ると機嫌良くなる
+                babyState.sleepiness = 0; // 眠気ゼロ
+
+                // 2時間の睡眠をシミュレート
+                const sleepDuration = 120; // 2時間
+                passTime(sleepDuration);
+                babyState.isSleeping = false;
+                babyState.sleepHistory[babyState.sleepHistory.length - 1].end = babyState.time; // 睡眠終了を記録
+            }
+        });
+
+        document.getElementById('playButton').addEventListener('click', () => {
+            if (!babyState.isSleeping) {
+                babyState.mood = Math.min(100, babyState.mood + 15); // 機嫌アップ
+                babyState.sleepiness = Math.min(100, babyState.sleepiness + 10); // 少し疲れる
+                passTime(45); // 遊びに45分経過
+            }
+        });
+
+        // 初期表示
+        updateUI();
+        updateCharts();
+
+        // 10分ごとに自動で時間経過をシミュレート (任意)
+        // setInterval(() => {
+        //     if (!babyState.isSleeping) {
+        //         passTime(10);
+        //     }
+        // }, 1000); // 1秒ごとに10分経過
+    </script>
+</body>
+</html>
