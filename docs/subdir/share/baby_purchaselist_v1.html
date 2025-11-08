@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>チェックリスト</title>
+    <title>チェックリスト（機能追加版）</title>
     <style>
         /* 見た目を整えるための簡単なスタイル */
         body {
@@ -13,6 +13,9 @@
             max-width: 600px;
             margin: 20px auto;
             padding: 0 15px;
+        }
+        h1 {
+            text-align: center;
         }
         h3 {
             border-bottom: 2px solid #eee;
@@ -36,11 +39,41 @@
         label {
             cursor: pointer;
         }
+        /* 操作ボタン用のスタイルを追加 */
+        #controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 20px;
+        }
+        #controls button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+        }
+        #controls button:hover {
+            background-color: #e8e8e8;
+        }
     </style>
 </head>
 <body>
 
     <h1>購入予定リスト</h1>
+
+    <!-- 操作ボタンを追加 -->
+    <div id="controls">
+        <button id="save-json-btn">JSON形式で保存</button>
+        <button id="import-json-btn">JSON形式で読込</button>
+        <button id="save-text-btn">テキスト形式で保存</button>
+        <button id="import-text-btn">テキスト形式で読込</button>
+        <!-- ファイル選択用のinput（非表示） -->
+        <input type="file" id="file-input" style="display: none;">
+    </div>
+
     <div id="checklist-container"></div>
 
     <script>
@@ -82,50 +115,177 @@
 `;
 
         /**
+         * 現在のリストの状態をデータ配列として取得する関数
+         * @returns {Array} リストの状態を表すオブジェクトの配列
+         */
+        function getCurrentChecklistData() {
+            const container = document.getElementById('checklist-container');
+            const data = [];
+            // h3とulを順番に走査
+            container.childNodes.forEach(node => {
+                if (node.tagName === 'H3') {
+                    data.push({ type: 'heading', text: node.innerText });
+                } else if (node.tagName === 'UL') {
+                    node.querySelectorAll('li').forEach(li => {
+                        const checkbox = li.querySelector('input[type="checkbox"]');
+                        const label = li.querySelector('label');
+                        if (checkbox && label) {
+                            data.push({
+                                type: 'item',
+                                text: label.innerText,
+                                checked: checkbox.checked
+                            });
+                        }
+                    });
+                }
+            });
+            return data;
+        }
+
+        /**
+         * データ配列からMarkdownテキストを生成する関数
+         * @param {Array} data - リストの状態データ
+         * @returns {string} Markdown形式のテキスト
+         */
+        function generateMarkdownFromData(data) {
+            let markdown = '';
+            data.forEach(item => {
+                if (item.type === 'heading') {
+                    markdown += `### ${item.text}\n\n`;
+                } else if (item.type === 'item') {
+                    markdown += `- [${item.checked ? 'x' : ' '}] ${item.text}\n`;
+                }
+            });
+            return markdown;
+        }
+
+
+        /**
          * MarkdownテキストをHTMLに変換して表示する関数
+         * チェック済み([- [x] ...])の項目にも対応
          */
         function renderMarkdown(text) {
             const container = document.getElementById('checklist-container');
             if (!container) return;
 
-            // テキストを行ごとに分割し、空の行は除外する
             const lines = text.split('\n').filter(line => line.trim() !== '');
-
             let htmlOutput = '';
-            let inList = false; // <ul> タグの内側にいるかどうかを管理
+            let inList = false;
 
             lines.forEach(line => {
-                // H3見出しの処理
                 if (line.startsWith('### ')) {
                     if (inList) {
-                        htmlOutput += '</ul>'; // リストがあれば閉じる
+                        htmlOutput += '</ul>';
                         inList = false;
                     }
                     htmlOutput += `<h3>${line.substring(4)}</h3>`;
                 }
-                // 未チェックのリストアイテムの処理
-                else if (line.startsWith('- [ ] ')) {
+                // チェック済み・未チェックの両方に対応
+                else if (line.match(/^- \[( |x)\]/)) {
                     if (!inList) {
-                        htmlOutput += '<ul>'; // リストを開始する
+                        htmlOutput += '<ul>';
                         inList = true;
                     }
+                    const isChecked = line.includes('[x]');
                     const itemText = line.substring(6);
-                    // 各チェックボックスとラベルにユニークなIDを割り当てる
                     const uniqueId = 'item-' + Math.random().toString(36).substr(2, 9);
-                    htmlOutput += `<li><input type="checkbox" id="${uniqueId}"><label for="${uniqueId}">${itemText}</label></li>`;
+                    htmlOutput += `<li><input type="checkbox" id="${uniqueId}" ${isChecked ? 'checked' : ''}><label for="${uniqueId}">${itemText}</label></li>`;
                 }
             });
 
             if (inList) {
-                htmlOutput += '</ul>'; // 最後にリストが開いたままなら閉じる
+                htmlOutput += '</ul>';
             }
-
             container.innerHTML = htmlOutput;
         }
 
-        // ページの読み込みが完了したら関数を実行
+        /**
+         * ファイルをダウンロードさせるためのヘルパー関数
+         * @param {string} content - ファイルの内容
+         * @param {string} fileName - ダウンロード時のファイル名
+         * @param {string} contentType - ファイルのMIMEタイプ
+         */
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // ページの読み込みが完了したら各種イベントリスナーを設定
         document.addEventListener('DOMContentLoaded', () => {
+            // 初期表示
             renderMarkdown(markdownText);
+
+            const saveJsonBtn = document.getElementById('save-json-btn');
+            const importJsonBtn = document.getElementById('import-json-btn');
+            const saveTextBtn = document.getElementById('save-text-btn');
+            const importTextBtn = document.getElementById('import-text-btn');
+            const fileInput = document.getElementById('file-input');
+
+            // JSON形式で保存
+            saveJsonBtn.addEventListener('click', () => {
+                const data = getCurrentChecklistData();
+                const jsonString = JSON.stringify(data, null, 2); // 綺麗に整形して出力
+                downloadFile(jsonString, 'checklist.json', 'application/json');
+            });
+
+            // テキスト形式で保存
+            saveTextBtn.addEventListener('click', () => {
+                const data = getCurrentChecklistData();
+                const markdownString = generateMarkdownFromData(data);
+                downloadFile(markdownString, 'checklist.txt', 'text/plain');
+            });
+            
+            // JSONインポートボタンがクリックされたら、ファイル選択ダイアログを開く
+            importJsonBtn.addEventListener('click', () => {
+                fileInput.accept = '.json';
+                fileInput.onchange = (event) => handleFileImport(event, 'json');
+                fileInput.click();
+            });
+
+            // テキストインポートボタンがクリックされたら、ファイル選択ダイアログを開く
+            importTextBtn.addEventListener('click', () => {
+                fileInput.accept = '.txt,.md';
+                fileInput.onchange = (event) => handleFileImport(event, 'text');
+                fileInput.click();
+            });
+            
+            /**
+             * ファイルが選択されたときの処理
+             * @param {Event} event
+             * @param {string} importType - 'json' または 'text'
+             */
+            const handleFileImport = (event, importType) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    try {
+                        if (importType === 'json') {
+                            const data = JSON.parse(content);
+                            const markdown = generateMarkdownFromData(data);
+                            renderMarkdown(markdown);
+                        } else if (importType === 'text') {
+                            renderMarkdown(content);
+                        }
+                    } catch (error) {
+                        alert('ファイルの読み込みに失敗しました。形式が正しいか確認してください。');
+                        console.error(error);
+                    }
+                };
+                reader.readAsText(file);
+                
+                // 次回同じファイルを選択できるように、値をクリアする
+                event.target.value = '';
+            };
         });
     </script>
 
