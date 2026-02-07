@@ -1,0 +1,74 @@
+
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Docker Compose configuration</title>
+    <!-- Mermaid CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+    <style>
+        body {
+        margin: 0;
+        font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+        background: linear-gradient(270deg, #f8f9fa, #e9ecef, #dee2e6, #f1f3f5);
+        background-size: 800% 800%;
+        animation: gradientFlow 20s ease infinite;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+        }
+        h2 {
+        margin-bottom: 20px;
+        }
+        .mermaid {
+        background: #ffffffcc; /* 半透明の白 */
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        max-width: 90%;
+        backdrop-filter: blur(1px); /* ふわっと */
+        }
+        @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+    <h2><b>Generative AI Usage Rules</b></h2>
+        <h3><b>The Rules of Using Generative AI in Our Repository</b></h3>
+            <h4>The following table summarizes the generative AI tools we use in our repository, 
+            <br>their specific functions, usage methods, frequency of use, and whether they can generate or edit files.
+            <br>Please refer to this when utilizing generative AI for development and documentation tasks.</p></h4>
+    
+    <div style="overflow-x:auto;">
+        <table border="1" style="border-collapse:collapse; min-width:900px;">
+            <thead>
+                <tr style="background:#f2f2f2;">
+                <th>Generative AI</th><th>Type</th><th>Strong Feature</th><th>Way</th><th>Using timing</th><th>Elable File Generaion and update</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><b>ChatGPT</b></td><td>General LLM</td><td>Investigation</td><td>General purpose</td><td>Most</td><td>YES(Enable to Generate)</td></tr>
+                <tr><td><b>Claude</b></td><td>Deep LLM</td><td>Long Investigation and Coording Generations</td><td>Coordings Generations</td><td>High</td><td>YES(Enable to Generate and Edit)</td></tr>
+                <tr><td><b>Gemini</b></td><td>General LLM</td><td>Investigation</td><td>General purpose</td><td>Medium</td><td>No</td></tr>
+                <tr><td><b>Copilot</b></td><td>General LLM</td><td>Assistant Coordings</td><td>Coordings</td><td>Low</td><td>No</td></tr>
+                <tr><td><b>AI Studio</b></td><td>General LLM</td><td>Investigation</td><td>Long Markdown Generations</td><td>Medium</td><td>No</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">BACK</button></div>
+    
+</body>
+</html>
+
