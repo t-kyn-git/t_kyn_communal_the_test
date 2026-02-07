@@ -32,10 +32,10 @@
             <input type="hidden" id="recipe-id">
             <label for="recipe-name">料理名:</label>
             <input type="text" id="recipe-name" placeholder="例: 豚の生姜焼き" required>
-            <label for="recipe-ingredients">材料と分量 (1行に1つずつ):</label>
+            <label for="recipe-ingredients">材料と分量 (※1行に1つずつ記載すると、箇条書きで表示されます。):</label>
             <textarea id="recipe-ingredients" placeholder="例:&#10;豚ロース肉 200g&#10;玉ねぎ 1/2個&#10;生姜 1かけ" required></textarea>
-            <label for="recipe-instructions">作り方・手順 (1行に1ステップずつ):</label>
-            <textarea id="recipe-instructions" placeholder="例:&#10;1. 玉ねぎは薄切り、生姜はすりおろす。&#10;2. フライパンに油を熱し、豚肉を炒める。&#10;3. 肉の色が変わったら玉ねぎを加えてさらに炒める。" required></textarea>
+            <label for="recipe-instructions">作り方・手順 (※1行に1ステップずつ記載すると、手順番号が自動で表示されます。):</label>
+            <textarea id="recipe-instructions" placeholder="例:&#10;玉ねぎは薄切り、生姜はすりおろす。&#10;フライパンに油を熱し、豚肉を炒める。&#10;肉の色が変わったら玉ねぎを加えてさらに炒める。" required></textarea>
             <button type="submit">レシピを登録・更新</button>
             <button type="button" id="clear-form-btn">フォームをクリア</button>
         </form>
