@@ -132,33 +132,60 @@
     </style>
 </head>
 <body>
-    <h1>Knowledge Portal</h1>
-    <div id="en" class="text-container"></div>
+    <font color=seashell><h1>📖Knowledge Portal📖</h1></font>
     
-    <!-- 通常コンテンツのセクション -->
-    <h2><b><u>The all content of share is below</u></b></h2>
-    <h6>Click the LinkPage to see the contents<br>
-    These contents are made from AI tools.</h6>
-    <div class="content-grid" id="content-grid-container"></div>
+    <font color=seashell><h5><b><u>The all content of share is below</u></b>
+    Click the LinkPage to see the contents<br>
+    These contents are made from AI tools.</h5></font>
 
-    <!-- ▼▼▼ ここから変更したHTML ▼▼▼ -->
-    <!-- トライアル機能のセクション（折りたたみ式） -->
     <details>
         <summary>
-            <h2><b><u>Trial Features</u></b></h2>
+            <h3><b><u><font color=cornsilk>😊▼Introduction▼😊</font></u></b></h3>
+        </summary>
+        <h6><div id="en" class="text-container"></div></h6>
+    </details>
+
+    <!-- Raising Children Contents -->
+    <!-- <details>
+        <summary> -->
+            <h3><b><u><font color=cornsilk>👶Raising Children Contents👶</font></u></b></h3>
+        <!-- </summary> -->
+        <div class="content-grid" id="raising-children-grid-container"></div>
+    <!-- </details> -->
+
+    <!-- IT Main tools Contents -->
+    <details>
+        <summary>
+            <h3><b><u><font color=lightcyan>💻▼Main Contents(CLICK HERE)▼💻</font></u></b></h3>
+        </summary>
+        <div class="content-grid" id="content-grid-container"></div>
+    </details>
+
+    <!-- IT Trial Features Contents -->
+    <details>
+        <summary>
+            <h3><b><u><font color=lightcyan>🚙▼Trial Features(CLICK HERE)▼🚙</font></u></b></h3>
         </summary>
         <div class="content-grid" id="trial-grid-container"></div>
     </details>
     <!-- ▲▲▲ ここまで変更したHTML ▲▲▲ -->
 
     <script>
-        // --- 通常コンテンツのデータ ---
-        const mainData = [
-            { category: 'Terraform', link: 'terraform_aws_outputs/aws_output.html', linkText: '★terraform awsoutput', description: 'terraform awsoutput' },
+        const raisingChildrenData = [
+            { category: 'Raising Children', link: 'raising_children/newborncare_instructions.html', linkText: '★Newborn Care Instructions', description: 'Detailed instructions for caring for a newborn from discharge to one month old.' },
+            { category: 'Raising Children', link: 'raising_children/child_growth_roadmaps.html', linkText: '★Child Growth roadmaps', description: 'Track and monitor your child\'s growth milestones.' },
+            { category: 'Raising Children', link: 'raising_children/parenting_tips.html', linkText: '★Parenting Tips', description: 'Helpful tips and advice for effective parenting.' },
+            { category: 'Raising Children', link: 'raising_children/educational_games.html', linkText: '★Educational Games', description: 'Fun and educational games for children of various ages.' },
+            { category: 'Raising Children', link: 'raising_children/nutrition_guide.html', linkText: '★Nutrition Guide', description: 'A guide to healthy eating habits for children.' },
             { category: 'Baby', link: 'share/donoteat_pregnant.html', linkText: '★Do not eat pregnant', description: 'Do not eat during pregnancy' },
             { category: 'Baby', link: 'share/baby_husband_aid.html', linkText: '★baby tasks check', description: 'baby tasks check' },
             { category: 'Baby', link: 'share/baby_ready_items.html', linkText: '★baby items check', description: 'baby items check' },
             { category: 'Baby', link: 'share/baby_purchaselist_v1.html', linkText: '★baby purchaselist', description: 'baby purchaselist v1' },
+            { category: 'Tools', link: 'development/tools_cooking_server.html', linkText: '★Cooking(Not baby cares)', description: 'Cooking of the recipes with manuals' },
+        ];
+
+        const mainData = [
+            { category: 'Terraform', link: 'terraform_aws_outputs/aws_output.html', linkText: '★terraform awsoutput', description: 'terraform awsoutput' },
             { category: 'caution', link: 'share/caution_fireworks.html', linkText: '★caution of fireworks', description: 'Caution of fireworks' },
             { category: 'caution', link: 'share/northern_giant_hornet.html', linkText: '★caution of northern giant hornet', description: 'Caution of northern giant hornet' },
             { category: 'Development Blogs', link: 'development/dev_blog_k3d.html', linkText: '★dev_blog_k3d', description: 'Development blog of k3d' },
@@ -171,15 +198,15 @@
             { category: 'Tools', link: 'development/tools_stocks.html', linkText: 'confirm stocks', description: 'Stocks site' },
             { category: 'Tools', link: 'development/tools_sleepwrite.html', linkText: 'sleepwrite', description: 'Sleepwrite' },
             { category: 'Tools', link: 'development/tools_babytest001.html', linkText: '★badyRecord', description: 'bady the record' },
-            { category: 'Tools', link: 'development/tools_cooking.html', linkText: '★CookingGrow', description: 'Cooking of the recipes' },
-            { category: 'Tools', link: 'development/tools_cooking_v2.html', linkText: 'CookingWithWays', description: 'Cooking of the recipes with manuals' },
+            { category: 'Tools', link: 'development/tools_cooking.html', linkText: 'CookingGrow', description: 'Cooking of the recipes' },
+            { category: 'Tools', link: 'development/tools_cooking_v2.html', linkText: '★CookingWithWays', description: 'Cooking of the recipes with manuals' },
+            { category: 'Tools', link: 'development/tools_cooking_server.html', linkText: '★CookingWithWays', description: 'Cooking of the recipes with manuals' },
             { category: 'Test', link: 'test/testhtml001.html', linkText: 'test', description: 'test' },
             { category: 'Weather', link: 'share/weathernews.html', linkText: '×weathernews', description: 'weathernews world' },
             { category: 'weather', link: 'share/weathernewsjp.html', linkText: '×weathernews', description: 'weathernews Japan' },
             { category: 'Tools' , link: 'development/tools_qr_generations.html', linkText: '★QR Generations', description: 'QR code generation tool' }
         ];
 
-        // --- トライアル機能のデータ ---
         const trialData = [
             { category: 'Games', link: 'trial_features/tools_three_par.html', linkText: 'three par mock', description: 'Tools three par mock test' },
             { category: 'Games', link: 'trial_features/games_worldtrackfield.html', linkText: '★games_World100mFinal', description: 'Games World track and field' },
@@ -252,14 +279,20 @@
         }
         
         // --- 各コンテナにカードを生成 ---
+        createContentCards(raisingChildrenData, 'raising-children-grid-container');
         createContentCards(mainData, 'content-grid-container');
         createContentCards(trialData, 'trial-grid-container');
 
-        const texts = {
-            en: "The server construction that started 10 years ago. \
-            The approach to server construction has shifted from mere manufacturing to considering what can be achieved through the server. \
-            Today, we are in an era where AI, Cloud, and Big Data fields are growing rapidly. \
-            It is essential to solve social issues through the utilization of data. UNKO - Unknown Numeric Knowledge Owner - seeks to acquire infinite unknown knowledge and share it with the world!",
+        const introductions_texts = {
+            en: "The server construction that started 10 years ago has changed in meaning. \
+            It is no longer just building machines, but understanding what kind of life those systems support. \
+            In order to start the raising childcare, I realized using my system development have to utilize in terms of \
+            continuous monitoring, recording small changes, predicting problems, and adjusting daily routines. \
+            I think A record of raising childcare is a good life experience and bring to gain the new knowledge. \
+            In an era of AI, Cloud, and Big Data, technology should support real human life — families and children — not exist for its own sake. \
+            \
+            \
+            UNKO — *Unknown Numeric Knowledge Owner* — now means acquiring unknown knowledge and passing it to the next generation.",
         };
 
         function fadeInText(text, containerId, delay) {
@@ -275,7 +308,7 @@
                 }, index * delay);
             });
         }
-        fadeInText(texts.en, "en", 10);
+        fadeInText(introductions_texts.en, "en", 5);
     </script>
 
     <div style="text-align:center;"><button onclick="history.back()" style="font-size:18px; padding:10px 20px;">戻る</button></div>
