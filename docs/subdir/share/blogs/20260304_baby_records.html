@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>👶 育児活動記録 — パパより 20260304時点</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cream: #FDF6EE;
+      --warm-white: #FFFAF5;
+      --blush: #E8A598;
+      --blush-light: #F5D5CE;
+      --brown: #6B4226;
+      --brown-mid: #9B6347;
+      --text: #3D2B1F;
+      --text-muted: #7A5C4A;
+      --border: #E8D5C4;
+    }
+
+```
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background-color: var(--cream);
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--text);
+  line-height: 1.8;
+}
+
+/* Header */
+header {
+  background: var(--blush);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: -40px; left: -40px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+header::after {
+  content: '';
+  position: absolute;
+  bottom: -60px; right: -30px;
+  width: 250px; height: 250px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+header h1 {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 2rem;
+  color: #fff;
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+}
+header p {
+  margin-top: 0.5rem;
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Main layout */
+main {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+/* Section cards */
+.section {
+  background: var(--warm-white);
+  border-radius: 16px;
+  padding: 2rem 2rem 1.8rem;
+  margin-bottom: 1.8rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(107,66,38,0.06);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.5s ease forwards;
+}
+.section:nth-child(1) { animation-delay: 0.1s; }
+.section:nth-child(2) { animation-delay: 0.2s; }
+.section:nth-child(3) { animation-delay: 0.3s; }
+.section:nth-child(4) { animation-delay: 0.4s; }
+.section:nth-child(5) { animation-delay: 0.5s; }
+.section:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1.2rem;
+  color: var(--brown);
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 2px solid var(--blush-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.6rem;
+}
+.section p:last-child { margin-bottom: 0; }
+
+strong {
+  color: var(--brown);
+  font-weight: 700;
+}
+
+/* Sub section */
+.sub-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--brown-mid);
+  margin: 1.4rem 0 0.8rem;
+}
+.sub-title:first-of-type { margin-top: 0.2rem; }
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+  margin-bottom: 1rem;
+}
+th {
+  background: var(--blush-light);
+  color: var(--brown);
+  font-weight: 700;
+  padding: 0.6rem 1rem;
+  text-align: left;
+}
+td {
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #FDF0E8; }
+
+/* Trouble section — slightly different style */
+.section.trouble {
+  background: #FFF8F0;
+  border-color: #F0C9A8;
+}
+.section.trouble .section-title {
+  border-bottom-color: #F0C9A8;
+}
+
+/* Closing section */
+.section.closing {
+  background: var(--blush);
+  border: none;
+  text-align: center;
+}
+.section.closing .section-title {
+  color: #fff;
+  border-bottom-color: rgba(255,255,255,0.3);
+  justify-content: center;
+}
+.section.closing p {
+  color: rgba(255,255,255,0.92);
+  font-size: 1rem;
+}
+
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+```
+
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>👶 育児活動記録 — パパより 20260304時点</h1>
+  <p>息子との日々のきろく</p>
+</header>
+
+<main>
+
+  <div class="section">
+    <h2 class="section-title">🤰 妊娠期間</h2>
+    <p>妊娠初期はつわりがかなりひどく、妻にとって辛い日々が続いた。</p>
+    <p>安定期に入ると食欲が戻り、もりもり食べられるように。</p>
+    <p>胎動は夜になると活発になることが多く、お腹の中でも夜型だったのかも。</p>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">🏥 出産</h2>
+    <p>無痛分娩の予定で臨んだが、途中で破水。</p>
+    <p>さらに臍の緒が赤ちゃんに絡まっていることが判明し、自然分娩では難しいと判断。</p>
+    <p>急遽、<strong>緊急帝王切開</strong>で出産することになった。</p>
+    <p>予定外の展開に不安と緊張でいっぱいだったが、母子ともに無事に乗り越えてくれた。<br>本当によく頑張ってくれた。</p>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">💭 パパの心情</h2>
+    <p>生まれてきた息子の顔を初めて見たとき、言葉にならなかった。</p>
+    <p>緊急帝王切開という想定外の展開に、手術室の外で待っている間は気が気でなかった。</p>
+    <p>「育休を取って絶対に支えよう」と、そのとき強く思った。</p>
+  </div>
+
+  <div class="section">
+    <h2 class="section-title">🏠 育児休職中に担当したこと</h2>
+
+```
+<p class="sub-title">家のこと</p>
+<table>
+  <thead><tr><th>やること</th><th>担当</th></tr></thead>
+  <tbody>
+    <tr><td>洗濯</td><td>パパ</td></tr>
+    <tr><td>掃除</td><td>パパ</td></tr>
+    <tr><td>皿洗い</td><td>パパ</td></tr>
+    <tr><td>料理</td><td>ママ</td></tr>
+  </tbody>
+</table>
+<p>産後の妻が体を動かせる範囲で料理を担当してくれており、それ以外の家事はパパが引き受けた。</p>
+
+<p class="sub-title">育児</p>
+<table>
+  <thead><tr><th>やること</th><th>担当</th></tr></thead>
+  <tbody>
+    <tr><td>寝かしつけ</td><td>パパ</td></tr>
+    <tr><td>おむつ替え→ミルク</td><td>パパ</td></tr>
+    <tr><td>おむつ替え→母乳</td><td>ママ</td></tr>
+    <tr><td>沐浴</td><td>交代制</td></tr>
+    <tr><td>夜のワンオペ</td><td>パパ</td></tr>
+  </tbody>
+</table>
+<p>おむつ替えと授乳はセットで担当。パパのときはおむつ替え→ミルク、ママのときはおむつ替え→母乳という流れで対応している。</p>
+<p>沐浴は交代制で、お互いに慣れながら取り組んでいる。</p>
+<p>夜間はママを休ませるためパパがワンオペで対応。泣き声に起きて、ミルクをあげて、寝かしつけて——気づけば朝になっていることも。</p>
+```
+
+  </div>
+
+  <div class="section trouble">
+    <h2 class="section-title">😅 苦労したこと</h2>
+    <p>おむつ替え中のおしっこシャワーが連発。油断した瞬間にやられる。</p>
+    <p>さらにミルクの吐き戻しも重なり、1日に何度も着替えるはめになった——息子も、パパも。</p>
+    <p>洗濯物の山を見ながら「また増えた…」と苦笑いしつつ、それでも憎めないのが不思議なところ。</p>
+  </div>
+
+  <div class="section closing">
+    <h2 class="section-title">✨ 一言</h2>
+    <p>大変なことも多いけれど、息子の顔を見るたびにすべて吹き飛ぶ。</p>
+    <p>この時間は一生に一度。全力で楽しもうと思う。</p>
+  </div>
+
+</main>
+
+<footer>👶 育児活動記録 — パパより 20260304時点</footer>
+
+</body>
+</html>
