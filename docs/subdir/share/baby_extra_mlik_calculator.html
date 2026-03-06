@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>追加ミルク量 計算ツール</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700&family=DM+Serif+Display&display=swap');
+
+:root {
+–cream: #fdf6ee;
+–warm: #f5e6d3;
+–blush: #e8c5a0;
+–cocoa: #7a5c44;
+–deep: #3d2b1f;
+–accent: #c97d4e;
+–soft: #f9f0e6;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–cream);
+font-family: ‘Zen Kaku Gothic New’, sans-serif;
+color: var(–deep);
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 40px 20px 60px;
+background-image: radial-gradient(circle at 20% 20%, #f0deca55 0%, transparent 60%),
+radial-gradient(circle at 80% 80%, #e8c5a033 0%, transparent 50%);
+}
+
+header {
+text-align: center;
+margin-bottom: 36px;
+animation: fadeDown 0.7s ease both;
+}
+
+header .en-title {
+font-family: ‘DM Serif Display’, serif;
+font-size: 13px;
+letter-spacing: 0.25em;
+color: var(–accent);
+text-transform: uppercase;
+margin-bottom: 8px;
+}
+
+header h1 {
+font-size: 24px;
+font-weight: 700;
+line-height: 1.4;
+color: var(–deep);
+}
+
+header p.subtitle {
+font-size: 12px;
+color: var(–cocoa);
+margin-top: 8px;
+line-height: 1.7;
+}
+
+.card {
+background: white;
+border-radius: 20px;
+padding: 32px 28px;
+width: 100%;
+max-width: 420px;
+box-shadow: 0 8px 40px #c97d4e18, 0 2px 8px #c97d4e0a;
+animation: fadeUp 0.7s ease both;
+animation-delay: 0.1s;
+}
+
+.formula-box {
+background: var(–soft);
+border-left: 4px solid var(–accent);
+border-radius: 10px;
+padding: 14px 16px;
+margin-bottom: 28px;
+font-size: 13px;
+line-height: 1.8;
+color: var(–cocoa);
+}
+
+.formula-box strong {
+display: block;
+font-size: 14px;
+color: var(–deep);
+margin-bottom: 4px;
+}
+
+.formula-box .formula {
+font-size: 13px;
+background: white;
+border-radius: 6px;
+padding: 8px 12px;
+margin-top: 8px;
+color: var(–accent);
+font-weight: 700;
+letter-spacing: 0.02em;
+}
+
+.field {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+font-size: 13px;
+font-weight: 700;
+color: var(–cocoa);
+margin-bottom: 8px;
+letter-spacing: 0.04em;
+}
+
+label span.note {
+font-weight: 300;
+font-size: 11px;
+color: #aaa;
+margin-left: 6px;
+}
+
+input[type=“number”] {
+width: 100%;
+padding: 13px 16px;
+border: 1.5px solid var(–blush);
+border-radius: 12px;
+font-family: ‘Zen Kaku Gothic New’, sans-serif;
+font-size: 16px;
+color: var(–deep);
+background: var(–soft);
+outline: none;
+transition: border 0.2s, box-shadow 0.2s;
+-webkit-appearance: none;
+}
+
+input[type=“number”]:focus {
+border-color: var(–accent);
+box-shadow: 0 0 0 3px #c97d4e18;
+background: white;
+}
+
+.unit {
+font-size: 12px;
+color: #bbb;
+margin-top: 5px;
+padding-left: 4px;
+}
+
+button {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, var(–accent), #e09060);
+color: white;
+border: none;
+border-radius: 14px;
+font-family: ‘Zen Kaku Gothic New’, sans-serif;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+letter-spacing: 0.08em;
+margin-top: 8px;
+transition: transform 0.15s, box-shadow 0.15s;
+box-shadow: 0 4px 20px #c97d4e33;
+}
+
+button:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 28px #c97d4e44;
+}
+
+button:active { transform: translateY(0); }
+
+.result {
+display: none;
+margin-top: 28px;
+background: linear-gradient(135deg, #fff8f2, #fdeede);
+border-radius: 16px;
+padding: 24px 20px;
+text-align: center;
+border: 1.5px solid var(–blush);
+animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.result .label {
+font-size: 12px;
+color: var(–cocoa);
+letter-spacing: 0.1em;
+margin-bottom: 6px;
+}
+
+.result .amount {
+font-family: ‘DM Serif Display’, serif;
+font-size: 52px;
+color: var(–accent);
+line-height: 1;
+}
+
+.result .ml {
+font-size: 20px;
+color: var(–cocoa);
+font-weight: 700;
+margin-left: 4px;
+}
+
+.result .note {
+font-size: 11px;
+color: #bbb;
+margin-top: 10px;
+line-height: 1.7;
+}
+
+.warning {
+margin-top: 28px;
+background: #fff8f0;
+border: 1px solid #f0d0b0;
+border-radius: 12px;
+padding: 16px;
+font-size: 11.5px;
+color: #a07050;
+line-height: 1.8;
+animation: fadeUp 0.5s ease both;
+animation-delay: 0.3s;
+}
+
+.warning strong { color: var(–accent); }
+
+footer {
+margin-top: 32px;
+font-size: 11px;
+color: #c0a88a;
+text-align: center;
+line-height: 1.8;
+max-width: 420px;
+animation: fadeUp 0.7s ease both;
+animation-delay: 0.4s;
+}
+
+footer a {
+color: var(–accent);
+text-decoration: none;
+border-bottom: 1px dotted var(–accent);
+}
+
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+from { opacity: 0; transform: scale(0.9); }
+to   { opacity: 1; transform: scale(1); }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <p class="en-title">Supplemental Milk Calculator</p>
+  <h1>追加ミルク量 計算ツール</h1>
+  <p class="subtitle">母乳後に足りないとき、どれくらい足せばいい？</p>
+</header>
+
+<div class="card">
+  <div class="formula-box">
+    <strong>📐 使用している計算式</strong>
+    計算式は医学的に公式なものではなく、<br>
+    Claude（AI）が提案した<strong>推定式</strong>です。
+    <div class="formula">
+      追加ミルク量 ＝ 体重(kg) × 20 × (経過時間 ÷ 授乳間隔)
+    </div>
+  </div>
+
+  <div class="field">
+    <label>赤ちゃんの体重 <span class="note">現在の体重</span></label>
+    <input type="number" id="weight" placeholder="例：3.7" step="0.1" min="1" max="15">
+    <div class="unit">kg</div>
+  </div>
+
+  <div class="field">
+    <label>母乳から経過した時間</label>
+    <input type="number" id="elapsed" placeholder="例：1" step="0.5" min="0" max="6">
+    <div class="unit">時間</div>
+  </div>
+
+  <div class="field">
+    <label>通常の授乳間隔 <span class="note">目安は3時間</span></label>
+    <input type="number" id="interval" placeholder="例：3" step="0.5" min="1" max="6">
+    <div class="unit">時間</div>
+  </div>
+
+<button onclick="calculate()">計算する</button>
+
+  <div class="result" id="result">
+    <div class="label">推奨する追加ミルク量</div>
+    <div>
+      <span class="amount" id="resultAmount">--</span>
+      <span class="ml">ml</span>
+    </div>
+    <div class="note" id="resultNote"></div>
+  </div>
+</div>
+
+<div class="warning">
+  ⚠️ <strong>ご注意</strong><br>
+  この計算式は医学的に公式なものではありません。<br>
+  Claude（AI）が授乳間隔・体重から導いた<strong>推定値</strong>です。<br>
+  前提として、<br>
+  ・おむつの状況は問題ないこと<br>
+  ・お腹の不快感がないこと<br>
+  ・寝かしつけても寝ないこと<br>
+  を確認した上で授乳不足と判断して下さい<br>
+  実際の授乳量は赤ちゃんの様子・体重増加・<br>
+  助産師・小児科医の指導を優先してください。
+</div>
+
+<footer>
+  ※ 参考文献・引用元について<br>
+  本計算式（追加ミルク量 ＝ 体重×20×経過時間÷授乳間隔）は<br>
+  <strong>特定の公式サイトや論文からの引用ではなく、</strong><br>
+  AI（Claude / Anthropic）が提案した推定式です。<br><br>
+  一般的な新生児栄養の参考情報：<br>
+  <a href="https://www.ncchd.go.jp/" target="_blank">国立成育医療研究センター</a> ／
+  <a href="https://www.jpeds.or.jp/" target="_blank">日本小児科学会</a>
+</footer>
+
+<script>
+function calculate() {
+  const weight   = parseFloat(document.getElementById('weight').value);
+  const elapsed  = parseFloat(document.getElementById('elapsed').value);
+  const interval = parseFloat(document.getElementById('interval').value);
+
+  if (isNaN(weight) || isNaN(elapsed) || isNaN(interval) || interval === 0) {
+    alert('すべての項目を入力してください');
+    return;
+  }
+
+  const fullAmount = weight * 20;
+  const ratio      = Math.min(elapsed / interval, 1);
+  const additional = Math.round(fullAmount * ratio / 5) * 5; // 5ml単位で丸める
+
+  const resultDiv    = document.getElementById('result');
+  const resultAmount = document.getElementById('resultAmount');
+  const resultNote   = document.getElementById('resultNote');
+
+  resultAmount.textContent = additional;
+
+  let note = `満腹量の目安：${Math.round(fullAmount)}ml／`;
+  if (ratio >= 1) {
+    note += 'ほぼ次の授乳タイミングです。多めに与えて大丈夫です。';
+  } else if (ratio >= 0.6) {
+    note += '経過時間が長めなので、やや多めが安心です。';
+  } else {
+    note += '少なめから始め、飲み切ったら少し追加してみましょう。';
+  }
+  resultNote.textContent = note;
+
+  resultDiv.style.display = 'block';
+}
+</script>
+
+</body>
+</html>
