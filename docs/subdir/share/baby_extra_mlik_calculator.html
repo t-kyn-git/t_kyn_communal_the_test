@@ -273,7 +273,7 @@ to   { opacity: 1; transform: scale(1); }
     計算式は医学的に公式なものではなく、<br>
     Claude（AI）が提案した<strong>推定式</strong>です。
     <div class="formula">
-      追加ミルク量 ＝ 体重(kg) × 20 × (経過時間 ÷ 授乳間隔)
+      追加ミルク量 ＝ 体重(kg) × 係数 × (経過時間 ÷ 授乳間隔)
     </div>
   </div>
 
@@ -281,6 +281,12 @@ to   { opacity: 1; transform: scale(1); }
     <label>赤ちゃんの体重 <span class="note">現在の体重</span></label>
     <input type="number" id="weight" placeholder="例：3.7" step="0.1" min="1" max="15">
     <div class="unit">kg</div>
+  </div>
+
+  <div class="field">
+    <label>1回満腹係数 <span class="note">体重1kgあたりの1回量（標準：20）</span></label>
+    <input type="number" id="coefficient" placeholder="例：20" step="1" min="10" max="40" value="20">
+    <div class="unit">ml/kg　※ 1日150ml/kg ÷ 1日8回授乳 ＝ 約20</div>
   </div>
 
   <div class="field">
@@ -293,6 +299,12 @@ to   { opacity: 1; transform: scale(1); }
     <label>通常の授乳間隔 <span class="note">目安は3時間</span></label>
     <input type="number" id="interval" placeholder="例：3" step="0.5" min="1" max="6">
     <div class="unit">時間</div>
+  </div>
+
+  <div class="field">
+    <label>係数（体重1kgあたりの1回量） <span class="note">標準は20</span></label>
+    <input type="number" id="coefficient" placeholder="例：20" step="1" min="5" max="50" value="20">
+    <div class="unit">ml/kg　※ 1日量150ml÷1日8回＝20が標準。赤ちゃんの実態に合わせて調整</div>
   </div>
 
 <button onclick="calculate()">計算する</button>
@@ -308,21 +320,22 @@ to   { opacity: 1; transform: scale(1); }
 </div>
 
 <div class="warning">
-  ⚠️ <strong>ご注意</strong><br>
-  この計算式は医学的に公式なものではありません。<br>
+  ⚠️ <strong>授乳不足と判断する前に確認してください</strong><br><br>
+  以下の<strong>すべて</strong>を確認した上で、授乳不足かどうかを判断してください：<br><br>
+  ✅ おむつの状況は問題ない（濡れすぎ・汚れすぎでない）<br>
+  ✅ お腹の不快感がない（ガス・便秘などではない）<br>
+  ✅ 寝かしつけても寝ない<br>
+  ✅ 指しゃぶりや口をモゴモゴするなどの反応がある<br><br>
+  <strong>これらを確認した上で</strong>、授乳不足と判断してください。<br><br>
+  また、この計算式は医学的に公式なものではありません。<br>
   Claude（AI）が授乳間隔・体重から導いた<strong>推定値</strong>です。<br>
-  前提として、<br>
-  ・おむつの状況は問題ないこと<br>
-  ・お腹の不快感がないこと<br>
-  ・寝かしつけても寝ないこと<br>
-  を確認した上で授乳不足と判断して下さい<br>
   実際の授乳量は赤ちゃんの様子・体重増加・<br>
   助産師・小児科医の指導を優先してください。
 </div>
 
 <footer>
   ※ 参考文献・引用元について<br>
-  本計算式（追加ミルク量 ＝ 体重×20×経過時間÷授乳間隔）は<br>
+  本計算式（追加ミルク量 ＝ 体重×係数×経過時間÷授乳間隔　※係数の標準値は20）は<br>
   <strong>特定の公式サイトや論文からの引用ではなく、</strong><br>
   AI（Claude / Anthropic）が提案した推定式です。<br><br>
   一般的な新生児栄養の参考情報：<br>
@@ -341,7 +354,8 @@ function calculate() {
     return;
   }
 
-  const fullAmount = weight * 20;
+  const coefficient = parseFloat(document.getElementById('coefficient').value) || 20;
+  const fullAmount = weight * coefficient;
   const ratio      = Math.min(elapsed / interval, 1);
   const additional = Math.round(fullAmount * ratio / 5) * 5; // 5ml単位で丸める
 
