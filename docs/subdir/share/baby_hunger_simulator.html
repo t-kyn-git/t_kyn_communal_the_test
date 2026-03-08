@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>空腹シミュレーター</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+
+:root {
+–bg: #0f0c1a;
+–card: #1a1628;
+–border: #2e2845;
+–accent1: #ff7eb3;
+–accent2: #ffb347;
+–accent3: #7eb8ff;
+–text: #f0eaff;
+–muted: #8b7faa;
+–green: #5effa0;
+–red: #ff5e7e;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+font-family: ‘Noto Sans JP’, sans-serif;
+color: var(–text);
+min-height: 100vh;
+padding: 32px 16px 60px;
+background-image:
+radial-gradient(ellipse at 10% 10%, #2a1a4a55 0%, transparent 50%),
+radial-gradient(ellipse at 90% 90%, #1a2a4a44 0%, transparent 50%);
+}
+
+header {
+text-align: center;
+margin-bottom: 32px;
+animation: fadeDown 0.6s ease both;
+}
+
+header .label {
+font-size: 11px;
+letter-spacing: 0.3em;
+color: var(–accent1);
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+
+header h1 {
+font-family: ‘Kaisei Tokumin’, serif;
+font-size: 26px;
+background: linear-gradient(135deg, var(–accent1), var(–accent2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+line-height: 1.3;
+}
+
+header p {
+font-size: 12px;
+color: var(–muted);
+margin-top: 8px;
+line-height: 1.7;
+}
+
+.card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 24px 20px;
+max-width: 440px;
+margin: 0 auto 20px;
+animation: fadeUp 0.6s ease both;
+}
+
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+
+.section-title {
+font-size: 12px;
+letter-spacing: 0.15em;
+color: var(–accent3);
+text-transform: uppercase;
+margin-bottom: 16px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.section-title::after {
+content: ‘’;
+flex: 1;
+height: 1px;
+background: var(–border);
+}
+
+.field {
+margin-bottom: 16px;
+}
+
+label {
+display: block;
+font-size: 12px;
+color: var(–muted);
+margin-bottom: 6px;
+letter-spacing: 0.05em;
+}
+
+input[type=“number”], input[type=“time”], select {
+width: 100%;
+padding: 11px 14px;
+background: #0f0c1a;
+border: 1px solid var(–border);
+border-radius: 10px;
+color: var(–text);
+font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 15px;
+outline: none;
+transition: border 0.2s, box-shadow 0.2s;
+-webkit-appearance: none;
+}
+
+input:focus, select:focus {
+border-color: var(–accent1);
+box-shadow: 0 0 0 3px #ff7eb322;
+}
+
+select option { background: #1a1628; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* 授乳履歴 */
+.feed-list {
+display: flex;
+flex-direction: column;
+gap: 10px;
+margin-bottom: 16px;
+max-height: 280px;
+overflow-y: auto;
+}
+
+.feed-item {
+background: #0f0c1a;
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 12px 14px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+animation: fadeUp 0.3s ease both;
+}
+
+.feed-item .feed-info {
+display: flex;
+flex-direction: column;
+gap: 3px;
+}
+
+.feed-item .feed-time {
+font-size: 16px;
+font-weight: 700;
+color: var(–accent2);
+font-family: ‘Kaisei Tokumin’, serif;
+}
+
+.feed-item .feed-detail {
+font-size: 11px;
+color: var(–muted);
+}
+
+.feed-item .feed-amount {
+font-size: 20px;
+font-weight: 700;
+color: var(–accent1);
+font-family: ‘Kaisei Tokumin’, serif;
+}
+
+.feed-item .feed-amount span {
+font-size: 11px;
+color: var(–muted);
+font-family: ‘Noto Sans JP’, sans-serif;
+font-weight: 400;
+}
+
+.delete-btn {
+background: none;
+border: 1px solid #ff5e7e44;
+color: #ff5e7e88;
+border-radius: 6px;
+padding: 3px 8px;
+font-size: 11px;
+cursor: pointer;
+margin-left: 12px;
+transition: all 0.2s;
+}
+
+.delete-btn:hover {
+background: #ff5e7e22;
+color: var(–red);
+border-color: var(–red);
+}
+
+.add-btn {
+width: 100%;
+padding: 12px;
+background: linear-gradient(135deg, #2a1a4a, #1a2a4a);
+border: 1px dashed var(–border);
+border-radius: 12px;
+color: var(–accent3);
+font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 13px;
+cursor: pointer;
+transition: all 0.2s;
+letter-spacing: 0.05em;
+}
+
+.add-btn:hover {
+border-color: var(–accent3);
+background: #1a2a4a;
+}
+
+.calc-btn {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, var(–accent1), var(–accent2));
+border: none;
+border-radius: 14px;
+color: #0f0c1a;
+font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+letter-spacing: 0.1em;
+transition: transform 0.15s, box-shadow 0.15s;
+box-shadow: 0 4px 24px #ff7eb344;
+max-width: 440px;
+display: block;
+margin: 0 auto;
+animation: fadeUp 0.6s ease both;
+animation-delay: 0.3s;
+}
+
+.calc-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 32px #ff7eb355; }
+.calc-btn:active { transform: translateY(0); }
+
+/* 結果 */
+.result-card {
+display: none;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 20px;
+padding: 28px 20px;
+max-width: 440px;
+margin: 20px auto 0;
+animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.hunger-meter {
+margin: 20px 0;
+position: relative;
+}
+
+.meter-label {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+color: var(–muted);
+margin-bottom: 8px;
+}
+
+.meter-track {
+height: 18px;
+background: #0f0c1a;
+border-radius: 9px;
+overflow: hidden;
+border: 1px solid var(–border);
+position: relative;
+}
+
+.meter-fill {
+height: 100%;
+border-radius: 9px;
+transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+position: relative;
+}
+
+.meter-fill::after {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+animation: shimmer 2s infinite;
+}
+
+.hunger-percent {
+text-align: center;
+margin: 16px 0 8px;
+}
+
+.hunger-percent .num {
+font-family: ‘Kaisei Tokumin’, serif;
+font-size: 64px;
+line-height: 1;
+}
+
+.hunger-percent .pct {
+font-size: 20px;
+color: var(–muted);
+margin-left: 4px;
+}
+
+.status-badge {
+display: inline-block;
+padding: 5px 16px;
+border-radius: 20px;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: 0.05em;
+margin: 0 auto;
+}
+
+.info-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+margin-top: 20px;
+}
+
+.info-box {
+background: #0f0c1a;
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 12px;
+text-align: center;
+}
+
+.info-box .info-label {
+font-size: 10px;
+color: var(–muted);
+letter-spacing: 0.08em;
+margin-bottom: 6px;
+}
+
+.info-box .info-val {
+font-family: ‘Kaisei Tokumin’, serif;
+font-size: 20px;
+color: var(–accent3);
+}
+
+.info-box .info-unit {
+font-size: 10px;
+color: var(–muted);
+margin-left: 2px;
+}
+
+.next-feed {
+background: linear-gradient(135deg, #1a2a1a, #1a1a2a);
+border: 1px solid #5effa044;
+border-radius: 14px;
+padding: 16px;
+margin-top: 16px;
+text-align: center;
+}
+
+.next-feed .next-label {
+font-size: 11px;
+color: var(–green);
+letter-spacing: 0.1em;
+margin-bottom: 6px;
+}
+
+.next-feed .next-time {
+font-family: ‘Kaisei Tokumin’, serif;
+font-size: 32px;
+color: var(–green);
+}
+
+.next-feed .next-sub {
+font-size: 11px;
+color: var(–muted);
+margin-top: 4px;
+}
+
+.advice-box {
+background: #1a1a0f;
+border: 1px solid #ffb34744;
+border-radius: 14px;
+padding: 14px 16px;
+margin-top: 14px;
+font-size: 12px;
+color: #ffcc88;
+line-height: 1.8;
+}
+
+.advice-box .advice-title {
+font-weight: 700;
+color: var(–accent2);
+margin-bottom: 6px;
+font-size: 13px;
+}
+
+.warning-box {
+background: #1a0f0f;
+border: 1px solid #ff5e7e44;
+border-radius: 14px;
+padding: 14px 16px;
+margin-top: 10px;
+font-size: 11.5px;
+color: #ffaaaa;
+line-height: 1.8;
+}
+
+/* タイマー */
+.live-timer {
+text-align: center;
+margin-top: 16px;
+font-size: 11px;
+color: var(–muted);
+}
+
+.live-timer span {
+color: var(–accent1);
+font-weight: 700;
+}
+
+@keyframes fadeDown {
+from { opacity: 0; transform: translateY(-16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pop {
+from { opacity: 0; transform: scale(0.9); }
+to   { opacity: 1; transform: scale(1); }
+}
+@keyframes shimmer {
+0%   { transform: translateX(-100%); }
+100% { transform: translateX(100%); }
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <p class="label">Baby Hunger Simulator</p>
+  <h1>空腹シミュレーター<br>弓反り予測ツール</h1>
+  <p>授乳記録から現在の空腹率をリアルタイム計算</p>
+</header>
+
+<!-- 基本設定 -->
+
+<div class="card">
+  <div class="section-title">基本設定</div>
+  <div class="row2">
+    <div class="field">
+      <label>体重</label>
+      <input type="number" id="weight" placeholder="3.8" step="0.1" min="1" max="15" value="3.8">
+    </div>
+    <div class="field">
+      <label>通常の授乳間隔（時間）</label>
+      <input type="number" id="interval" placeholder="3" step="0.5" min="1" max="6" value="3">
+    </div>
+  </div>
+  <div class="row2">
+    <div class="field">
+      <label>係数（標準:20）</label>
+      <input type="number" id="coefficient" placeholder="20" step="1" min="5" max="50" value="20">
+    </div>
+    <div class="field">
+      <label>消化速度</label>
+      <select id="digestSpeed">
+        <option value="1.0">標準（母乳混合）</option>
+        <option value="0.8">ゆっくり（ミルク多め）</option>
+        <option value="1.2">はやめ（母乳多め）</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- 授乳履歴 -->
+
+<div class="card">
+  <div class="section-title">授乳履歴</div>
+  <div class="feed-list" id="feedList">
+    <p style="text-align:center;color:var(--muted);font-size:12px;padding:16px 0;">授乳記録を追加してください</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+    <div class="field" style="margin:0">
+      <label>時刻</label>
+      <input type="time" id="feedTime">
+    </div>
+    <div class="field" style="margin:0">
+      <label>量（ml）</label>
+      <input type="number" id="feedAmount" placeholder="100" min="0" max="300">
+    </div>
+    <div class="field" style="margin:0">
+      <label>種類</label>
+      <select id="feedType">
+        <option value="混合">混合</option>
+        <option value="母乳">母乳</option>
+        <option value="ミルク">ミルク</option>
+      </select>
+    </div>
+  </div>
+  <button class="add-btn" onclick="addFeed()">＋ 授乳記録を追加</button>
+</div>
+
+<button class="calc-btn" onclick="calculate()">🍼 空腹率を計算する</button>
+
+<!-- 結果 -->
+
+<div class="result-card" id="resultCard">
+  <div class="section-title">現在の空腹状態</div>
+
+  <div class="hunger-percent">
+    <span class="num" id="hungerNum" style="color:var(--accent1)">--</span>
+    <span class="pct">%</span>
+  </div>
+  <div style="text-align:center;margin-bottom:16px;">
+    <span class="status-badge" id="statusBadge">--</span>
+  </div>
+
+  <div class="hunger-meter">
+    <div class="meter-label">
+      <span>満腹</span>
+      <span>空腹限界</span>
+    </div>
+    <div class="meter-track">
+      <div class="meter-fill" id="meterFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-box">
+      <div class="info-label">最終授乳</div>
+      <div class="info-val" id="lastFeedTime">--</div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">経過時間</div>
+      <div class="info-val" id="elapsedTime">--<span class="info-unit">時間</span></div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">最終授乳量</div>
+      <div class="info-val" id="lastAmount">--<span class="info-unit">ml</span></div>
+    </div>
+    <div class="info-box">
+      <div class="info-label">満腹量目安</div>
+      <div class="info-val" id="fullAmount">--<span class="info-unit">ml</span></div>
+    </div>
+  </div>
+
+  <div class="next-feed">
+    <div class="next-label">▶ 次の授乳推奨時刻</div>
+    <div class="next-time" id="nextFeedTime">--:--</div>
+    <div class="next-sub" id="nextFeedSub">--</div>
+  </div>
+
+  <div class="advice-box" id="adviceBox">
+    <div class="advice-title">💡 アドバイス</div>
+    <span id="adviceText"></span>
+  </div>
+
+  <div class="warning-box">
+    ⚠️ この計算はAI（Claude）による推定です。医学的な根拠のある公式計算式ではありません。赤ちゃんの様子を最優先に判断してください。
+  </div>
+
+  <div class="live-timer" id="liveTimer"></div>
+</div>
+
+<script>
+let feeds = [];
+let timerInterval = null;
+
+// 現在時刻をデフォルトにセット
+window.onload = () => {
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  document.getElementById('feedTime').value = `${hh}:${mm}`;
+};
+
+function addFeed() {
+  const time   = document.getElementById('feedTime').value;
+  const amount = parseFloat(document.getElementById('feedAmount').value);
+  const type   = document.getElementById('feedType').value;
+
+  if (!time || isNaN(amount) || amount <= 0) {
+    alert('時刻と量を入力してください');
+    return;
+  }
+
+  feeds.push({ time, amount, type });
+  feeds.sort((a, b) => a.time.localeCompare(b.time));
+  renderFeeds();
+
+  document.getElementById('feedAmount').value = '';
+}
+
+function renderFeeds() {
+  const list = document.getElementById('feedList');
+  if (feeds.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:12px;padding:16px 0;">授乳記録を追加してください</p>';
+    return;
+  }
+  list.innerHTML = feeds.map((f, i) => `
+    <div class="feed-item">
+      <div class="feed-info">
+        <div class="feed-time">${f.time}</div>
+        <div class="feed-detail">${f.type}</div>
+      </div>
+      <div style="display:flex;align-items:center">
+        <div class="feed-amount">${f.amount}<span>ml</span></div>
+        <button class="delete-btn" onclick="deleteFeed(${i})">削除</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function deleteFeed(i) {
+  feeds.splice(i, 1);
+  renderFeeds();
+}
+
+function calculate() {
+  if (feeds.length === 0) {
+    alert('授乳記録を1件以上追加してください');
+    return;
+  }
+
+  const weight      = parseFloat(document.getElementById('weight').value) || 3.8;
+  const interval    = parseFloat(document.getElementById('interval').value) || 3;
+  const coefficient = parseFloat(document.getElementById('coefficient').value) || 20;
+  const digestSpeed = parseFloat(document.getElementById('digestSpeed').value) || 1.0;
+
+  const fullAmount = weight * coefficient;
+  const adjustedInterval = interval / digestSpeed;
+
+  // 最終授乳
+  const lastFeed = feeds[feeds.length - 1];
+  const [lh, lm] = lastFeed.time.split(':').map(Number);
+
+  if (timerInterval) clearInterval(timerInterval);
+
+  function update() {
+    const now = new Date();
+    const lastDate = new Date();
+    lastDate.setHours(lh, lm, 0, 0);
+    if (lastDate > now) lastDate.setDate(lastDate.getDate() - 1);
+
+    const elapsedMs   = now - lastDate;
+    const elapsedHrs  = elapsedMs / 3600000;
+    const hungerRatio = Math.min(elapsedHrs / adjustedInterval, 1);
+    const hungerPct   = Math.round(hungerRatio * 100);
+
+    // 色設定
+    let color, statusText, statusBg;
+    if (hungerPct < 40) {
+      color = '#5effa0'; statusText = '😴 満腹・ねんね'; statusBg = '#5effa022';
+    } else if (hungerPct < 65) {
+      color = '#ffb347'; statusText = '😐 少しお腹すいてきた'; statusBg = '#ffb34722';
+    } else if (hungerPct < 85) {
+      color = '#ff9966'; statusText = '😟 空腹サイン出始め'; statusBg = '#ff996622';
+    } else {
+      color = '#ff5e7e'; statusText = '😭 弓反り注意！空腹MAX'; statusBg = '#ff5e7e22';
+    }
+
+    document.getElementById('hungerNum').textContent = hungerPct;
+    document.getElementById('hungerNum').style.color = color;
+    document.getElementById('meterFill').style.width = hungerPct + '%';
+    document.getElementById('meterFill').style.background = `linear-gradient(90deg, #5effa0, ${color})`;
+
+    const badge = document.getElementById('statusBadge');
+    badge.textContent = statusText;
+    badge.style.background = statusBg;
+    badge.style.color = color;
+    badge.style.border = `1px solid ${color}44`;
+
+    document.getElementById('lastFeedTime').textContent = lastFeed.time;
+    document.getElementById('elapsedTime').innerHTML = elapsedHrs.toFixed(1) + '<span class="info-unit">時間</span>';
+    document.getElementById('lastAmount').innerHTML = lastFeed.amount + '<span class="info-unit">ml</span>';
+    document.getElementById('fullAmount').innerHTML = Math.round(fullAmount) + '<span class="info-unit">ml</span>';
+
+    // 次の授乳推奨時刻
+    const nextDate = new Date(lastDate.getTime() + adjustedInterval * 3600000);
+    const nh = String(nextDate.getHours()).padStart(2, '0');
+    const nm = String(nextDate.getMinutes()).padStart(2, '0');
+    const diffMin = Math.round((nextDate - now) / 60000);
+    document.getElementById('nextFeedTime').textContent = `${nh}:${nm}`;
+    document.getElementById('nextFeedSub').textContent =
+      diffMin > 0 ? `あと約${diffMin}分` : `${Math.abs(diffMin)}分超過 ⚠️`;
+
+    // アドバイス
+    let advice = '';
+    if (hungerPct < 40) {
+      advice = 'ぐっすり寝ているはずです。起こさず休ませてあげましょう😊';
+    } else if (hungerPct < 65) {
+      advice = '口モゴモゴや指しゃぶりが始まるかもしれません。授乳の準備をしておきましょう。';
+    } else if (hungerPct < 85) {
+      advice = '空腹サインが出始めています。フガフガ・ハスハスしていたら授乳タイミングです。弓反りが出る前に授乳できると理想的です！';
+    } else {
+      advice = '⚠️ 弓反りが起きやすい状態です！興奮しすぎている場合は小指を口に入れて少し落ち着かせてから授乳してください。';
+    }
+    document.getElementById('adviceText').textContent = advice;
+
+    // ライブタイマー
+    const ns = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('liveTimer').innerHTML =
+      `最終更新: <span>${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${ns}</span>（毎秒更新）`;
+  }
+
+  update();
+  timerInterval = setInterval(update, 1000);
+
+  const resultCard = document.getElementById('resultCard');
+  resultCard.style.display = 'block';
+  resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+
+</body>
+</html>
