@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>新生児 寝かしつけガイド</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;600;800&family=Noto+Sans+JP:wght@300;400;500&display=swap');
+
+:root {
+–bg: #fdf8f2;
+–warm1: #fff4e6;
+–warm2: #ffe8cc;
+–cold1: #e8f4ff;
+–cold2: #cce4ff;
+–brown: #6b4c2a;
+–blue: #2a5c8a;
+–orange: #d47a2a;
+–sky: #4a8ac4;
+–text: #2d2018;
+–muted: #9a8070;
+–border: #e8d8c4;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+font-family: ‘Noto Sans JP’, sans-serif;
+color: var(–text);
+min-height: 100vh;
+padding: 0 0 80px;
+background-image:
+radial-gradient(circle at 5% 5%, #ffe4c444 0%, transparent 40%),
+radial-gradient(circle at 95% 95%, #ddeeff33 0%, transparent 40%);
+}
+
+/* ヘッダー */
+.hero {
+text-align: center;
+padding: 52px 24px 40px;
+position: relative;
+overflow: hidden;
+}
+
+.hero::before {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0; bottom: 0;
+background: linear-gradient(135deg, #fff8ee 0%, #eef6ff 100%);
+z-index: 0;
+}
+
+.hero * { position: relative; z-index: 1; }
+
+.hero .tag {
+display: inline-block;
+background: linear-gradient(135deg, var(–orange), #e8a04a);
+color: white;
+font-size: 10px;
+letter-spacing: 0.2em;
+padding: 4px 14px;
+border-radius: 20px;
+margin-bottom: 16px;
+font-weight: 500;
+}
+
+.hero h1 {
+font-family: ‘Shippori Mincho’, serif;
+font-size: 28px;
+font-weight: 800;
+line-height: 1.5;
+color: var(–text);
+margin-bottom: 12px;
+}
+
+.hero p {
+font-size: 13px;
+color: var(–muted);
+line-height: 1.8;
+max-width: 340px;
+margin: 0 auto;
+}
+
+/* タブ */
+.tabs {
+display: flex;
+max-width: 480px;
+margin: 0 auto 28px;
+padding: 0 16px;
+gap: 10px;
+}
+
+.tab-btn {
+flex: 1;
+padding: 12px 8px;
+border-radius: 14px;
+border: 2px solid transparent;
+font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 13px;
+font-weight: 500;
+cursor: pointer;
+transition: all 0.25s;
+letter-spacing: 0.03em;
+}
+
+.tab-btn.hunger {
+background: var(–warm1);
+color: var(–orange);
+border-color: var(–warm2);
+}
+
+.tab-btn.hunger.active {
+background: linear-gradient(135deg, var(–orange), #e8a04a);
+color: white;
+border-color: transparent;
+box-shadow: 0 4px 20px #d47a2a33;
+}
+
+.tab-btn.cold {
+background: var(–cold1);
+color: var(–sky);
+border-color: var(–cold2);
+}
+
+.tab-btn.cold.active {
+background: linear-gradient(135deg, var(–sky), #6aaae0);
+color: white;
+border-color: transparent;
+box-shadow: 0 4px 20px #4a8ac433;
+}
+
+/* コンテンツ */
+.content {
+max-width: 480px;
+margin: 0 auto;
+padding: 0 16px;
+display: none;
+}
+
+.content.active { display: block; animation: fadeIn 0.3s ease both; }
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+/* チェックリスト */
+.check-section {
+background: white;
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 16px;
+border: 1px solid var(–border);
+box-shadow: 0 2px 12px #00000008;
+}
+
+.check-section .section-head {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-bottom: 16px;
+}
+
+.check-section .icon {
+width: 36px;
+height: 36px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 18px;
+flex-shrink: 0;
+}
+
+.icon.orange { background: var(–warm1); }
+.icon.blue   { background: var(–cold1); }
+
+.check-section h2 {
+font-family: ‘Shippori Mincho’, serif;
+font-size: 16px;
+font-weight: 600;
+color: var(–text);
+}
+
+.check-section .desc {
+font-size: 11.5px;
+color: var(–muted);
+line-height: 1.7;
+margin-bottom: 16px;
+padding-left: 46px;
+margin-top: -8px;
+}
+
+/* ステップカード */
+.steps { display: flex; flex-direction: column; gap: 10px; }
+
+.step {
+display: flex;
+gap: 12px;
+align-items: flex-start;
+padding: 14px;
+border-radius: 14px;
+cursor: pointer;
+transition: all 0.2s;
+border: 1.5px solid transparent;
+user-select: none;
+}
+
+.step:hover { transform: translateX(3px); }
+
+.step.hunger-step { background: #fff8f0; border-color: #f5e0c8; }
+.step.hunger-step.done { background: #fff4e6; border-color: var(–orange); opacity: 0.6; }
+.step.cold-step { background: #f0f8ff; border-color: #cce0f5; }
+.step.cold-step.done { background: #e8f4ff; border-color: var(–sky); opacity: 0.6; }
+
+.step-num {
+width: 28px;
+height: 28px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+font-weight: 700;
+flex-shrink: 0;
+transition: all 0.2s;
+}
+
+.hunger-step .step-num { background: var(–warm2); color: var(–orange); }
+.hunger-step.done .step-num { background: var(–orange); color: white; }
+.cold-step .step-num { background: var(–cold2); color: var(–sky); }
+.cold-step.done .step-num { background: var(–sky); color: white; }
+
+.step-body { flex: 1; }
+
+.step-title {
+font-size: 14px;
+font-weight: 500;
+color: var(–text);
+margin-bottom: 4px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.step-title .emoji { font-size: 15px; }
+
+.step-detail {
+font-size: 11.5px;
+color: var(–muted);
+line-height: 1.7;
+}
+
+.step.done .step-title { text-decoration: line-through; color: var(–muted); }
+
+/* サインカード */
+.sign-card {
+background: white;
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 16px;
+border: 1px solid var(–border);
+}
+
+.sign-card h3 {
+font-family: ‘Shippori Mincho’, serif;
+font-size: 14px;
+margin-bottom: 12px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.signs { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.sign-tag {
+padding: 5px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 500;
+}
+
+.sign-tag.hunger-tag { background: var(–warm1); color: var(–orange); border: 1px solid var(–warm2); }
+.sign-tag.cold-tag   { background: var(–cold1);  color: var(–sky);    border: 1px solid var(–cold2); }
+
+/* 室温カード */
+.temp-card {
+background: white;
+border-radius: 20px;
+padding: 20px;
+margin-bottom: 16px;
+border: 1px solid var(–border);
+}
+
+.temp-card h3 {
+font-family: ‘Shippori Mincho’, serif;
+font-size: 14px;
+margin-bottom: 14px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.temp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.temp-box {
+background: var(–cold1);
+border-radius: 12px;
+padding: 14px 12px;
+text-align: center;
+border: 1px solid var(–cold2);
+}
+
+.temp-box .season { font-size: 11px; color: var(–sky); font-weight: 500; margin-bottom: 4px; }
+.temp-box .temp   { font-family: ‘Shippori Mincho’, serif; font-size: 22px; color: var(–blue); font-weight: 600; }
+.temp-box .unit   { font-size: 11px; color: var(–muted); }
+
+/* リセットボタン */
+.reset-btn {
+width: 100%;
+padding: 12px;
+background: none;
+border: 1.5px dashed var(–border);
+border-radius: 12px;
+color: var(–muted);
+font-family: ‘Noto Sans JP’, sans-serif;
+font-size: 12px;
+cursor: pointer;
+margin-bottom: 16px;
+transition: all 0.2s;
+}
+
+.reset-btn:hover { border-color: var(–muted); color: var(–text); }
+
+/* 出典 */
+.sources {
+background: #f8f5f0;
+border-radius: 14px;
+padding: 14px 16px;
+font-size: 11px;
+color: var(–muted);
+line-height: 2;
+margin-bottom: 16px;
+}
+
+.sources strong { color: var(–brown); display: block; margin-bottom: 4px; }
+.sources a { color: var(–orange); text-decoration: none; }
+
+/* 警告 */
+.warning {
+background: #fff8f0;
+border: 1px solid #f0d8b8;
+border-radius: 14px;
+padding: 14px 16px;
+font-size: 11.5px;
+color: #8a6030;
+line-height: 1.8;
+}
+</style>
+
+</head>
+<body>
+
+<div class="hero">
+  <div class="tag">NEWBORN SLEEP GUIDE</div>
+  <h1>新生児<br>寝かしつけガイド</h1>
+  <p>原因別に対処法を順番に試せる<br>チェックリスト形式のガイドです</p>
+</div>
+
+<!-- タブ -->
+
+<div class="tabs">
+  <button class="tab-btn hunger active" onclick="switchTab('hunger')">🍼 空腹で寝ない</button>
+  <button class="tab-btn cold"          onclick="switchTab('cold')">🥶 寒がって寝ない</button>
+</div>
+
+<!-- 空腹タブ -->
+
+<div class="content active" id="hunger">
+
+  <div class="sign-card">
+    <h3>🔍 空腹のサインを確認</h3>
+    <div class="signs">
+      <span class="sign-tag hunger-tag">口をモゴモゴ</span>
+      <span class="sign-tag hunger-tag">指しゃぶり</span>
+      <span class="sign-tag hunger-tag">服・ガーゼをしゃぶる</span>
+      <span class="sign-tag hunger-tag">ハスハス・フガフガ</span>
+      <span class="sign-tag hunger-tag">抱っこで弓反り</span>
+      <span class="sign-tag hunger-tag">ギャン泣き</span>
+    </div>
+  </div>
+
+  <div class="check-section">
+    <div class="section-head">
+      <div class="icon orange">🍼</div>
+      <h2>空腹時の寝かしつけ手順</h2>
+    </div>
+    <p class="desc">興奮しすぎている場合は①から順番に試してください</p>
+
+```
+<div class="steps" id="hungerSteps">
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">👆</span>小指で落ち着かせる</div>
+      <div class="step-detail">清潔な小指を口に入れて吸わせ、興奮を鎮める。弓反りがひどい場合はまずここから。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🤱</span>縦抱きで密着</div>
+      <div class="step-detail">体を密着させて心音を聞かせると興奮が落ち着く。肩に乗せて背中をさする。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🍼</span>授乳（薄暗い環境で）</div>
+      <div class="step-detail">手元が見える程度の薄暗い状態で授乳。明るすぎると目が覚めてしまう。ゆっくり30分かけて飲ませると空気を飲みにくい。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">💨</span>ゲップを促す</div>
+      <div class="step-detail">縦抱きで背中をさすり5〜10分。出なければ無理しなくてOK。右向きに寝かせると吐き戻し防止になる。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🔄</span>お腹マッサージ・自転車こぎ</div>
+      <div class="step-detail">ガスが溜まって苦しい可能性。お腹を時計回りに優しくマッサージ、または足を自転車こぎのように動かす。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🧸</span>おしゃぶり・おくるみ</div>
+      <div class="step-detail">お腹が満たされていても吸いたい欲求（吸啜欲求）がある。おしゃぶりで満たすか、おくるみで包んで安心感を与える。</div>
+    </div>
+  </div>
+
+  <div class="step hunger-step" onclick="toggleStep(this)">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">😴</span>右向きで寝かせる</div>
+      <div class="step-detail">授乳後15〜30分は縦抱きで落ち着かせてから寝かせる。吐き戻し防止に右向き、頭を少し高くするのが理想。</div>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+
+<button class="reset-btn" onclick="resetSteps('hungerSteps')">✓ チェックをリセット</button>
+
+  <div class="check-section">
+    <div class="section-head">
+      <div class="icon orange">⏰</div>
+      <h2>授乳量・タイミングの目安</h2>
+    </div>
+    <div class="steps">
+      <div class="step hunger-step" style="cursor:default">
+        <div class="step-num">📏</div>
+        <div class="step-body">
+          <div class="step-title">1回の満腹量の目安</div>
+          <div class="step-detail">体重(kg) × 20ml が1回の目安。3.8kgなら約76ml。ただし成長スパート中（生後2〜3週）は多めに求めることがある。</div>
+        </div>
+      </div>
+      <div class="step hunger-step" style="cursor:default">
+        <div class="step-num">🕐</div>
+        <div class="step-body">
+          <div class="step-title">次の授乳タイミング</div>
+          <div class="step-detail">母乳は約1.5〜2時間、ミルクは約2〜2.5時間で消化完了。生後1ヶ月未満は4〜5時間以上空く場合は起こして授乳を。</div>
+        </div>
+      </div>
+      <div class="step hunger-step" style="cursor:default">
+        <div class="step-num">🔴</div>
+        <div class="step-body">
+          <div class="step-title">授乳不足の判断基準</div>
+          <div class="step-detail">①おむつに問題なし ②お腹の不快感なし ③寝かしつけても寝ない ④指しゃぶり・口モゴモゴがある — この4つを確認してから授乳不足と判断する。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sources">
+    <strong>📚 参考サイト</strong>
+    <a href="https://www.richell.co.jp/babychell/how-to-put-baby-to-sleep/" target="_blank">リッチェル・べびちぇる「新生児を寝かせる方法」</a><br>
+    <a href="https://dna-am.co.jp/column/not-sleep/" target="_blank">MAMA Media「新生児が寝ない原因と対処法」</a><br>
+    <a href="https://jp.moony.com/ja/tips/baby/childcare/sleep/bm0011.html" target="_blank">おむつのムーニー「新生児が寝ない理由と対処法」（小児科医監修）</a>
+  </div>
+
+  <div class="warning">
+    ⚠️ 本ガイドは一般的な情報をまとめたものです。赤ちゃんの様子が普段と大きく異なる場合は、小児科・助産師にご相談ください。
+  </div>
+</div>
+
+<!-- 寒がりタブ -->
+
+<div class="content" id="cold">
+
+  <div class="sign-card">
+    <h3>🔍 寒がっているサインを確認</h3>
+    <div class="signs">
+      <span class="sign-tag cold-tag">お腹・背中がひんやり</span>
+      <span class="sign-tag cold-tag">顔色が悪い・青白い</span>
+      <span class="sign-tag cold-tag">唇が紫っぽい</span>
+      <span class="sign-tag cold-tag">体を丸めて縮こまる</span>
+      <span class="sign-tag cold-tag">手足の色が青白い</span>
+      <span class="sign-tag cold-tag">震えている</span>
+    </div>
+  </div>
+
+  <div class="temp-card">
+    <h3>🌡️ 快適な室温の目安（小児科医監修）</h3>
+    <div class="temp-grid">
+      <div class="temp-box">
+        <div class="season">春・夏</div>
+        <div class="temp">25〜28<span class="unit">℃</span></div>
+        <div class="unit">湿度 50〜60%</div>
+      </div>
+      <div class="temp-box">
+        <div class="season">秋・冬</div>
+        <div class="temp">20〜25<span class="unit">℃</span></div>
+        <div class="unit">湿度 50〜60%</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--muted);margin-top:12px;line-height:1.7;">
+      新生児の場合は冬でも<strong>23〜25℃</strong>がおすすめ。エアコンの風が直接当たらないよう位置を調整する。
+    </p>
+  </div>
+
+  <div class="check-section">
+    <div class="section-head">
+      <div class="icon blue">🥶</div>
+      <h2>寒がり時の寝かしつけ手順</h2>
+    </div>
+    <p class="desc">順番に確認・対処してください</p>
+
+```
+<div class="steps" id="coldSteps">
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🌡️</span>室温を確認・調整する</div>
+      <div class="step-detail">赤ちゃんが寝る高さに温度計を置いてチェック。冬は20〜25℃（新生児は23〜25℃推奨）に調整。急激な温度変化は避ける。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">👕</span>衣類を1枚追加する</div>
+      <div class="step-detail">大人より1枚多めが基本。長袖ボディスーツ＋ロンパース＋スリーパーが冬の基本。ただし着せすぎは汗・SIDSリスクに注意。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🌯</span>おくるみで包む</div>
+      <div class="step-detail">生後0〜3ヶ月はおくるみが最適。体を包まれる安心感＋保温効果で落ち着きやすい。寝返りができるようになったら卒業。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🤗</span>全身を毛布でくるんで抱っこ</div>
+      <div class="step-detail">体が冷えている場合は抱っこしながら毛布でくるんで全身を温める。心音を聞かせながら温めると落ち着きやすい。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">5</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🛏️</span>布団・寝具を確認する</div>
+      <div class="step-detail">冬はバスタオル＋毛布＋掛け布団が目安。大人用の重い布団は窒息リスクがあるためNG。ベビー用の軽い掛け布団を使う。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">6</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">💧</span>湿度を確認する</div>
+      <div class="step-detail">冬は暖房で乾燥しやすい。湿度50〜60%を目安に加湿器を使用。乾燥すると鼻詰まりで眠れなくなることがある。</div>
+    </div>
+  </div>
+
+  <div class="step cold-step" onclick="toggleStep(this)">
+    <div class="step-num">7</div>
+    <div class="step-body">
+      <div class="step-title"><span class="emoji">🩺</span>お腹・背中の温度を触って確認</div>
+      <div class="step-detail">手足が冷たくてもお腹・背中が温かければOK。お腹・背中まで冷たい＋顔色が悪い場合は要注意。小児科に相談を。</div>
+    </div>
+  </div>
+
+</div>
+```
+
+  </div>
+
+<button class="reset-btn" onclick="resetSteps('coldSteps')">✓ チェックをリセット</button>
+
+  <div class="check-section">
+    <div class="section-head">
+      <div class="icon blue">⚠️</div>
+      <h2>やってはいけないこと</h2>
+    </div>
+    <div class="steps">
+      <div class="step cold-step" style="cursor:default;background:#fff0f0;border-color:#ffd0d0">
+        <div class="step-num" style="background:#ffd0d0;color:#c04040">❌</div>
+        <div class="step-body">
+          <div class="step-title" style="color:#c04040">ホットカーペットの上で寝かせる</div>
+          <div class="step-detail">過度の体温上昇でSIDS（乳幼児突然死症候群）のリスクが増加。絶対にNG。</div>
+        </div>
+      </div>
+      <div class="step cold-step" style="cursor:default;background:#fff0f0;border-color:#ffd0d0">
+        <div class="step-num" style="background:#ffd0d0;color:#c04040">❌</div>
+        <div class="step-body">
+          <div class="step-title" style="color:#c04040">帽子をかぶせて寝かせる</div>
+          <div class="step-detail">頭部からの体温調節を妨げる。室内での就寝時は帽子NG。</div>
+        </div>
+      </div>
+      <div class="step cold-step" style="cursor:default;background:#fff0f0;border-color:#ffd0d0">
+        <div class="step-num" style="background:#ffd0d0;color:#c04040">❌</div>
+        <div class="step-body">
+          <div class="step-title" style="color:#c04040">大人用の重い布団をかける</div>
+          <div class="step-detail">窒息・体温上昇リスクあり。必ずベビー用の軽い寝具を使用する。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sources">
+    <strong>📚 参考サイト</strong>
+    <a href="https://world-family.co.jp/cetimes/newborn/education/article-473.html" target="_blank">ワールドファミリー「新生児に快適な室温は？」（小児科医監修）</a><br>
+    <a href="https://toysub.net/times/article/childcare_temperature/" target="_blank">トイサブ「新生児が快適に過ごせる室温とは？」（小児科医監修）</a><br>
+    <a href="https://news.yahoo.co.jp/expert/articles/0f3d24edba54c117b99df01e3adf35084c16b591" target="_blank">ねんねママ（小児スリープコンサルタント）「やってはいけない寒さ対策」</a><br>
+    <a href="https://www.babyband.jp/column/baby-back-switch" target="_blank">babyband「背中スイッチ対策」（小児科医監修）</a>
+  </div>
+
+  <div class="warning">
+    ⚠️ 本ガイドは一般的な情報をまとめたものです。顔色が悪い・震えが続くなど気になる症状がある場合は、すぐに小児科を受診してください。
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.tab-btn.${tab}`).classList.add('active');
+  document.getElementById(tab).classList.add('active');
+}
+
+function toggleStep(el) {
+  el.classList.toggle('done');
+  const num = el.querySelector('.step-num');
+  if (el.classList.contains('done')) {
+    num.textContent = '✓';
+  } else {
+    // 元の番号を復元
+    const steps = el.parentElement.querySelectorAll('.step');
+    steps.forEach((s, i) => {
+      const n = s.querySelector('.step-num');
+      if (!s.classList.contains('done')) n.textContent = i + 1;
+    });
+  }
+}
+
+function resetSteps(id) {
+  const steps = document.getElementById(id).querySelectorAll('.step');
+  steps.forEach((s, i) => {
+    s.classList.remove('done');
+    const num = s.querySelector('.step-num');
+    if (num.textContent === '✓') num.textContent = i + 1;
+  });
+}
+</script>
+
+</body>
+</html>
