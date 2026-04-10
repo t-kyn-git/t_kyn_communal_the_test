@@ -1,0 +1,696 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>モロー反射｜起こりやすい事象と対策まとめ</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --card: #1f2937;
+      --card2: #0b1220;
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 12px 30px rgba(0,0,0,.25);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: radial-gradient(1200px 600px at top left, rgba(96,165,250,.15), transparent 55%),
+                  radial-gradient(1000px 500px at top right, rgba(52,211,153,.12), transparent 50%),
+                  linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(96,165,250,.16), rgba(52,211,153,.10));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.15;
+      letter-spacing: .01em;
+    }
+
+    .lead {
+      margin: 0;
+      color: #dbeafe;
+      font-size: 16px;
+      max-width: 72ch;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .card {
+      background: rgba(17,24,39,.88);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h2, .card h3 {
+      margin: 0 0 10px;
+      line-height: 1.25;
+    }
+
+    .card p { margin: 0 0 10px; color: var(--muted); }
+    .card ul { margin: 10px 0 0 20px; color: var(--muted); }
+    .card li { margin: 6px 0; }
+
+    .span-8 { grid-column: span 8; }
+    .span-4 { grid-column: span 4; }
+    .span-6 { grid-column: span 6; }
+    .span-12 { grid-column: span 12; }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      background: rgba(3,7,18,.45);
+    }
+
+    th, td {
+      padding: 14px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: rgba(255,255,255,.05);
+      color: #f8fafc;
+      font-weight: 700;
+    }
+
+    td { color: var(--muted); }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .02em;
+      white-space: nowrap;
+    }
+
+    .tag.accent { background: rgba(96,165,250,.16); color: #bfdbfe; }
+    .tag.good { background: rgba(52,211,153,.16); color: #a7f3d0; }
+    .tag.warn { background: rgba(251,191,36,.16); color: #fde68a; }
+    .tag.danger { background: rgba(251,113,133,.16); color: #fecdd3; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .step {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+    }
+
+    .step .n {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(96,165,250,.16);
+      color: #bfdbfe;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .note {
+      border-left: 4px solid var(--warn);
+      padding: 12px 14px;
+      background: rgba(251,191,36,.08);
+      border-radius: 12px;
+      color: #f8fafc;
+    }
+
+    .danger-box {
+      border-left: 4px solid var(--danger);
+      padding: 12px 14px;
+      background: rgba(251,113,133,.08);
+      border-radius: 12px;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: #94a3b8;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .toc a {
+      color: #bfdbfe;
+      text-decoration: none;
+    }
+    .toc a:hover { text-decoration: underline; }
+
+    @media (max-width: 900px) {
+      .span-8, .span-4, .span-6, .span-12 { grid-column: span 12; }
+      .steps { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" id="top">
+      <div class="eyebrow">育児メモ / 1ファイル完結</div>
+      <h1>モロー反射｜起こりやすい事象と人の対策まとめ</h1>
+      <p class="lead">
+        モロー反射（びくっと両手を広げるような反応）が、どんな場面で出やすいか、家庭で何をすればよいかを一画面で整理したHTMLです。
+        実践時は「急な刺激を減らす」「頭と首をしっかり支える」「安全な寝かせ方を守る」が基本です。
+      </p>
+      <div class="pill-row">
+        <span class="pill">対象: 新生児〜乳児初期</span>
+        <span class="pill">用途: 観察 / 対応 / 受診目安</span>
+        <span class="pill">形式: ローカル保存して閲覧可能</span>
+      </div>
+    </section>
+
+    <section class="grid toc" aria-label="目次">
+      <div class="card span-12">
+        <h2>目次</h2>
+        <div class="pill-row">
+          <a class="pill" href="#what">モロー反射とは</a>
+          <a class="pill" href="#triggers">起こりやすい事象</a>
+          <a class="pill" href="#countermeasures">人の対策</a>
+          <a class="pill" href="#safe-sleep">安全な寝かしつけ</a>
+          <a class="pill" href="#checklist">チェックリスト</a>
+          <a class="pill" href="#redflags">受診・相談の目安</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="what">
+      <div class="card span-8">
+        <h2>モロー反射とは</h2>
+        <p>
+          赤ちゃんが<strong>急な刺激</strong>を受けたときに、<strong>両腕を広げる → すぼめる</strong>ような反応を見せる原始反射です。
+          眠っている最中や、抱き上げ・寝かせる瞬間にも見られます。
+        </p>
+        <p>
+          反射そのものは異常ではありませんが、頻繁に起こると<strong>覚醒して泣く</strong>、<strong>眠りが浅くなる</strong>、<strong>落ち着きにくくなる</strong>原因になります。
+        </p>
+      </div>
+      <div class="card span-4">
+        <h3>よくある見え方</h3>
+        <ul>
+          <li>ビクッと両腕が開く</li>
+          <li>手指がパッと開く</li>
+          <li>そのあと泣く</li>
+          <li>抱っこで少し落ち着く</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid" id="triggers">
+      <div class="card span-12">
+        <h2>起こりやすい事象</h2>
+        <p>「突然」「予想外」「支えが切れる」が合図になりやすいです。漏れを減らすため、家庭でよくある引き金をまとめます。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 24%">事象</th>
+                <th style="width: 18%">起こりやすさ</th>
+                <th>なぜ起きやすいか</th>
+                <th style="width: 24%">見え方</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>急に体勢を変える</td>
+                <td><span class="tag danger">非常に多い</span></td>
+                <td>抱き上げ、寝かせる、向きを変えるときに支持感が途切れるため</td>
+                <td>ビクッとして泣く</td>
+              </tr>
+              <tr>
+                <td>頭や首の支えが弱い</td>
+                <td><span class="tag danger">要注意</span></td>
+                <td>頭の急な揺れが「落下」っぽい刺激になるため</td>
+                <td>驚いて両手を広げる</td>
+              </tr>
+              <tr>
+                <td>抱っこから布団へ移す瞬間</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>温もりと支持感が一気になくなるため</td>
+                <td>再覚醒して泣く</td>
+              </tr>
+              <tr>
+                <td>寝返り・体の向きが急に変わる</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>本人が意図しない姿勢変化になるため</td>
+                <td>びくついて目を覚ます</td>
+              </tr>
+              <tr>
+                <td>おくるみを外した瞬間</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>腕の自由度が急に増えて刺激になりやすい</td>
+                <td>手足を広げる</td>
+              </tr>
+              <tr>
+                <td>大きな音</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>突然の音刺激で驚き反応が出やすい</td>
+                <td>反射後に泣く</td>
+              </tr>
+              <tr>
+                <td>ペットボトルが潰れる音</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>「パキッ」「バキッ」に近い突発音で、予測できない刺激だから</td>
+                <td>ビクッとする、目を開ける</td>
+              </tr>
+              <tr>
+                <td>くしゃみ</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>人のくしゃみは突然大きな音になりやすい</td>
+                <td>びくっとして泣く</td>
+              </tr>
+              <tr>
+                <td>咳</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>乾いた咳や連続した咳が突然入るため</td>
+                <td>目を覚ます、手足が開く</td>
+              </tr>
+              <tr>
+                <td>あくびの大きな声</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>近距離だと意外に強い音刺激になる</td>
+                <td>目が開く、顔をこわばらせる</td>
+              </tr>
+              <tr>
+                <td>くしゃみ・咳が連続する</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>1回だけでなく連続刺激で覚醒しやすくなる</td>
+                <td>眠りが浅くなる</td>
+              </tr>
+              <tr>
+                <td>ドアを閉める音</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>低音でも「ドン」と響くため</td>
+                <td>びくつく、寝つきが切れる</td>
+              </tr>
+              <tr>
+                <td>ドアノブを回す音・金具音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>カチャッという細かい金属音が刺激になる</td>
+                <td>目を開ける</td>
+              </tr>
+              <tr>
+                <td>鍵を落とす音</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>甲高い突発音で驚きやすい</td>
+                <td>びくっとする</td>
+              </tr>
+              <tr>
+                <td>スマホの通知音・着信音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>予測不能な電子音が刺激になる</td>
+                <td>起きる、表情が変わる</td>
+              </tr>
+              <tr>
+                <td>スマホのバイブレーション</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>近くで振動が伝わると不快になりやすい</td>
+                <td>体が反応する、落ち着かない</td>
+              </tr>
+              <tr>
+                <td>テレビの音量が急に上がる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>音の変化量が大きいほど驚きやすい</td>
+                <td>びくっとして泣く</td>
+              </tr>
+              <tr>
+                <td>掃除機</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>持続する大きな音と振動があるため</td>
+                <td>落ち着かず覚醒する</td>
+              </tr>
+              <tr>
+                <td>ドライヤー</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>高めの連続音が刺激になりやすい</td>
+                <td>手足を開く・泣く</td>
+              </tr>
+              <tr>
+                <td>洗濯機の脱水音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>低い振動音が響くと不快になりやすい</td>
+                <td>眠りが浅くなる</td>
+              </tr>
+              <tr>
+                <td>電子レンジの終了音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>突然の高い音が入りやすい</td>
+                <td>目を開ける</td>
+              </tr>
+              <tr>
+                <td>食器を置く音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>硬い面に当たる音が予期せず入るため</td>
+                <td>びくっとする</td>
+              </tr>
+              <tr>
+                <td>スプーン・フォークの金属音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>甲高い反響音が刺激になりやすい</td>
+                <td>目を覚ます</td>
+              </tr>
+              <tr>
+                <td>食器棚の開閉音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>扉の衝撃音が響くため</td>
+                <td>落ち着かない</td>
+              </tr>
+              <tr>
+                <td>床に物を落とす音</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>突然の衝突音は驚きやすい</td>
+                <td>びくつく、泣く</td>
+              </tr>
+              <tr>
+                <td>兄弟の大きな声・笑い声</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>音量の急変が起きやすい</td>
+                <td>目を開ける、覚醒する</td>
+              </tr>
+              <tr>
+                <td>犬の吠え声</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>突発的かつ大音量になりやすい</td>
+                <td>びくっとする</td>
+              </tr>
+              <tr>
+                <td>インターホン</td>
+                <td><span class="tag accent">多い</span></td>
+                <td>突然鳴るため予測しづらい</td>
+                <td>起きる、泣く</td>
+              </tr>
+              <tr>
+                <td>玄関の開閉音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>重い扉の音が響くため</td>
+                <td>表情がこわばる</td>
+              </tr>
+              <tr>
+                <td>水道の流水音が急に大きくなる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>音量変化が急だと驚きやすい</td>
+                <td>眠りが切れる</td>
+              </tr>
+              <tr>
+                <td>シャワー音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>連続的な高音が刺激になることがある</td>
+                <td>起きる、そわそわする</td>
+              </tr>
+              <tr>
+                <td>トイレの流す音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>突然の水音と反響でびっくりしやすい</td>
+                <td>目が開く</td>
+              </tr>
+              <tr>
+                <td>エアコンの風向きが急に変わる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>風の感覚変化が刺激になることがある</td>
+                <td>体をこわばらせる</td>
+              </tr>
+              <tr>
+                <td>冷たい手で触れる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>皮膚刺激と温度差が驚きになりやすい</td>
+                <td>びくっとする</td>
+              </tr>
+              <tr>
+                <td>服の着脱</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>腕や頭が通る瞬間に支持感が減るため</td>
+                <td>反る、泣く</td>
+              </tr>
+              <tr>
+                <td>おむつ替えで脚を持ち上げる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>股関節周辺の不安定感が出やすい</td>
+                <td>手足を開く、泣く</td>
+              </tr>
+              <tr>
+                <td>おむつテープをはがす音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>軽い破裂音に近い刺激になることがある</td>
+                <td>目を開ける</td>
+              </tr>
+              <tr>
+                <td>げっぷが出そうなときの体の張り</td>
+                <td><span class="tag warn">間接的に多い</span></td>
+                <td>不快感で睡眠が浅くなる</td>
+                <td>反る、うなる、泣く</td>
+              </tr>
+              <tr>
+                <td>ひきつけるようなひっく</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>自分の体の不意な動きが刺激になる</td>
+                <td>一瞬起きる</td>
+              </tr>
+              <tr>
+                <td>泣き声そのもの</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>自分の声や近くの泣き声が刺激になることがある</td>
+                <td>さらに興奮する</td>
+              </tr>
+              <tr>
+                <td>寝床の硬さや不安定さ</td>
+                <td><span class="tag warn">間接的に多い</span></td>
+                <td>支持感が弱くなると反射が出やすい</td>
+                <td>落ち着かない</td>
+              </tr>
+              <tr>
+                <td>照明の点灯・消灯</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>急な明暗変化が刺激になる</td>
+                <td>目を開ける</td>
+              </tr>
+              <tr>
+                <td>カーテンが急に開く</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>光の変化が急で、驚きやすい</td>
+                <td>びくつく</td>
+              </tr>
+              <tr>
+                <td>周囲の話し声が急に増える</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>音量と情報量が増えるため</td>
+                <td>眠りが浅くなる</td>
+              </tr>
+              <tr>
+                <td>上の階や外の物音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>天井や壁越しでも突発音は伝わる</td>
+                <td>びくっとする</td>
+              </tr>
+              <tr>
+                <td>スマホのカメラシャッター音</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>短く鋭い電子音が入るため</td>
+                <td>目を開ける</td>
+              </tr>
+              <tr>
+                <td>授乳の姿勢が崩れる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>吸っている途中で支持が変わるため</td>
+                <td>離す、泣く</td>
+              </tr>
+              <tr>
+                <td>哺乳瓶の角度が急に変わる</td>
+                <td><span class="tag warn">やや多い</span></td>
+                <td>飲みながらの姿勢変化が刺激になるため</td>
+                <td>むせる、びくつく</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="countermeasures">
+      <div class="card span-12">
+        <h2>人の対策</h2>
+        <p>目的は「反射をゼロにすること」ではなく、<strong>反射を起こりにくくして、起きても落ち着ける状態にすること</strong>です。</p>
+        <div class="steps">
+          <div class="step">
+            <div class="n">1</div>
+            <h3>持ち上げ方をゆっくりにする</h3>
+            <p>頭と首をしっかり支え、急な角度変化を避けます。布団から抱き上げるときは、まず手のひらで体幹を安定させます。</p>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <h3>刺激を減らす</h3>
+            <p>音を小さくし、照明を落とし、話しかけを最小限にします。必要以上に触りすぎないことも有効です。</p>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <h3>抱っこで支持感を作る</h3>
+            <p>縦抱き、胸元での密着、肩に頭を安定させる形は、驚き刺激を減らしやすいです。</p>
+          </div>
+          <div class="step">
+            <div class="n">4</div>
+            <h3>おくるみやスリーパーを使う</h3>
+            <p>腕のばたつきを抑えて、眠りに入りやすくします。足はきつく固定しないことが前提です。</p>
+          </div>
+          <div class="step">
+            <div class="n">5</div>
+            <h3>げっぷ・お腹のケア</h3>
+            <p>授乳後は縦抱きでげっぷを促し、お腹の張りが強そうなら少し様子を見ます。</p>
+          </div>
+          <div class="step">
+            <div class="n">6</div>
+            <h3>眠いサインを早めに拾う</h3>
+            <p>あくび、目をこする、視線が合いにくい、ぐずり始めた段階で寝かしつけに入ります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="safe-sleep">
+      <div class="card span-6">
+        <h2>安全な寝かしつけの基本</h2>
+        <ul>
+          <li>仰向けで寝かせる</li>
+          <li>顔まわりに布をかぶせない</li>
+          <li>寝具を柔らかくしすぎない</li>
+          <li>暑すぎないようにする</li>
+          <li>おくるみはきつすぎないようにする</li>
+        </ul>
+      </div>
+      <div class="card span-6">
+        <h2>おくるみを使うときの注意</h2>
+        <div class="note">
+          腕を落ち着かせる目的には役立ちますが、<strong>過度に締めない</strong>、<strong>暑くしすぎない</strong>、<strong>うつ伏せで使わない</strong>ことが重要です。
+        </div>
+        <p style="margin-top: 12px;">足や股関節を強く固定しない、顔が埋もれない、寝返りが始まったら使い方を見直す、という点も外せません。</p>
+      </div>
+    </section>
+
+    <section class="grid" id="checklist">
+      <div class="card span-12">
+        <h2>チェックリスト</h2>
+        <p>モロー反射が気になるときは、以下を順番に確認します。</p>
+        <div class="steps">
+          <div class="step">
+            <div class="n">A</div>
+            <h3>刺激</h3>
+            <p>音、光、抱き上げ方、移動の急さが強くないか。</p>
+          </div>
+          <div class="step">
+            <div class="n">B</div>
+            <h3>眠気</h3>
+            <p>眠いのに寝られず、過覚醒になっていないか。</p>
+          </div>
+          <div class="step">
+            <div class="n">C</div>
+            <h3>不快</h3>
+            <p>空腹、げっぷ不足、おむつ、暑さ寒さがないか。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="redflags">
+      <div class="card span-12">
+        <h2>受診・相談の目安</h2>
+        <div class="danger-box">
+          反射自体は正常でも、<strong>片側だけ</strong>、<strong>極端に強い</strong>、<strong>月齢に対して長く続く</strong>、<strong>ぐったりしている</strong>、<strong>飲めない</strong>、<strong>発熱</strong>、<strong>呼吸が苦しそう</strong>、<strong>泣き方が明らかにいつもと違う</strong>場合は、別の問題を疑って相談したほうがよいです。
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card span-12">
+        <h2>まとめ</h2>
+        <p>
+          モロー反射は、<strong>急な刺激</strong>、<strong>支えの不足</strong>、<strong>眠さや不快</strong>で目立ちやすくなります。
+          家庭での対応は、<strong>ゆっくり動かす</strong>、<strong>頭と首を支える</strong>、<strong>刺激を減らす</strong>、<strong>おくるみや抱っこで支持感を作る</strong>、<strong>安全な寝かしつけを守る</strong>の5本柱です。
+        </p>
+      </div>
+    </section>
+
+    <div class="footer">
+      このページは家庭向けの整理メモです。症状が強い、いつもと違う、心配が大きい場合は小児科へ相談してください。
+    </div>
+  </main>
+</body>
+</html>

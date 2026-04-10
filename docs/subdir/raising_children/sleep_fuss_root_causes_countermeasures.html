@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>寝ぐずり｜根本要因と対策まとめ</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(17, 24, 39, .90);
+      --card: rgba(31, 41, 55, .82);
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --warn: #fbbf24;
+      --danger: #fb7185;
+      --border: rgba(255,255,255,.12);
+      --shadow: 0 16px 36px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(96,165,250,.16), transparent 55%),
+        radial-gradient(800px 450px at 90% 10%, rgba(52,211,153,.12), transparent 50%),
+        linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 28px 18px 56px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(96,165,250,.16), rgba(52,211,153,.10));
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.08); border: 1px solid var(--border);
+      color: var(--muted); font-size: 14px; margin-bottom: 14px;
+    }
+    h1 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 44px); line-height: 1.15; }
+    .lead { margin: 0; color: #dbeafe; max-width: 76ch; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 999px;
+      background: rgba(255,255,255,.07); border: 1px solid var(--border);
+      color: var(--text); font-size: 14px; text-decoration: none;
+    }
+    .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; margin-top: 18px; }
+    .card {
+      background: var(--panel); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+    }
+    .card h2, .card h3 { margin: 0 0 10px; line-height: 1.25; }
+    .card p, .card li { color: var(--muted); }
+    .card ul { margin: 10px 0 0 20px; }
+    .span-12 { grid-column: span 12; }
+    .span-8 { grid-column: span 8; }
+    .span-6 { grid-column: span 6; }
+    .span-4 { grid-column: span 4; }
+    .table-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid var(--border); }
+    table { width: 100%; min-width: 900px; border-collapse: collapse; background: rgba(3,7,18,.44); }
+    th, td { padding: 13px 14px; border-bottom: 1px solid var(--border); vertical-align: top; text-align: left; }
+    th { background: rgba(255,255,255,.05); color: #f8fafc; font-weight: 700; }
+    td { color: var(--muted); }
+    .tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .accent { background: rgba(96,165,250,.16); color: #bfdbfe; }
+    .good { background: rgba(52,211,153,.16); color: #a7f3d0; }
+    .warn { background: rgba(251,191,36,.16); color: #fde68a; }
+    .danger { background: rgba(251,113,133,.16); color: #fecdd3; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .step {
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border: 1px solid var(--border); border-radius: 18px; padding: 16px;
+    }
+    .n {
+      width: 34px; height: 34px; border-radius: 999px; display: inline-grid; place-items: center;
+      background: rgba(96,165,250,.16); color: #bfdbfe; font-weight: 800; margin-bottom: 10px;
+    }
+    .note, .danger-box {
+      padding: 12px 14px; border-radius: 12px; border-left: 4px solid var(--warn); background: rgba(251,191,36,.08);
+    }
+    .danger-box { border-left-color: var(--danger); background: rgba(251,113,133,.08); }
+    .footer { margin-top: 18px; color: #94a3b8; font-size: 13px; text-align: center; }
+    .toc a { color: #bfdbfe; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    @media (max-width: 900px) {
+      .span-8, .span-6, .span-4, .span-12 { grid-column: span 12; }
+      .steps, .two-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" id="top">
+      <div class="eyebrow">育児メモ / 寝ぐずり対策</div>
+      <h1>寝ぐずりの根本要因と対策まとめ</h1>
+      <p class="lead">
+        寝ぐずりは「眠いのに寝つけない」だけでなく、空腹・お腹の張り・刺激過多・眠りの浅さ・生活リズムの未成熟など、複数要因が重なって起こります。
+        ここでは根本要因と、家庭での具体的な対策、さらに「放置してセルフねんねできるか」を整理します。
+      </p>
+      <div class="pill-row">
+        <a class="pill" href="#causes">根本要因</a>
+        <a class="pill" href="#countermeasures">対策</a>
+        <a class="pill" href="#self-soothe">セルフねんね</a>
+        <a class="pill" href="#checklist">観察ポイント</a>
+        <a class="pill" href="#redflags">受診目安</a>
+      </div>
+    </section>
+
+    <section class="grid toc" aria-label="目次">
+      <div class="card span-12">
+        <h2>目次</h2>
+        <div class="pill-row">
+          <a class="pill" href="#what">寝ぐずりとは</a>
+          <a class="pill" href="#causes">根本要因</a>
+          <a class="pill" href="#countermeasures">対策</a>
+          <a class="pill" href="#self-soothe">放置でセルフねんね</a>
+          <a class="pill" href="#checklist">チェックリスト</a>
+          <a class="pill" href="#redflags">受診・相談の目安</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="what">
+      <div class="card span-8">
+        <h2>寝ぐずりとは</h2>
+        <p>
+          眠るタイミングなのに、赤ちゃんが泣く・反る・落ち着かない・抱っこでしか寝ない、という状態です。
+          典型的には「眠いのに寝るスイッチが入らない」状態で、単なるわがままではありません。
+        </p>
+        <p>
+          特に月齢が低いほど、睡眠のまとまりが未発達で、ちょっとした刺激や不快感で寝ぐずりが強くなります。
+        </p>
+      </div>
+      <div class="card span-4">
+        <h3>よくある見え方</h3>
+        <ul>
+          <li>目をこする</li>
+          <li>あくびをする</li>
+          <li>抱くと少し落ち着く</li>
+          <li>置くと泣く</li>
+          <li>反る・うなる</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid" id="causes">
+      <div class="card span-12">
+        <h2>根本要因</h2>
+        <p>寝ぐずりは単独原因より、複数の「眠れない条件」が重なって起きることが多いです。</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 18%">要因</th>
+                <th style="width: 14%">重要度</th>
+                <th>何が起きているか</th>
+                <th style="width: 22%">典型的なサイン</th>
+                <th style="width: 18%">セルフねんねできるか</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>眠いのに寝つけない</td>
+                <td><span class="tag danger">最重要</span></td>
+                <td>眠気が強すぎて、逆に覚醒が上がる「過覚醒」状態になる</td>
+                <td>泣く、反る、落ち着かない</td>
+                <td><span class="tag danger">難しい</span></td>
+              </tr>
+              <tr>
+                <td>昼寝不足・起きている時間が長すぎる</td>
+                <td><span class="tag danger">最重要</span></td>
+                <td>疲れが溜まり、寝入りの制御が難しくなる</td>
+                <td>夕方以降に特に崩れる</td>
+                <td><span class="tag danger">難しい</span></td>
+              </tr>
+              <tr>
+                <td>刺激過多</td>
+                <td><span class="tag warn">重要</span></td>
+                <td>音・光・人の出入り・抱っこの切り替えなどで興奮しやすくなる</td>
+                <td>目が冴える、泣きが強い</td>
+                <td><span class="tag warn">低い</span></td>
+              </tr>
+              <tr>
+                <td>空腹 / 飲み足りない</td>
+                <td><span class="tag warn">重要</span></td>
+                <td>落ち着くためのエネルギーが足りない</td>
+                <td>口を探す、吸いたがる</td>
+                <td><span class="tag warn">低い</span></td>
+              </tr>
+              <tr>
+                <td>お腹の張り / げっぷ不足</td>
+                <td><span class="tag warn">重要</span></td>
+                <td>気持ち悪さで寝入りが妨げられる</td>
+                <td>反る、うなる、苦しそう</td>
+                <td><span class="tag warn">低い</span></td>
+              </tr>
+              <tr>
+                <td>おむつ・暑さ寒さ・服の不快</td>
+                <td><span class="tag warn">重要</span></td>
+                <td>微細な不快感が積み上がる</td>
+                <td>足をばたつかせる、機嫌が悪い</td>
+                <td><span class="tag warn">低い</span></td>
+              </tr>
+              <tr>
+                <td>眠りが浅い</td>
+                <td><span class="tag accent">よくある</span></td>
+                <td>眠りの移行がまだ安定せず、ちょっとした刺激で起きる</td>
+                <td>置くと起きる、浅く寝る</td>
+                <td><span class="tag warn">状況次第</span></td>
+              </tr>
+              <tr>
+                <td>生活リズムの未成熟</td>
+                <td><span class="tag accent">よくある</span></td>
+                <td>昼夜の区別がまだ弱く、寝る時間が固定されない</td>
+                <td>日によってばらつく</td>
+                <td><span class="tag warn">状況次第</span></td>
+              </tr>
+              <tr>
+                <td>気分転換不足</td>
+                <td><span class="tag accent">よくある</span></td>
+                <td>体を動かせず、眠気の抜け道がない</td>
+                <td>ぐずり続ける</td>
+                <td><span class="tag warn">状況次第</span></td>
+              </tr>
+              <tr>
+                <td>体調のゆらぎ</td>
+                <td><span class="tag warn">要観察</span></td>
+                <td>鼻づまり、便秘、発熱前、咳、くしゃみなどで不快が増える</td>
+                <td>普段より泣きが強い</td>
+                <td><span class="tag danger">難しい</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="countermeasures">
+      <div class="card span-12">
+        <h2>対策</h2>
+        <p>一気に全部やる必要はなく、<strong>眠る前の刺激を減らす</strong>ことが中心です。</p>
+        <div class="steps">
+          <div class="step">
+            <div class="n">1</div>
+            <h3>寝かせる前に過覚醒を止める</h3>
+            <p>明るさを落とし、話しかけを減らし、抱っこや密着で安心感を作ります。</p>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <h3>空腹・げっぷ・おむつを先に潰す</h3>
+            <p>寝る直前に不快が残ると、寝ぐずりが長引きます。授乳後は縦抱きで少し様子見します。</p>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <h3>眠いサインを早めに拾う</h3>
+            <p>あくび、視線が合いにくい、抱くと重くなる、動きが鈍い段階で寝かしつけに入ります。</p>
+          </div>
+          <div class="step">
+            <div class="n">4</div>
+            <h3>同じ手順を固定する</h3>
+            <p>毎回ほぼ同じ順番にすると、寝る前の合図として認識されやすくなります。</p>
+          </div>
+          <div class="step">
+            <div class="n">5</div>
+            <h3>おくるみ・スリーパーを活用する</h3>
+            <p>手足のバタつきやモロー反射を抑えて、寝入りの妨害を減らします。きつすぎは不可です。</p>
+          </div>
+          <div class="step">
+            <div class="n">6</div>
+            <h3>寝床へ置くタイミングを調整する</h3>
+            <p>完全に寝落ちしてからより、「少し落ち着いた」段階で置くほうがうまくいくことがあります。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="self-soothe">
+      <div class="card span-8">
+        <h2>放置でセルフねんねするか</h2>
+        <p>
+          これは<strong>月齢と個人差が大きい</strong>です。一般に、成長すると自分で再入眠しやすくなりますが、
+          低月齢ではまだ難しいことが多いです。
+        </p>
+        <p>
+          つまり、<strong>「放置したら必ず寝る」ではなく、「少し様子を見て、落ち着くならセルフねんねの可能性がある」</strong>
+          という扱いが現実的です。
+        </p>
+      </div>
+      <div class="card span-4">
+        <h3>判断の目安</h3>
+        <ul>
+          <li>短時間で泣きが弱まる</li>
+          <li>指しゃぶり・手を口へ持っていく</li>
+          <li>体の動きが徐々に減る</li>
+          <li>声かけなしでも再入眠する</li>
+        </ul>
+      </div>
+      <div class="card span-12">
+        <div class="note">
+          <strong>放置の考え方</strong>：すぐ完全放置ではなく、まずは安全な環境を整えたうえで、短時間だけ見守るのが基本です。
+          泣きが強くなる、息が荒い、反り返りが強い、明らかに不快が強い場合は、放置よりケアを優先します。
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="checklist">
+      <div class="card span-12">
+        <h2>観察チェックリスト</h2>
+        <div class="two-col">
+          <div>
+            <ul>
+              <li>最後の睡眠からどれくらい起きているか</li>
+              <li>授乳量は足りているか</li>
+              <li>げっぷは出たか</li>
+              <li>おむつは不快でないか</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>音・光・人の出入りが多くないか</li>
+              <li>反り返りや強い泣きがあるか</li>
+              <li>指しゃぶりや吸う仕草があるか</li>
+              <li>少し待つと落ち着くタイプか</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="redflags">
+      <div class="card span-12">
+        <h2>受診・相談の目安</h2>
+        <div class="danger-box">
+          ぐずりだけでなく、<strong>発熱</strong>、<strong>飲みが明らかに悪い</strong>、<strong>ぐったりしている</strong>、<strong>呼吸が苦しそう</strong>、<strong>嘔吐が多い</strong>、
+          <strong>いつもと違う泣き方</strong>、<strong>泣きが長時間止まらない</strong>場合は、寝ぐずりだけと決めつけずに相談したほうがよいです。
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card span-12">
+        <h2>まとめ</h2>
+        <p>
+          寝ぐずりの根本には、<strong>眠いのに寝られない</strong>、<strong>刺激過多</strong>、<strong>空腹や不快</strong>、<strong>生活リズムの未成熟</strong>があり、
+          対策は<strong>刺激を減らす</strong>、<strong>不快を先に潰す</strong>、<strong>寝る前の流れを固定する</strong>が基本です。
+          セルフねんねは可能性はあるものの、放置前提ではなく、短時間見守りと安全確保を優先します。
+        </p>
+      </div>
+    </section>
+
+    <div class="footer">家庭向けの整理メモです。月齢や体調で対応は変わるため、心配が強い場合は小児科へ相談してください。</div>
+  </main>
+</body>
+</html>
