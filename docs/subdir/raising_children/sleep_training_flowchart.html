@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>寝かしつけフローチャート</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN",
+                   "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      background: #f7f7fb;
+      color: #222;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      padding: 20px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+    p.note {
+      margin: 0 0 18px;
+      color: #555;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .mermaid {
+      overflow-x: auto;
+      background: #fcfcff;
+      border: 1px solid #e5e7ef;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .footer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: #666;
+      line-height: 1.6;
+    }
+    code {
+      background: #f0f2f7;
+      padding: 0 4px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>寝かしつけフローチャート</h1>
+      <p class="note">
+        まずは「泣いている理由を1つずつ潰す」方針です。最終ゴールは「寝る」に固定しています。
+        必要に応じて、各分岐の文言はそのまま編集できます。
+      </p>
+
+      <div class="mermaid">
+flowchart TD
+    A[寝ない / ぐずる / 泣く] --> B{お腹は空いていそう?}
+    B -- はい --> B1[授乳 / ミルク]
+    B1 --> Z[縦抱きで少し落ち着かせる]
+    Z --> Y{まだ寝ない?}
+
+    B -- いいえ --> C{おむつは不快?}
+    C -- はい --> C1[おむつ交換]
+    C1 --> Y
+
+    C -- いいえ --> D{げっぷ・空気が苦しそう?}
+    D -- はい --> D1[げっぷ / 縦抱き]
+    D1 --> Y
+
+    D -- いいえ --> E{室温・明るさ・音が合っている?}
+    E -- いいえ --> E1[室温調整 / 暗くする / 音を減らす]
+    E1 --> Y
+
+    E -- はい --> F{眠すぎて興奮していない?}
+    F -- はい --> F1[刺激を減らす / 抱っこで静かに]
+    F1 --> Y
+
+    F -- いいえ --> G{抱っこ・ゆらゆらで落ち着く?}
+    G -- はい --> G1[一定リズムで抱っこ / トントン]
+    G1 --> H{まぶたが重い?}
+
+    G -- いいえ --> I{おくるみ / 体の固定が有効?}
+    I -- はい --> I1[安全に配慮して、おくるみ or 手を包む]
+    I1 --> H
+    I -- いいえ --> J{眠りのルーティンを開始}
+    J --> J1[同じ順番で毎回実施]
+    J1 --> K[絵本 / 子守唄 / 暗めの部屋]
+    K --> H
+
+    H -- はい --> L[ベッドへ移す]
+    L --> M{また起きる?}
+    M -- いいえ --> N[寝る]
+    M -- はい --> O[トントン / 声かけを最小限]
+    O --> N
+
+    Y -- いいえ --> G
+    Y -- はい --> E
+
+    classDef goal fill:#e8fff1,stroke:#2c9b5f,stroke-width:2px,color:#114d2a;
+    classDef step fill:#eef3ff,stroke:#5b7bd5,color:#20315f;
+    classDef decision fill:#fff6e6,stroke:#d49b2a,color:#5c4300;
+    classDef action fill:#f4f4f4,stroke:#999,color:#222;
+
+    class N goal;
+    class A,B,C,D,E,F,G,H,M,Y decision;
+    class B1,C1,D1,E1,F1,G1,I1,J1,K,L,O,Z action;
+      </div>
+
+      <div class="footer">
+        <div>使い方: このまま <code>.html</code> で保存してブラウザで開けます。</div>
+        <div>Mermaid を使っているので、図の文言は HTML 内のテキストを編集すれば差し替えできます。</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      flowchart: { useMaxWidth: true, htmlLabels: true }
+    });
+  </script>
+</body>
+</html>
