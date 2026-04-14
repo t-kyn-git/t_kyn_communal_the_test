@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Policy for Using Generative AI in Coding Automation</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --accent: #60a5fa;
+      --accent-2: #34d399;
+      --border: #334155;
+      --code: #0b1020;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+      background: linear-gradient(180deg, #0b1120 0%, #111827 100%);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 20px 56px;
+    }
+    header {
+      background: linear-gradient(135deg, rgba(96,165,250,.18), rgba(52,211,153,.12));
+      border: 1px solid rgba(148,163,184,.2);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.25);
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+      letter-spacing: .02em;
+    }
+    .lead { margin: 0; color: var(--muted); }
+    section {
+      background: rgba(17,24,39,.92);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px;
+      margin-top: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.18);
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.25rem;
+      color: #f8fafc;
+      border-left: 4px solid var(--accent);
+      padding-left: 12px;
+    }
+    h3 {
+      margin: 18px 0 8px;
+      font-size: 1.03rem;
+      color: #f8fafc;
+    }
+    ul { margin: 10px 0 0 22px; padding: 0; }
+    li { margin: 6px 0; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: rgba(31,41,55,.9);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      border-radius: 999px;
+      background: rgba(96,165,250,.14);
+      border: 1px solid rgba(96,165,250,.28);
+      color: #bfdbfe;
+      font-size: .88rem;
+    }
+    .note {
+      background: rgba(52,211,153,.08);
+      border: 1px solid rgba(52,211,153,.22);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: #d1fae5;
+      margin-top: 12px;
+    }
+    pre {
+      overflow: auto;
+      background: var(--code);
+      color: #e2e8f0;
+      border: 1px solid #243044;
+      border-radius: 14px;
+      padding: 16px;
+      line-height: 1.5;
+      font-size: .9rem;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    .mermaid-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      overflow-x: auto;
+      border: 1px solid #cbd5e1;
+    }
+    .footer {
+      margin-top: 18px;
+      color: #94a3b8;
+      font-size: .92rem;
+      text-align: right;
+    }
+    a { color: #93c5fd; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Policy for Using Generative AI in Coding Automation</h1>
+      <p class="lead">A role-based workflow for Claude, Codex, and ChatGPT, using local folders and temporary branches to keep code changes controlled and testable.</p>
+    </header>
+
+    <section>
+      <h2>1. Overall Policy</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="badge">Priority</span>
+          <p style="margin:8px 0 0;">Claude &gt; Codex &gt; ChatGPT &gt; Copilot &gt; Google AI Studio = Gemini</p>
+        </div>
+        <div class="card">
+          <span class="badge">Core Principle</span>
+          <p style="margin:8px 0 0;">Each AI has a fixed role, and editing scope, verification steps, and branch handling are standardized.</p>
+        </div>
+        <div class="card">
+          <span class="badge">Safety</span>
+          <p style="margin:8px 0 0;">Temporary branches and tests are mandatory to avoid direct changes to the main line.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Workflow</h2>
+      <div class="mermaid-box">
+        <div class="mermaid">
+graph LR
+Claude --> LocalClaudeFolder --> LocalRepository -- Claude Way--> RemotoBranch -- merge -->MainBranch
+Codex --> LocalCodexFolder --> LocalRepository -- Codex Way --> RemotoTmpBranch -- merge --> RemotoBranch
+ChatGPT --> B["ZipFiles with Extract"] -->LocalRepository -- ChatGPT Way --> RemotoTmpBranch
+RemotoTmpBranch -- Check --> C["Unit And Merged Test"]
+RemotoBranch -- Check --> C["Unit And Merged Test"]
+C -- OK --> RemotoTmpBranch
+C -- OK --> RemotoBranch
+        </div>
+      </div>
+      <div class="note">Branch names can be standardized according to the operation. The key is to separate workspaces by AI and promote changes only after verification.</div>
+    </section>
+
+    <section>
+      <h2>3. Claude Usage</h2>
+      <ul>
+        <li>Purpose: coding automation. Use it when official documentation needs to be checked as well.</li>
+        <li>Model: Sonnet 4.6 as the highest-performance model assumed here.</li>
+        <li>MCPs: Context7 and FileSystem.</li>
+        <li>Best use case: file creation and modification should generally be done in Claude Desktop.</li>
+        <li>Rate limits vary by situation, so keep the editing scope narrow.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4. Codex Usage</h2>
+      <ul>
+        <li>Purpose: coding automation. Suitable for tasks that do not require checking official documentation first.</li>
+        <li>Model: GPT-5.4 as the highest-performance model assumed here.</li>
+        <li>MCPs: Context7 and FileSystem.</li>
+        <li>Operation: create a temporary branch, commit changes, verify them, and delete the branch once confirmed.</li>
+        <li>Install Microsoft.VCRedist.2015+.x64 in advance because Codex may require it to launch.</li>
+      </ul>
+
+      <h3>Installation example</h3>
+      <pre><code>winget install --id Microsoft.VCRedist.2015+.x64 -e</code></pre>
+    </section>
+
+    <section>
+      <h2>5. Branch Operation Rules</h2>
+      <ul>
+        <li>RemotoTmpBranch is treated as the intermediate workspace for Codex and ChatGPT.</li>
+        <li>RemotoBranch is treated as the verification stage before upstream integration.</li>
+        <li>RemotoBranch is deleted periodically so that unnecessary history does not accumulate.</li>
+        <li>Only changes that pass unit tests and merge tests are allowed to proceed.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>6. Additional Notes</h2>
+      <ul>
+        <li>Claude is the primary tool for design and edits.</li>
+        <li>Codex is best for short, iterative implementation assistance.</li>
+        <li>ChatGPT is used mainly for organizing, transforming, and extracting materials.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>7. Original Mermaid Source</h2>
+      <pre><code>graph LR
+Claude --&gt; LocalClaudeFolder --&gt; LocalRepository -- Claude Way--&gt; RemotoBranch -- merge --&gt;MainBranch
+Codex --&gt; LocalCodexFolder --&gt; LocalRepository -- Codex Way --&gt; RemotoTmpBranch -- merge --&gt; RemotoBranch
+ChatGPT --&gt; B[&quot;ZipFiles with Extract&quot;] --&gt;LocalRepository -- ChatGPT Way --&gt; RemotoTmpBranch
+RemotoTmpBranch -- Check --&gt; C[&quot;Unit And Merged Test&quot;]
+RemotoBranch -- Check --&gt; C[&quot;Unit And Merged Test&quot;]
+C -- OK --&gt; RemotoTmpBranch 
+C -- OK --&gt; RemotoBranch</code></pre>
+    </section>
+
+    <div class="footer">Generated as a standalone HTML document.</div>
+  </div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+  </script>
+</body>
+</html>
