@@ -22,7 +22,8 @@ A module will be created to test various functions.
   * Use Visual Studio Code for development.
 
 * Content Being Developed
-  * 1) Django Application Development
+  * **1) Django Application Development**
+    * **CAUTION: This project is currently a lower priority, so updates may be infrequent.**
     * Operation Flow
       * Develop Django applications using Visual Studio Code.
       * Commit and upload to a Github repository.
@@ -49,12 +50,15 @@ A module will be created to test various functions.
       * stock invest analyze tool (❌)
       * cooking recipe viewer (❌)
 
-  * 2) Web Hosting Development
+  * **2) Web Hosting Development**
     * Functionality checks for HTML, CSS, and JavaScript.
     * Use as public news site (under consideration).
+    * This also serves as a platform for recording and sharing knowledge related to childcare, household tasks, and daily life.
 
-  * 3) Testing New Features in Github Actions
-    * Trial development of features that may incur costs in private repositories.
+  * **3) Testing New Features in Github Actions**
+    * Trial development of features that may incur costs in repositories.
+    * Develop and validate various automation features that can be safely made public.
+    * **This is a only public repository, so the Github Actions of private repositories is trade secret.**
 
 * Notes
   * There are many possibilities:
