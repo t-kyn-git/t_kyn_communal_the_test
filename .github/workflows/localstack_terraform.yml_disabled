@@ -1,0 +1,318 @@
+name: TFLocal Workflow
+
+permissions:
+  contents: write
+
+# before ph2 testing
+on:
+  push:
+    paths:
+      - "terraform_t_kyn/**"
+      - "terraform/**"
+      - "lambda/**"
+      - "scripts/save_aws_outputs.sh"
+      - ".github/workflows/localstack_terraform.yml"
+      - "!**aws_output_*.txt"
+    branches:
+      - main
+      - "*_communal_the_test"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  terraform-local:
+    runs-on: ubuntu-latest
+    services:
+      docker:
+        image: docker:19.03.12  # 互換性のある Docker バージョンを指定
+        options: --privileged    # Docker コンテナ内で Docker を実行するためのオプション
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # # LocalStack のセットアップ
+    # - name: Set up LocalStack
+    #   uses: localstack/localstack-action@v1
+    #   with:
+    #     services: ec2, s3, apigateway, lambda
+
+    # - name: Set up LocalStack
+    #   run: |
+    #     docker run --rm -d -p 4566:4566 localstack/localstack
+    # - name: Set up LocalStack
+      # run: |
+      #   docker run --rm -d -p 4566:4566 -p 4571:4571 localstack/localstack -e LAMBDA_EXECUTOR=docker
+      #   sleep 10  # コンテナ起動待機
+      #以下は外す。
+      #    -e LAMBDA_EXECUTOR=${LAMBDA_EXECUTOR- docker-reuse} \
+      #    -e DOCKER_HOST=unix:///var/run/docker.sock \
+    - name: Set up LocalStack
+      run: |
+        docker run --rm -d -p 4566:4566 -p 4571:4571 \
+          -e LAMBDA_EXECUTOR=docker \
+          -e SERVICES=lambda,ec2,vpc,s3,apigateway,iam,rds,cloudwatch,route53 \
+          -e DEBUG=1 \
+          -v /var/run/docker.sock:/var/run/docker.sock \
+          localstack/localstack
+
+    # - name: Wait for LocalStack to be ready
+    #   run: |
+    #     until curl -s http://localhost:4566/_localstack/health | grep '"services": {"lambda": "running"}'; do
+    #       echo "Waiting for LocalStack..."
+    #       sleep 5
+    #     done
+
+    - name: Check Docker availability
+      run: |
+        docker --version
+
+    # # TFLocal のインストール
+    # - name: Install TFLocal
+    #   run: |
+    #     pip install localstack-client
+    #     wget https://github.com/localstack/terraform-local/releases/download/v0.13/tflocal-linux-amd64
+    #     chmod +x tflocal-linux-amd64
+    #     sudo mv tflocal-linux-amd64 /usr/local/bin/tflocal
+
+    # TFLocal のインストール
+    - name: Install TFLocal
+      run: |
+          pip install localstack-client
+          pip install terraform-local
+    #       git clone https://github.com/localstack/terraform-local.git
+    #       ls -lrtR
+    #       chmod -x terraform-local/bin/tflocal
+    #       sudo mv terraform-local/bin/tflocal terraform/tflocal
+    # chmod +x tflocal-linux-amd64
+    # sudo mv tflocal-linux-amd64 /usr/local/bin/tflocal
+
+    - name: Check if tflocal is installed
+      run: which tflocal
+
+    # Terraform をインストール（公式バイナリ）
+    - name: Install Terraform
+      run: |
+        curl -sLo terraform.zip https://releases.hashicorp.com/terraform/1.5.7/terraform_1.5.7_linux_amd64.zip
+        unzip terraform.zip
+        sudo mv terraform /usr/local/bin/
+        terraform -version
+
+    # - name: Create symlink for tflocal
+    #   run: sudo ln -s /home/runner/.local/bin/tflocal /usr/local/bin/tflocal
+
+    # - name: Run Terraform Initialization
+    #   run: |
+    #     cd terraform
+    #     /home/runner/.local/bin/tflocal init
+    
+    # 暫定追加
+    - name: Print current directory(Temporary add 2024/09/07)
+      run: |
+        ls -lrt
+        pwd
+    # chmod -R 777 terraform
+
+    # - name: Add TFLocal to PATH
+    #   run: |
+    #     echo "$HOME/.local/bin" >> $GITHUB_PATH
+    #     echo $GITHUB_PATH
+
+    # - name: Set TFLocal ENV
+    #   run: echo "TF_CLI_PATH=$(which terraform)" >> $GITHUB_ENV
+      
+    # - name: Verify TFLocal
+    #   run: |
+    #     echo $PATH
+    #     which tflocal
+    #     tflocal --version
+
+    # Lambdaのファイルがあるかの事前確認
+    - name: Verify ZIP file creation
+      run: |
+        cd terraform_t_kyn
+        ls -la lambda/
+        unzip -l lambda/lambda_function_payload.zip
+
+    # Terraform用ディレクトリ作成
+    # - name: Ensure terraform directory exists
+    #   run: mkdir -p terraform
+
+    # Terraform用ディレクトリ
+    # - name: Change to terraform directory
+    #   run: |
+    #     cd terraform
+    #     pwd
+
+    # Terraform の初期化
+    - name: Initialize TFLocal
+      run: |
+        cd terraform_t_kyn
+        ls -lrta
+        tflocal init
+
+    # Terraform の適用
+    - name: Apply TFLocal configuration
+      run: |
+        cd terraform_t_kyn
+        ls -lrtR
+        tflocal apply -auto-approve
+
+    # 出力の確認
+    - name: Output TFLocal state
+      run: |
+        cd terraform_t_kyn
+        tflocal output
+
+    # 出力の確認
+    - name: show TFLocal state
+      run: |
+        cd terraform_t_kyn
+        tflocal show
+        tflocal state list
+
+    # 出力の確認
+    - name: show docker ps
+      run: |
+        docker ps -a
+
+    # - name: Install AWS CLI
+    #   run: |
+    #     sudo apt-get install -y awscli
+
+    - name: Check AWS CLI version
+      run: |
+        pip install awscli --upgrade --user
+        aws --version
+
+    - name: Configure AWS CLI
+      run: |
+        aws configure set aws_access_key_id mock_secret_key
+        aws configure set aws_secret_access_key mock_secret_key
+        aws configure set region us-east-1
+        aws --endpoint-url=http://localhost:4566 ec2 describe-instances --output text
+        ENDPOINT="http://localhost:4566"
+        aws --endpoint-url=$ENDPOINT ec2 describe-vpcs --output text
+        echo "===== サブネット一覧 ====="
+        aws --endpoint-url=$ENDPOINT ec2 describe-subnets --output text
+        echo "===== セキュリティグループ一覧 ====="
+        aws --endpoint-url=$ENDPOINT ec2 describe-security-groups --output text
+        echo "===== ルートテーブル一覧 ====="
+        aws --endpoint-url=$ENDPOINT ec2 describe-route-tables --output text
+        echo "===== EC2インスタンス一覧 ====="
+        aws --endpoint-url=$ENDPOINT ec2 describe-instances --output text
+        echo "===== キーペア一覧 ====="
+        aws --endpoint-url=$ENDPOINT ec2 describe-key-pairs --output text
+        echo "===== S3バケット一覧 ====="
+        aws --endpoint-url=$ENDPOINT s3api list-buckets --output text
+        echo "===== Lambda関数一覧 ====="
+        aws --endpoint-url=$ENDPOINT lambda list-functions --output text
+        echo "===== API Gateway一覧 ====="
+        aws --endpoint-url=$ENDPOINT apigateway get-rest-apis --output text
+        echo "===== CloudWatch一覧 ====="
+        #aws --endpoint-url=$ENDPOINT cloudwatch describe-alarms --output text
+        echo "===== Route53ホストゾーン一覧 ====="
+        aws --endpoint-url=$ENDPOINT route53 list-hosted-zones --output text
+
+
+    - name: Configure AWS CLI and save output
+      run: |
+        ENDPOINT="http://localhost:4566"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        OUTDIR="output_terraform_resourceslogs"
+        mkdir -p $OUTDIR
+        OUTFILE="$OUTDIR/aws_output_${TIMESTAMP}.txt"
+        DOCS_DIR="docs/subdir/terraform_aws_outputs"
+        mkdir -p $DOCS_DIR
+        OUTHTMLFILE="$DOCS_DIR/aws_output.html"
+
+        {
+          echo "===== VPC一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-vpcs --output text
+          echo "===== サブネット一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-subnets --output text
+          echo "===== セキュリティグループ一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-security-groups --output text
+          echo "===== ルートテーブル一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-route-tables --output text
+          echo "===== EC2インスタンス一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-instances --output text
+          echo "===== キーペア一覧 ====="
+          aws --endpoint-url=$ENDPOINT ec2 describe-key-pairs --output text
+          echo "===== S3バケット一覧 ====="
+          aws --endpoint-url=$ENDPOINT s3api list-buckets --output text
+          echo "===== Lambda関数一覧 ====="
+          aws --endpoint-url=$ENDPOINT lambda list-functions --output text
+          echo "===== API Gateway一覧 ====="
+          aws --endpoint-url=$ENDPOINT apigateway get-rest-apis --output text
+          echo "===== Route53ホストゾーン一覧 ====="
+          aws --endpoint-url=$ENDPOINT route53 list-hosted-zones --output text
+        } > $OUTFILE
+
+        echo "Output saved to $OUTFILE"
+
+    # ステップ2: mainブランチへのpush時のみ、HTMLファイルを出力する
+    - name: Generate HTML output for main branch
+      if: github.event_name == 'push' && github.ref_name == 'main'
+      run: |
+        ENDPOINT="http://localhost:4566"
+        TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+        DOCS_DIR="docs/subdir/terraform_aws_outputs"
+        mkdir -p $DOCS_DIR
+        OUTHTMLFILE="$DOCS_DIR/aws_output.html"
+
+        echo "Running on main branch push. Generating HTML file..."
+        {
+          echo "<!DOCTYPE html>"
+          echo "<html lang='ja'>"
+          echo "<head>"
+          echo "  <meta charset='UTF-8'>"
+          echo "  <meta name='viewport' content='width=device-width, initial-scale=1.0'>"
+          echo "  <title>AWSリソース一覧 (${TIMESTAMP})</title>"
+          echo "  <style>"
+          echo "    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; }"
+          echo "    .container { max-width: 980px; margin: 20px auto; padding: 20px; }"
+          echo "    h1, h2 { border-bottom: 1px solid #ddd; padding-bottom: 5px; }"
+          echo "    pre { background-color: #f6f8fa; border-radius: 3px; padding: 16px; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word; }"
+          echo "  </style>"
+          echo "</head>"
+          echo "<body>"
+          echo "  <div class='container'>"
+          echo "    <h1>AWSリソース一覧 (${TIMESTAMP})</h1>"
+
+          echo "    <h2>VPC一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-vpcs --output text)</pre>"
+          echo "    <h2>サブネット一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-subnets --output text)</pre>"
+          echo "    <h2>セキュリティグループ一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-security-groups --output text)</pre>"
+          echo "    <h2>ルートテーブル一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-route-tables --output text)</pre>"
+          echo "    <h2>EC2インスタンス一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-instances --output text)</pre>"
+          echo "    <h2>キーペア一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT ec2 describe-key-pairs --output text)</pre>"
+          echo "    <h2>S3バケット一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT s3api list-buckets --output text)</pre>"
+          echo "    <h2>Lambda関数一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT lambda list-functions --output text)</pre>"
+          echo "    <h2>API Gateway一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT apigateway get-rest-apis --output text)</pre>"
+          echo "    <h2>Route53ホストゾーン一覧</h2><pre>$(aws --endpoint-url=$ENDPOINT route53 list-hosted-zones --output text)</pre>"
+          echo "  </div>"
+          echo "</body>"
+          echo "</html>"
+        } > $OUTHTMLFILE
+        echo "HTML output saved to $OUTHTMLFILE"
+
+    - name: Commit & Push AWS CLI output
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        ls -l $OUTFILE $OUTHTMLFILE
+        git add .
+        git commit -m "Add AWS CLI output ($OUTFILE AND $OUTHTMLFILE) [skip ci]" || echo "No changes to commit"
+
+        echo "current branches:"
+        BRANCH_NAME=${GITHUB_REF#refs/heads/}
+
+        # --- rebase before push ---
+        git fetch origin $BRANCH_NAME
+        git rebase origin/$BRANCH_NAME
+
+        # --- push after rebase ---
+        git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} HEAD:${BRANCH_NAME}

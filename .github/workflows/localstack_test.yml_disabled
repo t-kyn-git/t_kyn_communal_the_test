@@ -1,0 +1,186 @@
+name: LocalStack AWS Infrastructure Test
+
+# on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  localstack_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up LocalStack
+      run: |
+        docker run --rm -d -p 4566:4566 localstack/localstack
+
+    # - name: Install AWS CLI
+    #   run: |
+    #     sudo apt-get install -y awscli
+
+    # - name: Install AWS CLI
+    #   run: |
+    #     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    #     unzip awscliv2.zip
+    #     sudo ./aws/install
+    #     aws --version
+
+    - name: Check AWS CLI version
+      run: aws --version
+
+    - name: Configure AWS CLI
+      run: |
+        aws configure set aws_access_key_id test
+        aws configure set aws_secret_access_key test
+        aws configure set region us-east-1
+
+    - name: Create VPC
+      id: create_vpc
+      run: |
+        VPC_ID=$(aws --endpoint-url=http://localhost:4566 ec2 create-vpc --cidr-block 10.0.0.0/16 --query "Vpc.VpcId" --output text)
+        echo "VPC_ID=$VPC_ID" >> $GITHUB_ENV
+
+    - name: Create Subnets
+      run: |
+        aws --endpoint-url=http://localhost:4566 ec2 create-subnet --vpc-id ${{ env.VPC_ID }} --cidr-block 10.0.1.0/24 --availability-zone us-east-1a
+        aws --endpoint-url=http://localhost:4566 ec2 create-subnet --vpc-id ${{ env.VPC_ID }} --cidr-block 10.0.2.0/24 --availability-zone us-east-1b
+
+    - name: Create Internet Gateway
+      run: |
+        IGW_ID=$(aws --endpoint-url=http://localhost:4566 ec2 create-internet-gateway --query "InternetGateway.InternetGatewayId" --output text)
+        aws --endpoint-url=http://localhost:4566 ec2 attach-internet-gateway --vpc-id ${{ env.VPC_ID }} --internet-gateway-id $IGW_ID
+
+    - name: Create EC2 Instances
+      run: |
+        PUBLIC_SUBNET_ID=$(aws --endpoint-url=http://localhost:4566 ec2 describe-subnets --query "Subnets[?CidrBlock=='10.0.1.0/24'].SubnetId" --output text)
+        PRIVATE_SUBNET_ID=$(aws --endpoint-url=http://localhost:4566 ec2 describe-subnets --query "Subnets[?CidrBlock=='10.0.2.0/24'].SubnetId" --output text)
+        
+        aws --endpoint-url=http://localhost:4566 ec2 run-instances --image-id ami-12345678 --count 2 --instance-type t2.micro --subnet-id $PUBLIC_SUBNET_ID --associate-public-ip-address
+        aws --endpoint-url=http://localhost:4566 ec2 run-instances --image-id ami-12345678 --count 2 --instance-type t2.micro --subnet-id $PRIVATE_SUBNET_ID
+
+    - name: Create S3 Bucket
+      run: |
+        aws --endpoint-url=http://localhost:4566 s3 mb s3://my-test-bucket
+
+    - name: Create API Gateway
+      run: |
+        API_ID=$(aws --endpoint-url=http://localhost:4566 apigateway create-rest-api --name "my-api" --query "id" --output text)
+        echo "API_ID=$API_ID" >> $GITHUB_ENV
+
+    - name: Create Lambda Function
+      run: |
+        ZIP_FILE="function.zip"
+        echo "exports.handler = async (event) => { return { statusCode: 200, body: 'Hello from Lambda!' }; };" > index.js
+        zip $ZIP_FILE index.js
+        LAMBDA_ROLE_ARN=$(aws --endpoint-url=http://localhost:4566 iam create-role --role-name lambda-role --assume-role-policy-document '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "lambda.amazonaws.com"}, "Action": "sts:AssumeRole"}]}' --query "Role.Arn" --output text)
+        aws --endpoint-url=http://localhost:4566 iam attach-role-policy --role-name lambda-role --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        aws --endpoint-url=http://localhost:4566 lambda create-function --function-name my-function --runtime nodejs14.x --role $LAMBDA_ROLE_ARN --handler index.handler --zip-file fileb://$ZIP_FILE
+
+    # - name: Create Aurora Database Cluster
+    #   run: |
+    #     CLUSTER_ID=$(aws --endpoint-url=http://localhost:4566 rds create-db-cluster --db-cluster-identifier my-cluster --engine aurora --master-username master --master-user-password password --query "DBCluster.DBClusterIdentifier" --output text)
+    #     aws --endpoint-url=http://localhost:4566 rds create-db-instance --db-instance-identifier my-cluster-instance --db-instance-class db.t3.medium --engine aurora --db-cluster-identifier $CLUSTER_ID
+    #     aws --endpoint-url=http://localhost:4566 rds create-db-instance --db-instance-identifier my-cluster-instance-replica --db-instance-class db.t3.medium --engine aurora --db-cluster-identifier $CLUSTER_ID --db-instance-role reader
+
+    - name: Create DynamoDB Table
+      run: |
+        aws --endpoint-url=http://localhost:4566 dynamodb create-table \
+          --table-name my-table \
+          --attribute-definitions AttributeName=id,AttributeType=N \
+          --key-schema AttributeName=id,KeyType=HASH \
+          --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+
+    # - name: Create RDS Oracle Instances
+    #   run: |
+    #     # Create master DB instance
+    #     MASTER_DB_ID=$(aws --endpoint-url=http://localhost:4566 rds create-db-instance \
+    #       --db-instance-identifier my-oracle-master \
+    #       --db-instance-class db.t3.micro \
+    #       --engine oracle-se2 \
+    #       --allocated-storage 20 \
+    #       --master-username admin \
+    #       --master-user-password password \
+    #       --db-name mydatabase \
+    #       --query "DBInstance.DBInstanceIdentifier" --output text)
+        
+    #     # Create read replica of master DB instance
+    #     aws --endpoint-url=http://localhost:4566 rds create-db-instance \
+    #       --db-instance-identifier my-oracle-replica \
+    #       --db-instance-class db.t3.micro \
+    #       --engine oracle-se2 \
+    #       --source-db-instance-identifier $MASTER_DB_ID \
+    #       --allocated-storage 20
+
+
+    - name: Install Python and Diagrams
+      run: |
+        sudo apt-get install -y python3 python3-pip
+        pip3 install diagrams
+
+#     - name: Generate Architecture Diagram
+#       run: |
+#         # Create a Python script file
+#         cat > generate_diagram.py <<EOF
+# from diagrams import Diagram, Cluster
+# from diagrams.aws.network import VPC, PublicSubnet, PrivateSubnet, InternetGateway
+# from diagrams.aws.compute import EC2
+# from diagrams.aws.storage import S3
+# from diagrams.aws.network import APIGateway
+# from diagrams.aws.compute import Lambda
+# from diagrams.aws.database import RDS
+
+# with Diagram("AWS Infrastructure", show=False):
+#     vpc = VPC("VPC")
+    
+#     with Cluster("Public Subnet"):
+#         public_subnet = PublicSubnet("Public Subnet")
+#         ec2_public_1 = EC2("EC2 Instance (Public)")
+#         ec2_public_2 = EC2("EC2 Instance (Public)")
+#         public_subnet >> ec2_public_1
+#         public_subnet >> ec2_public_2
+
+#     with Cluster("Private Subnet"):
+#         private_subnet = PrivateSubnet("Private Subnet")
+#         ec2_private_1 = EC2("EC2 Instance (Private)")
+#         ec2_private_2 = EC2("EC2 Instance (Private)")
+#         private_subnet >> ec2_private_1
+#         private_subnet >> ec2_private_2
+
+#     igw = InternetGateway("Internet Gateway")
+#     vpc >> igw
+
+#     s3 = S3("S3 Bucket")
+#     api_gateway = APIGateway("API Gateway")
+#     lambda_func = Lambda("Lambda Function")
+
+#     rds = RDS("Aurora Cluster")
+#     master_db = RDS("Master Instance")
+#     replica_db = RDS("Read Replica")
+
+#     s3
+#     api_gateway
+#     lambda_func
+#     rds >> master_db
+#     rds >> replica_db
+# EOF
+
+#         # Run the Python script to generate the diagram
+#         python3 generate_diagram.py
+
+#         # Rename the output diagram if needed
+#         mv architecture.png architecture-diagram.png
+
+
+    # - name: Upload Diagram
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: architecture-diagram
+    #     path: architecture.png
+  

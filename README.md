@@ -40,6 +40,8 @@ A module will be created to test various functions.
             * pip install django
           * python content/t_kyn_test_app/manage_t_kyn.py runserver
             * execute the python applications.
+          * **playwright_script.py** (`content/t_kyn_test_app/`)
+            * Automated testing of Django pages, including screenshot capture and export into Excel.
       * chat tool (almost ✅)
         * Not probably realtime message exchange
       * Todo management（✅）
@@ -59,6 +61,12 @@ A module will be created to test various functions.
     * Trial development of features that may incur costs in repositories.
     * Develop and validate various automation features that can be safely made public.
     * **This is a only public repository, so the Github Actions of private repositories is trade secret.**
+
+* Testing Scripts
+  * **auth_screenshot.py** (`scripts/`)
+    * Tests the authentication screen using Playwright, capturing screenshots and exporting the results into Excel.
+  * **milk_screenshot.py** (`scripts/`)
+    * Automatically captures screenshots of the milk-related feature and exports the results into Excel.
 
 * Notes
   * There are many possibilities:
